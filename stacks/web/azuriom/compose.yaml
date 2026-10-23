@@ -56,9 +56,6 @@ services:
       traefik.http.services.azuriom.loadbalancer.server.port: "80"
 
   db-azuriom:
-    build:
-      context: ../../../images/mariadb
-      dockerfile: Dockerfile
     image: altherneum/mariadb:11.8
     container_name: db-azuriom
     restart: unless-stopped
@@ -102,15 +99,15 @@ volumes:
   altherneum_azuriom-plugins:
     name: altherneum_azuriom-plugins
     labels:
-      com.altherneum.backup: "false"
+      com.altherneum.backup: "true"
   altherneum_azuriom-themes:
     name: altherneum_azuriom-themes
     labels:
-      com.altherneum.backup: "false"
+      com.altherneum.backup: "true"
   altherneum_azuriom-config:
     name: altherneum_azuriom-config
     labels:
-      com.altherneum.backup: "false"
+      com.altherneum.backup: "true"
   altherneum_db-azuriom:
     name: altherneum_db-azuriom
     labels:

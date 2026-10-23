@@ -124,6 +124,18 @@ PMA_SECRET=$(get_env PMA_BLOWFISH_SECRET)
 VELOCITY_SECRET=$(get_env VELOCITY_SECRET)
 [ "${#VELOCITY_SECRET}" -ge 32 ] || warn "VELOCITY_SECRET semble trop court"
 
+# Réseaux externes créés par make init. Sans eux, le premier make up échoue.
+if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+    for key in PROXY_NETWORK DB_ADMIN_NETWORK MINECRAFT_NETWORK; do
+        net=$(get_env "$key")
+        if [ -z "$net" ] || ! docker network inspect "$net" >/dev/null 2>&1; then
+            fail "réseau Docker '$net' absent (lancer make init)"
+        fi
+    done
+else
+    fail "Docker inaccessible : service arrêté ou utilisateur hors du groupe docker (newgrp docker ou reconnexion)"
+fi
+
 if [ "$errors" -ne 0 ]; then
     echo >&2
     echo "$errors erreur(s) : corriger .env puis relancer make check-env." >&2

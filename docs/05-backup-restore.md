@@ -18,12 +18,17 @@ Sont exclus volontairement :
 - les volumes de bases (`altherneum_db-*`) : les dumps SQL sont la source de
   vérité, un volume MariaDB n'est pas portable tel quel ;
 - les volumes marqués `com.altherneum.backup=false` (données recréables :
-  plugins Minecraft, config Azuriom, caches).
+  plugins Minecraft, caches, config Discord régénérée).
 
-Volumes actuellement sauvegardés : `altherneum_azuriom-storage`,
-`altherneum_forgejo-data`, `altherneum_code-server-data`,
-`altherneum_code-server-workspace`, `altherneum_keeweb-webdav`,
-`altherneum_discord-data`, `altherneum_mc-*-data` (8 mondes).
+Volumes actuellement sauvegardés : `altherneum_azuriom-config`,
+`altherneum_azuriom-plugins`, `altherneum_azuriom-storage`,
+`altherneum_azuriom-themes`, `altherneum_forgejo-data`,
+`altherneum_code-server-data`, `altherneum_code-server-workspace`,
+`altherneum_keeweb-webdav`, `altherneum_discord-data`,
+`altherneum_mc-*-data` (8 mondes).
+
+`altherneum_azuriom-config` contient `.env`, la clé `APP_KEY` et le marqueur
+`.installed` : sans lui, Azuriom tenterait une nouvelle installation.
 
 ## Lancer une sauvegarde
 

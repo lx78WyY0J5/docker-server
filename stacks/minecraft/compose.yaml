@@ -15,9 +15,6 @@ name: altherneum
 # Ancre commune à tous les serveurs Paper (voir docs/services/minecraft.md).
 # -----------------------------------------------------------------------------
 x-paper: &paper
-  build:
-    context: ./paper
-    dockerfile: Dockerfile
   image: altherneum/paper:1.21.11
   restart: unless-stopped
   depends_on:
@@ -25,6 +22,7 @@ x-paper: &paper
       condition: service_completed_successfully
   networks:
     - minecraft
+    - egress
   environment: &paper-env
     TZ: ${TZ}
     DOMAIN: ${DOMAIN}
@@ -192,6 +190,11 @@ networks:
   minecraft:
     name: ${MINECRAFT_NETWORK}
     external: true
+  # Sortie Internet uniquement pour les serveurs Paper : le plugin Altherneum
+  # vérifie google.fr/discord.com et Paper récupère les clés Mojang. Aucun
+  # port n'est publié sur ce réseau.
+  egress:
+    name: altherneum_minecraft_egress
 
 volumes:
   altherneum_mc-plugins:

@@ -51,7 +51,7 @@ install_alpine() {
     ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
     echo "Europe/Paris" > /etc/timezone
     # docker-openrc fournit /etc/init.d/docker (absent du méta-paquet docker).
-    apk add git curl openssl make docker docker-cli-compose docker-openrc
+    apk add git curl openssl make docker docker-cli-compose docker-cli-buildx docker-openrc
     rc-update add docker default
     service docker start
 }
@@ -101,12 +101,17 @@ ensure_compose_plugin() {
 configure_docker() {
     log "Configuration de Docker daemon..."
     mkdir -p /etc/docker
-    cat > /etc/docker/daemon.json <<'EOF'
+    if [ -f /etc/docker/daemon.json ]; then
+        warn "/etc/docker/daemon.json existe déjà : fichier conservé (pas de fusion automatique)."
+        warn "Ajoutez-y log-driver=json-file et log-opts max-size=10m/max-file=3 si nécessaire."
+    else
+        cat > /etc/docker/daemon.json <<'EOF'
 {
   "log-driver": "json-file",
   "log-opts": { "max-size": "10m", "max-file": "3" }
 }
 EOF
+    fi
     if [ -d /run/systemd/system ] && command -v systemctl >/dev/null 2>&1; then
         systemctl daemon-reload
         systemctl restart docker
@@ -212,6 +217,8 @@ Répertoire du projet : $SERVER_DIR
 Prochaines étapes :
 1. Editer les secrets obligatoires :
    cd $SERVER_DIR
+   # Si vous venez d'être ajouté au groupe docker, reconnectez-vous ou lancez :
+   #   newgrp docker
    \$EDITOR .env
    # Renseigner au minimum :
    #   - DISCORD_BOT_TOKEN
@@ -235,40 +242,34 @@ Prochaines étapes :
 EXEMPLE COMPLET : Lancer SEULEMENT Azuriom (+ sa base MariaDB)
 ================================================================================
 
-# 1. Construire l'image de base PHP (requise pour Azuriom)
-make build
-
-# 2. Démarrer Traefik (nécessaire pour l'accès HTTPS)
+# 1. Démarrer Traefik (nécessaire pour l'accès HTTPS)
 make up-service SERVICE=traefik
-# ou équivalent docker compose :
-# docker compose --env-file .env -f stacks/proxy/compose.yaml up -d --build
 
-# 3. Démarrer Azuriom + sa base (db-azuriom)
+# 2. Démarrer Azuriom + sa base (db-azuriom)
+#    make up-service construit les images de base PHP/MariaDB si nécessaire.
 make up-service SERVICE=azuriom
-# ou équivalent docker compose :
-# docker compose --env-file .env -f stacks/web/azuriom/compose.yaml up -d --build
 
-# 4. Vérifier que le conteneur tourne
+# 3. Vérifier que le conteneur tourne
 make ps-service SERVICE=azuriom
 # NAME                STATUS
 # azuriom             Up (healthy)
 # (make ps affiche aussi db-azuriom et les autres services)
 
-# 5. Suivre les logs en temps réel (Ctrl+C pour quitter)
+# 4. Suivre les logs en temps réel (Ctrl+C pour quitter)
 make logs-service SERVICE=azuriom
 
-# 6. Vérifier l'accès web (remplacez par votre domaine)
+# 5. Vérifier l'accès web (remplacez par votre domaine)
 curl -k https://minecraft.votre-domaine.fr
 
-# 7. Arrêter proprement
+# 6. Arrêter proprement
 make stop SERVICE=azuriom
 # Les volumes (base de données, fichiers) sont conservés.
 # db-azuriom reste démarré : make stop SERVICE=db-azuriom pour l'arrêter aussi.
 
-# 8. Pour redémarrer plus tard
+# 7. Pour redémarrer plus tard
 make up-service SERVICE=azuriom
 
-# 9. Pour supprimer le conteneur (les volumes sont conservés)
+# 8. Pour supprimer le conteneur (les volumes sont conservés)
 # make down-service SERVICE=azuriom
 
 ================================================================================

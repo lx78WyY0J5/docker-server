@@ -8,7 +8,9 @@ Velocity 4.3.0 (proxy) + 8 serveurs Paper 1.21.11 :
   même conteneur (RakNet `19132/udp`, signalisation NetherNet `19132/tcp` et
   WebRTC `19133/udp`) ;
 - les serveurs Paper ne sont pas exposés : ils vivent sur le réseau interne
-  `altherneum_minecraft_internal` et écoutent tous sur le port `25565` ;
+  `altherneum_minecraft_internal` et écoutent tous sur le port `25565` ; ils
+  ont en plus un accès Internet **sortant** via
+  `altherneum_minecraft_egress` (clés Mojang, plugin), sans port publié ;
 - `mc-plugins` télécharge les plugins officiels dans le volume
   `altherneum_mc-plugins`, puis chaque serveur les recopie au démarrage ;
 - chaque serveur a son volume `altherneum_mc-<nom>-data` (monde + config).

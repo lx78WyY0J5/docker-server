@@ -67,8 +67,12 @@ advanced:
   cache-images: 0
   scoreboard-packet-threshold: 20
   add-team-suggestions: true
-  resource-pack-urls:
-    - "https://minecraft.__DOMAIN__/storage/zip/resourcePack.zip"
+  # Vide : le pack fourni par Azuriom est un pack Java (pack.mcmeta), pas un
+  # pack Bedrock (manifest.json). Il est envoyé aux joueurs Java par Paper.
+  # Exemple
+  # resource-pack-urls:
+  #   - "https://minecraft.__DOMAIN__/storage/zip/resourcePack.zip"
+  resource-pack-urls: []
   floodgate-key-file: key.pem
   java:
     use-haproxy-protocol: false

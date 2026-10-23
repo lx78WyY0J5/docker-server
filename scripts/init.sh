@@ -108,11 +108,11 @@ if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
     ensure_network "$(get_env DB_ADMIN_NETWORK)" --internal
     ensure_network "$(get_env MINECRAFT_NETWORK)" --internal
 else
-    echo "Attention : Docker n'est pas disponible." >&2
-    echo "Créez les réseaux avec :" >&2
-    echo "  docker network create $(get_env PROXY_NETWORK)" >&2
-    echo "  docker network create --internal $(get_env DB_ADMIN_NETWORK)" >&2
-    echo "  docker network create --internal $(get_env MINECRAFT_NETWORK)" >&2
+    echo "Erreur : Docker est introuvable ou inaccessible." >&2
+    echo "  - vérifier que le service Docker tourne ;" >&2
+    echo "  - vérifier que votre utilisateur est dans le groupe docker" >&2
+    echo "    (se déconnecter/reconnecter après 'usermod -aG docker \$USER')." >&2
+    exit 1
 fi
 
 echo

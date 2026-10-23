@@ -68,6 +68,35 @@ make forgejo-admin
 Les identifiants générés sont dans `.env` et dans
 `stacks/proxy/auth/*.htpasswd`. **Ne jamais commiter `.env`.**
 
+### Tester un seul service
+
+`make up` démarre toute l'infrastructure. Pour valider un service isolément,
+utilisez `make up-service` : la commande construit l'image du service et
+démarre uniquement ses dépendances Compose (par exemple la base MariaDB), sans
+toucher aux autres stacks.
+
+```sh
+# Traefik est nécessaire pour l'accès HTTPS des services web
+make up-service SERVICE=traefik
+
+# Exemple : Azuriom + db-azuriom (l'image de base PHP est construite si besoin)
+make up-service SERVICE=azuriom
+
+make ps-service SERVICE=azuriom
+make logs-service SERVICE=azuriom
+
+# Arrêt du service (la base et les volumes restent)
+make stop SERVICE=azuriom
+```
+
+Autres exemples : `php-site`, `phpmyadmin`, `meme`, `keeweb`, `code-server`,
+`forgejo`, `velocity`, `mc-hub`, `fail2ban`, `bot`. La liste complète est
+donnée par `make services`. Pour Minecraft, démarrez aussi `velocity` et un
+serveur Paper (`mc-hub`) si vous voulez tester une connexion complète. Les
+commandes d'une seule stack (`docker compose -f stacks/...`) fonctionnent
+aussi, mais `make up-service` évite d'oublier les images de base et les
+dépendances.
+
 ---
 
 ## 2. Architecture

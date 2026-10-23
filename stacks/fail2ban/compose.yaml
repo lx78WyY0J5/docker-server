@@ -16,7 +16,7 @@ services:
     environment:
       TZ: ${TZ}
     volumes:
-      - altherneum_traefik-logs:/var/log/traefik:ro
+      - altherneum_traefik-logs:/var/log/traefik
       - altherneum_fail2ban-data:/var/lib/fail2ban
 
 volumes:

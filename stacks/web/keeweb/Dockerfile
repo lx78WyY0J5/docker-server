@@ -7,11 +7,11 @@ FROM httpd:2.4.69-alpine3.24
 
 ARG KEEWEB_VERSION=1.18.7
 
-RUN apk add --no-cache curl unzip \
+RUN apk add --no-cache curl unzip apr-util-dbm_gdbm \
     && curl -fsSL --retry 5 \
         -o /tmp/keeweb.zip \
         "https://github.com/keeweb/keeweb/releases/download/v${KEEWEB_VERSION}/KeeWeb-${KEEWEB_VERSION}.html.zip" \
-    && unzip -q /tmp/keeweb.zip -d /usr/local/apache2/htdocs \
+    && unzip -oq /tmp/keeweb.zip -d /usr/local/apache2/htdocs \
     && rm -f /tmp/keeweb.zip \
     && sed -i 's|<meta name="kw-config" content="(no-config)">|<meta name="kw-config" content="./config.json">|' \
         /usr/local/apache2/htdocs/index.html

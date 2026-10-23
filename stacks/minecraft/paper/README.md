@@ -8,13 +8,16 @@ partage le même entrypoint.
 
 | Fichier | Rôle |
 |---|---|
-| `Dockerfile` | télécharge Paper avec version et build épinglés via l'API Fill v3 |
-| `entrypoint.sh` | génère `eula.txt`, `server.properties` et la configuration Paper, copie les plugins, puis lance Java |
+| `Dockerfile` | télécharge Paper avec version et build épinglés via l'API Fill v3, puis pré-cache le jar Mojang et le jar patché |
+| `entrypoint.sh` | copie le cache hors ligne, génère `eula.txt`, `server.properties` et la configuration Paper, copie les plugins, puis lance Java |
 | `config/` | modèles par défaut de `paper-global.yml`, `paper-world-defaults.yml`, `ops.json`, icône |
 
 Le serveur écoute sur `25565` **à l'intérieur** du réseau
 `altherneum_minecraft_internal` ; il n'est jamais publié sur l'hôte. Les
-joueurs passent par Velocity.
+joueurs passent par Velocity. Un second réseau,
+`altherneum_minecraft_egress`, donne uniquement un accès **sortant** à Internet
+(clés Mojang, vérifications du plugin). Les Paper utilisent **Java 25**,
+comme Velocity (WorldEdit 7.4.6 exige Java 25).
 
 ## Variables importantes
 
@@ -25,9 +28,15 @@ joueurs passent par Velocity.
 ## Construire et démarrer un serveur
 
 ```sh
-docker compose --env-file .env -f stacks/minecraft/compose.yaml up -d --build mc-hub
-docker compose logs -f mc-hub
+# Construit l'image Paper si nécessaire puis démarre le serveur
+make up-service SERVICE=mc-hub
+
+make logs-service SERVICE=mc-hub
 ```
+
+En appel direct de Compose, construire d'abord l'image :
+`make paper-base` puis
+`docker compose --env-file .env -f stacks/minecraft/compose.yaml up -d mc-hub`.
 
 La configuration durable se fait dans `entrypoint.sh` (le `server.properties`
 est réécrit à chaque démarrage) ou dans `config/paper-global.yml`. Pour ajouter

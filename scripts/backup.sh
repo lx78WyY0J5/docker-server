@@ -60,10 +60,15 @@ for volume in $VOLUMES; do
         tar czf "/backup/volume-$volume.tar.gz" -C /source .
 done
 
+# Les archives sont créées par un conteneur root : les remettre à l'utilisateur
+# courant avant de restreindre les permissions.
+docker run --rm -v "$(pwd)/$DIR":/backup alpine:3.24 \
+    sh -c 'chown -R "$1" /backup' _ "$(id -u):$(id -g)"
+
 # --- Manifeste --------------------------------------------------------------
 {
     echo "date=$STAMP"
-    echo "host=$(hostname)"
+    echo "host=$(uname -n)"
     echo "domain=$(get_env DOMAIN)"
     echo "docker=$(docker version --format '{{.Server.Version}}' 2>/dev/null || echo inconnu)"
     echo "volumes:"

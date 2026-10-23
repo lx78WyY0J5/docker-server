@@ -172,6 +172,9 @@ Tester immédiatement : `docker compose exec azuriom php artisan tinker`.
 docker compose logs -f forgejo
 # recréer l'admin
 make forgejo-admin
+# Si Forgejo répond « name is reserved » : le nom `admin` est réservé.
+# Choisir par exemple FORGEJO_ADMIN_NAME=altherneum dans .env puis relancer.
+
 # vérifier la base
 docker compose exec db-forgejo psql -U forgejo -d forgejo -c '\dt' | head
 ```

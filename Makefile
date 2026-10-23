@@ -5,7 +5,7 @@ SHELL := /bin/sh
 COMPOSE := docker compose
 MAILCOW_DIR := $(or $(shell sed -n 's/^MAILCOW_DIR=//p' .env 2>/dev/null | tail -n1),/opt/mailcow-dockerized)
 
-.PHONY: help init check-env build up down restart ps logs config backup restore \
+.PHONY: help init check-env build base php-base mariadb-base postgres-base paper-base ensure-base up down restart ps logs config backup restore \
         forgejo-admin mail-integrate mail-up mail-down mail-logs clean \
         stop restart-service logs-service up-service down-service \
         ps-service services
@@ -20,13 +20,30 @@ init: ## Génère .env, les mots de passe, les htpasswd et les réseaux Docker
 check-env: ## Vérifie que .env contient les secrets nécessaires avant make up
 	./scripts/check-env.sh
 
-build: ## Construit les images de base puis celles des stacks
-	docker build --pull --no-cache -t altherneum/php-apache:latest images/php-apache
-	docker build -t altherneum/mariadb:11.8 images/mariadb
-	docker build -t altherneum/postgres:18 images/postgres
+build: base ## Construit les images de base puis celles des stacks
 	$(COMPOSE) build
 
-up: check-env ## Démarre toute l'infrastructure
+php-base: ## Construit uniquement l'image de base PHP/Apache
+	docker build --pull --no-cache -t altherneum/php-apache:latest images/php-apache
+
+mariadb-base: ## Construit uniquement l'image de base MariaDB
+	docker build -t altherneum/mariadb:11.8 images/mariadb
+
+postgres-base: ## Construit uniquement l'image de base PostgreSQL
+	docker build -t altherneum/postgres:18 images/postgres
+
+paper-base: ## Construit l'image commune des serveurs Paper
+	docker build -t altherneum/paper:1.21.11 stacks/minecraft/paper
+
+base: php-base mariadb-base postgres-base paper-base ## Construit toutes les images de base
+
+ensure-base: ## Construit les images de base manquantes
+	@docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 || $(MAKE) php-base
+	@docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 || $(MAKE) mariadb-base
+	@docker image inspect altherneum/postgres:18 >/dev/null 2>&1 || $(MAKE) postgres-base
+	@docker image inspect altherneum/paper:1.21.11 >/dev/null 2>&1 || $(MAKE) paper-base
+
+up: check-env ensure-base ## Démarre toute l'infrastructure
 	$(COMPOSE) up -d --remove-orphans
 
 down: ## Arrête toute l'infrastructure (les volumes sont conservés)
@@ -88,6 +105,22 @@ logs-service: ## Suit les logs d'un service (ex: make logs-service SERVICE=azuri
 
 up-service: ## Démarre un service (ex: make up-service SERVICE=azuriom)
 	@test -n "$(SERVICE)" || (echo "Usage: make up-service SERVICE=nom"; exit 1)
+	@case "$(SERVICE)" in \
+		azuriom|php-site) \
+			docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 \
+				|| $(MAKE) php-base ; \
+			docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \
+				|| $(MAKE) mariadb-base ;; \
+		db-php|db-azuriom) \
+			docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \
+				|| $(MAKE) mariadb-base ;; \
+		forgejo|db-forgejo) \
+			docker image inspect altherneum/postgres:18 >/dev/null 2>&1 \
+				|| $(MAKE) postgres-base ;; \
+		mc-hub|mc-survie|mc-creatif|mc-anarchie|mc-rpg|mc-skyblock|mc-opprison|mc-test) \
+			docker image inspect altherneum/paper:1.21.11 >/dev/null 2>&1 \
+				|| $(MAKE) paper-base ;; \
+	esac
 	$(COMPOSE) --env-file .env up -d --build $(SERVICE)
 
 down-service: ## Arrête et supprime un service (ex: make down-service SERVICE=azuriom)

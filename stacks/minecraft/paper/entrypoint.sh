@@ -23,7 +23,17 @@ case "$ONLINE_MODE" in
         ;;
 esac
 
-mkdir -p /data/config /data/plugins
+mkdir -p /data/config /data/plugins /data/cache
+
+# Le build a pré-téléchargé le jar Mojang et le jar Paper patché. On les copie
+# dans le volume avant le premier démarrage ; le réseau egress ne sert qu'aux
+# vérifications de plugins et aux appels Mojang, jamais au trafic joueur.
+mkdir -p "/data/versions/${PAPER_VERSION}"
+[ -f "/data/cache/mojang_${PAPER_VERSION}.jar" ] \
+    || cp "/opt/paper-cache/cache/mojang_${PAPER_VERSION}.jar" /data/cache/
+[ -f "/data/versions/${PAPER_VERSION}/paper-${PAPER_VERSION}.jar" ] \
+    || cp "/opt/paper-cache/versions/${PAPER_VERSION}/paper-${PAPER_VERSION}.jar" \
+        "/data/versions/${PAPER_VERSION}/"
 
 printf 'eula=true\n' > /data/eula.txt
 
@@ -91,7 +101,7 @@ sync-chunk-writes=false
 op-permission-level=4
 prevent-proxy-connections=false
 hide-online-players=false
-resource-pack=
+resource-pack=https://minecraft.${DOMAIN}/storage/zip/resourcePack.zip
 entity-broadcast-range-percentage=100
 simulation-distance=6
 rcon.password=${MINECRAFT_RCON_PASSWORD}

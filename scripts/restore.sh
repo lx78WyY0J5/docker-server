@@ -31,6 +31,34 @@ for db in db-php db-azuriom db-forgejo; do
     done
 done
 
+# Sur un volume neuf, PostgreSQL/MariaDB peuvent répondre « healthy » pendant
+# l'initialisation temporaire. Attendre une vraie requête SQL avant d'importer.
+wait_mariadb() {
+    db=$1
+    pass=$2
+    i=0
+    until docker exec -e MYSQL_PWD="$pass" "$db" mariadb -uroot -e 'SELECT 1' >/dev/null 2>&1; do
+        i=$((i + 1))
+        [ "$i" -gt 120 ] && { echo "Erreur : $db ne répond pas aux requêtes SQL." >&2; exit 1; }
+        sleep 2
+    done
+}
+
+wait_postgres() {
+    i=0
+    until docker exec -e PGPASSWORD="$(get_env FORGEJO_DB_PASSWORD)" db-forgejo \
+        psql -U "$(get_env FORGEJO_DB_USER)" -d "$(get_env FORGEJO_DB_NAME)" \
+        -c 'SELECT 1' >/dev/null 2>&1; do
+        i=$((i + 1))
+        [ "$i" -gt 120 ] && { echo "Erreur : db-forgejo ne répond pas aux requêtes SQL." >&2; exit 1; }
+        sleep 2
+    done
+}
+
+wait_mariadb db-php "$(get_env PHP_DB_ROOT_PASSWORD)"
+wait_mariadb db-azuriom "$(get_env AZURIOM_DB_ROOT_PASSWORD)"
+wait_postgres
+
 if [ -s "$BACKUP/db-php.sql" ]; then
     echo "→ restauration db-php"
     docker exec -i -e MYSQL_PWD="$(get_env PHP_DB_ROOT_PASSWORD)" db-php \

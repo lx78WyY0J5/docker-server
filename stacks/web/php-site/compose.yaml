@@ -33,9 +33,6 @@ services:
       traefik.http.services.php-site.loadbalancer.server.port: "80"
 
   db-php:
-    build:
-      context: ../../../images/mariadb
-      dockerfile: Dockerfile
     image: altherneum/mariadb:11.8
     container_name: db-php
     restart: unless-stopped

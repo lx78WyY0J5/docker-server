@@ -151,8 +151,10 @@ quand les serveurs Paper n'utilisent pas l'API Floodgate. Il n'y a donc ni
 
 Geyser 2.12 nécessite Velocity 4.x (API Adventure récente) : Velocity 3.5.1
 provoque un `NoSuchMethodError` au chargement de Geyser. L'image Velocity est
-donc épinglée sur **4.3.0** avec **Java 25** ; ne pas revenir à Java 21 pour
-l'image Velocity ni à Velocity 3. Paper reste sur Java 21.
+donc épinglée sur **4.3.0** avec **Java 25**. Paper utilise également
+**Java 25** : WorldEdit 7.4.6 est compilé en classe Java 25 (version 69) et ne
+se charge pas sur Java 21. Ne pas revenir à Java 21 pour les images Velocity
+ou Paper.
 
 - mise à jour : éditer les versions/URLs dans `fetch-plugins.sh`, puis
   `docker compose build mc-plugins`,
@@ -203,11 +205,33 @@ Après une modification des templates, reconstruire l'image Velocity
 si l'on veut les régénérer. Les logs Geyser/Floodgate sont dans
 `docker compose logs velocity`.
 
-> Au premier `make up`, Velocity peut démarrer avant qu'Azuriom ait fini de
-> télécharger le resource pack : Geyser logue alors
-> `pack de ressources ... invalide`. Ce n'est pas bloquant ; une fois Azuriom
-> prêt, redémarrer Velocity (`make restart-service SERVICE=velocity`) pour que
-> Geyser recharge le pack.
+### Resource pack
+
+Le pack livré par Azuriom (`pack.mcmeta`) est un **pack Java**. Il est déclaré
+dans `server.properties` de chaque serveur Paper via
+`resource-pack=https://minecraft.<DOMAIN>/storage/zip/resourcePack.zip`.
+Il n'est **pas** envoyé à Geyser : un pack Bedrock exige un `manifest.json`,
+pas un `pack.mcmeta`. C'est pourquoi `resource-pack-urls` est vide dans
+`geyser.yml.template`. Si un pack Bedrock est ajouté plus tard, renseigner son
+URL dans ce template, reconstruire Velocity et supprimer
+`/data/plugins/Geyser-Velocity/config.yml` pour le régénérer.
+
+## Réseau et premier démarrage hors ligne
+
+Les serveurs Paper sont sur deux réseaux :
+
+- `altherneum_minecraft_internal` (`internal: true`) pour Velocity ↔ Paper et
+  Azuriom (ping/RCON) ;
+- `altherneum_minecraft_egress` (bridge non interne) pour la **sortie
+  Internet uniquement** : le plugin Altherneum vérifie `google.fr`/`discord.com`
+  et Paper récupère les clés Mojang. Aucun port n'est publié sur ce réseau.
+
+Paper n'a donc pas d'accès entrant, mais peut joindre Internet. L'image Paper
+pré-télécharge au build le jar Mojang et le jar patché (`PAPER_VERSION`) ;
+l'entrypoint les copie dans `/data/cache` et `/data/versions` avant le premier
+démarrage. Sans ce cache, Paper échouerait sur
+`UnknownHostException: piston-data.mojang.com` puisque le réseau `internal`
+n'a pas de DNS externe.
 
 ## Ajouter un serveur
 

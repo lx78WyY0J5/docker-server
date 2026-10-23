@@ -30,6 +30,7 @@ services:
       FORGEJO__database__PASSWD: ${FORGEJO_DB_PASSWORD}
       FORGEJO__database__SSL_MODE: "disable"
 
+      FORGEJO__security__INSTALL_LOCK: "true"
       FORGEJO__security__SECRET_KEY: ${FORGEJO_SECRET_KEY}
       FORGEJO__security__INTERNAL_TOKEN: ${FORGEJO_INTERNAL_TOKEN}
       FORGEJO__oauth2__JWT_SECRET: ${FORGEJO_OAUTH2_JWT_SECRET}
@@ -66,9 +67,6 @@ services:
       traefik.http.services.forgejo.loadbalancer.server.port: "3000"
 
   db-forgejo:
-    build:
-      context: ../../images/postgres
-      dockerfile: Dockerfile
     image: altherneum/postgres:18
     container_name: db-forgejo
     restart: unless-stopped

@@ -21,6 +21,9 @@ entryPoints:
   web:
     address: ":80"
     http:
+      # Supprime les en-têtes dont le nom imite un en-tête de confiance
+      # (X-Auth-User, X.Auth.User, …) pour éviter le spoofing vers PHP.
+      aliasHeadersStrategy: delete
       redirections:
         entryPoint:
           to: websecure
@@ -29,6 +32,7 @@ entryPoints:
   websecure:
     address: ":443"
     http:
+      aliasHeadersStrategy: delete
       tls:
         certResolver: letsencrypt
   # Entrée TCP Minecraft. Un seul routeur TCP écoute ici : Velocity.

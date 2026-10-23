@@ -59,6 +59,7 @@ et `19133/udp` au transport WebRTC NetherNet.
 | `altherneum_proxy` | `make init` | Traefik ↔ toutes les apps exposées |
 | `altherneum_db_admin` | `make init` (`--internal`) | bases MariaDB ↔ phpMyAdmin |
 | `altherneum_minecraft_internal` | `make init` (`--internal`) | Velocity ↔ Paper ↔ Azuriom (ping/RCON) |
+| `altherneum_minecraft_egress` | le compose Minecraft (bridge non interne) | sortie Internet des serveurs Paper (Mojang, plugin), aucun port publié |
 | `altherneum_<projet>_internal` | le compose du projet (`internal: true`) | app ↔ sa propre base uniquement |
 
 Un conteneur n'est joignable que par les services présents sur le même réseau.
@@ -73,8 +74,10 @@ phpMyAdmin).
 
 **Minecraft Java** : client → `25565` → Traefik (routeur TCP `HostSNI(*)` sur
 l'entrypoint `minecraft`) → conteneur `velocity` → serveurs Paper via
-`altherneum_minecraft_internal`. Les serveurs Paper ne sont jamais exposés et
-n'ont pas d'accès Internet : les plugins sont récupérés par `mc-plugins`.
+`altherneum_minecraft_internal`. Les serveurs Paper ne sont jamais exposés ;
+leur seul accès Internet est sortant via `altherneum_minecraft_egress` (clés
+Mojang, vérifications du plugin). Les plugins sont récupérés au build par
+`mc-plugins`.
 
 **Minecraft Bedrock** : client → `19132/udp` (RakNet) ou
 `19132/tcp` + `19133/udp` (NetherNet) → conteneur `velocity`
@@ -103,8 +106,8 @@ UDP `19132`/`19133` si Velocity reste au home lab.
 ## Algorithme de démarrage
 
 1. `make init` : `.env`, secrets, htpasswd, réseaux Docker ;
-2. `make build` : images de base (`php-apache`, `mariadb`, `postgres`) puis
-   images des stacks ;
+2. `make build` : images de base (`php-apache`, `mariadb`, `postgres`,
+   `paper`) puis images des stacks ;
 3. `make up` : `mc-plugins` télécharge les plugins puis sort ; Velocity et les
    serveurs Paper démarrent ensuite (`depends_on: service_completed_successfully`) ;
 4. Traefik lit le socket Docker en lecture seule et découvre les labels.

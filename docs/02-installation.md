@@ -79,7 +79,7 @@ cd /opt/docker-server
 
 ```sh
 # docker-openrc fournit /etc/init.d/docker
-apk add docker docker-cli-compose docker-openrc
+apk add docker docker-cli-compose docker-cli-buildx docker-openrc
 rc-update add docker default
 service docker start
 
@@ -90,7 +90,8 @@ docker compose version
 
 Configuration recommandée (`/etc/docker/daemon.json`) : limiter la rotation des
 logs pour éviter de saturer le disque (Traefik écrit dans un volume, mais les
-autres conteneurs utilisent le driver json-file) :
+autres conteneurs utilisent le driver json-file). Si le fichier existe déjà,
+fusionnez ces clés au lieu de l'écraser (`install.sh` le conserve désormais) :
 
 ```json
 {
@@ -170,10 +171,15 @@ make init          # .env + secrets + htpasswd + réseaux
 $EDITOR .env       # DISCORD_BOT_TOKEN, AZURIOM_ADMIN_GAME_ID, e-mails, etc.
 make check-env     # contrôle avant démarrage (aussi lancé par make up)
 
+# Après une installation via sudo : newgrp docker (ou reconnexion)
 make build
 make up
 make ps
 ```
+
+Pour ne tester qu'un service, ne lancez pas `make up` : utilisez
+`make up-service SERVICE=...` (voir la section
+« Tester un seul service » du [`README`](../README.md#tester-un-seul-service)).
 
 L'installation initiale d'Azuriom (migrations + compte admin) se fait toute
 seule au premier démarrage. En `mc-online`, renseigner
