@@ -11,10 +11,10 @@ Sur une machine vierge (Alpine, Arch, Debian, Ubuntu), en **root** :
 
 ```sh
 # Option 1 : via curl (si le repo n'est pas encore cloné)
-curl -fsSL https://raw.githubusercontent.com/Altherneum/server/main/server-v2/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/lx78WyY0J5/docker-server/main/install.sh | sh
 
 # Option 2 : si le repo est déjà cloné
-cd server-v2
+cd docker-server
 sudo ./install.sh
 ```
 
@@ -33,8 +33,8 @@ sudo pacman -S --needed docker docker-compose git make openssl
 sudo systemctl enable --now docker
 sudo usermod -aG docker "$USER"   # se reconnecter pour appliquer le groupe
 
-git clone https://github.com/Altherneum/server.git ~/altherneum
-cd ~/altherneum/server-v2
+git clone https://github.com/lx78WyY0J5/docker-server.git ~/docker-server
+cd ~/docker-server
 make init
 $EDITOR .env                      # domaine de test, secrets locaux
 make check-env
@@ -71,8 +71,8 @@ apk add git curl openssl make
 Le dépôt peut être cloné ensuite :
 
 ```sh
-git clone https://github.com/Altherneum/server.git /opt/altherneum
-cd /opt/altherneum/server-v2
+git clone https://github.com/lx78WyY0J5/docker-server.git /opt/docker-server
+cd /opt/docker-server
 ```
 
 ## 2. Docker
@@ -164,7 +164,7 @@ sites. `25565/tcp` sert au proxy Velocity. Pour le cross-play Bedrock, ouvrir
 ## 5. Déploiement
 
 ```sh
-cd /opt/altherneum/server-v2
+cd /opt/docker-server
 
 make init          # .env + secrets + htpasswd + réseaux
 $EDITOR .env       # DISCORD_BOT_TOKEN, AZURIOM_ADMIN_GAME_ID, e-mails, etc.
@@ -204,7 +204,7 @@ make logs
 ## Mise à jour de l'infrastructure
 
 ```sh
-cd /opt/altherneum/server-v2
+cd /opt/docker-server
 git pull
 
 # versions applicatives : .env (AZURIOM_VERSION, FORGEJO_VERSION…)

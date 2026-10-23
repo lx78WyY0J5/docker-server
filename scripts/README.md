@@ -1,7 +1,7 @@
 # Scripts d'exploitation
 
 Ces scripts sont appelés par le [`Makefile`](../Makefile). Ils se placent
-eux-mêmes à la racine `server-v2/` et lisent `.env` ; il est donc préférable de
+eux-mêmes à la racine `docker-server/` et lisent `.env` ; il est donc préférable de
 passer par `make` plutôt que de les lancer depuis un autre dossier.
 
 | Script | Commande | Rôle | Documentation |

@@ -1,22 +1,22 @@
 #!/bin/sh
 # =============================================================================
-# install.sh — Installation automatisée d'Altherneum server-v2
+# install.sh — Installation automatisée d'Altherneum docker-server
 # Usage : curl -fsSL <url> | sh    ou    ./install.sh
 # =============================================================================
 set -eu
 
-REPO_URL="https://github.com/Altherneum/server.git"
-REPO_DIR="/opt/altherneum"
-SERVER_DIR="${REPO_DIR}/server-v2"
+REPO_URL="https://github.com/lx78WyY0J5/docker-server.git"
+REPO_DIR="/opt/docker-server"
+SERVER_DIR="${REPO_DIR}"
 USE_SCRIPT_DIR=0
 
 # Si le script est lancé depuis un clone existant, l'utiliser au lieu de créer
-# un second clone dans /opt/altherneum.
+# un second clone dans /opt/docker-server.
 if [ -f "$0" ]; then
     SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd || true)
     if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/compose.yaml" ]; then
         SERVER_DIR="$SCRIPT_DIR"
-        REPO_DIR=$(dirname "$SERVER_DIR")
+        REPO_DIR="$SERVER_DIR"
         USE_SCRIPT_DIR=1
     fi
 fi

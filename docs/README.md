@@ -25,7 +25,7 @@ liens vers la documentation officielle de chaque logiciel.
 
 ## Conventions
 
-- les commandes sont à lancer depuis la racine `server-v2/` ;
+- les commandes sont à lancer depuis la racine `docker-server/` ;
 - les fichiers de secrets (`.env`, `*.htpasswd`) ne sont jamais commités ;
 - une stack peut être lancée seule avec
   `docker compose --env-file .env -f stacks/<nom>/compose.yaml up -d --build`.

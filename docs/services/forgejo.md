@@ -106,5 +106,5 @@ une montée majeure (<https://forgejo.org/releases/>).
   l'URL sur `https://git.altherneum.fr` ;
 - **Webhooks** : les conteneurs internes peuvent être joints via
   `altherneum_proxy` si nécessaire ;
-- **Dépôt miroir** de `Altherneum/server` : configurer un push mirror depuis
+- **Dépôt miroir** de `lx78WyY0J5/docker-server` : configurer un push mirror depuis
   l'ancien GitHub, ou pousser manuellement (`git push --mirror`).

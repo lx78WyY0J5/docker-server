@@ -56,7 +56,7 @@ Les dumps MariaDB/PostgreSQL sont, eux, cohérents à chaud
 ```sh
 cat > /etc/periodic/daily/altherneum-backup <<'EOF'
 #!/bin/sh
-cd /opt/altherneum/server-v2 || exit 1
+cd /opt/docker-server || exit 1
 docker compose stop mc-hub mc-survie mc-creatif mc-anarchie mc-rpg mc-skyblock mc-opprison mc-test forgejo
 ./scripts/backup.sh
 docker compose up -d
@@ -74,12 +74,12 @@ rc-update add crond default
 
 ```sh
 # garder 30 jours localement
-find /opt/altherneum/server-v2/backups -maxdepth 1 -mindepth 1 -type d -mtime +30 -exec rm -rf {} +
+find /opt/docker-server/backups -maxdepth 1 -mindepth 1 -type d -mtime +30 -exec rm -rf {} +
 
 # copie chiffrée hors site (exemple rclone, à configurer une fois)
 apk add rclone
 rclone config          # créer un remote (S3, B2, SFTP…)
-rclone sync /opt/altherneum/server-v2/backups remote:altherneum-backups --fast-list
+rclone sync /opt/docker-server/backups remote:altherneum-backups --fast-list
 ```
 
 Un dossier de sauvegarde fait facilement plusieurs gigaoctets (mondes

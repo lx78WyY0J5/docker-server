@@ -1,7 +1,7 @@
 # Migration depuis l'ancien serveur
 
 L'ancien serveur (Debian + Apache + systemd + scripts shell) et le nouveau
-(`server-v2`, Docker + Traefik) peuvent cohabiter le temps de la migration.
+(`docker-server`, Docker + Traefik) peuvent cohabiter le temps de la migration.
 Stratégie : préparer le nouveau serveur, copier les données, vérifier, puis
 basculer le DNS.
 
@@ -46,7 +46,7 @@ basculer le DNS.
 
 ```sh
 # Sur le nouveau serveur
-cd /opt/altherneum/server-v2
+cd /opt/docker-server
 make init
 $EDITOR .env              # DISCORD_BOT_TOKEN, ACME_EMAIL, AZURIOM_ADMIN_GAME_ID
 make check-env

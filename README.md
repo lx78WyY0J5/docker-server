@@ -32,7 +32,7 @@ ports `80/tcp`, `443/tcp`, `25565/tcp`, `19132/tcp`, `19132/udp` et
 (voir [`docs/03-dns.md`](docs/03-dns.md)).
 
 ```sh
-cd server-v2
+cd docker-server
 
 # 1. Génère .env, les mots de passe, les htpasswd et les réseaux Docker
 make init
@@ -154,7 +154,7 @@ il ne passe pas par le VPS (CNAME dédié).
 ## 4. Arborescence
 
 ```text
-server-v2/
+docker-server/
 ├── compose.yaml              # compose racine (include)
 ├── Makefile                  # commandes d'exploitation
 ├── .env.example              # variables, sans secrets

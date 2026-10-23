@@ -32,7 +32,7 @@ cd mailcow-dockerized
 #    ACME DNS-01 activé (voir ci-dessous)
 
 # 3. intégration Traefik depuis ce dépôt
-cd /opt/altherneum/server-v2
+cd /opt/docker-server
 make mail-integrate
 make mail-up
 ```
