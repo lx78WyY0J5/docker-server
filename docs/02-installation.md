@@ -11,7 +11,7 @@ Sur une machine vierge (Alpine, Arch, Debian, Ubuntu), en **root** :
 
 ```sh
 # Option 1 : via curl (si le repo n'est pas encore cloné)
-curl -fsSL https://raw.githubusercontent.com/lx78WyY0J5/docker-server/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/lx78WyY0J5/docker-server/main/install.sh | sudo sh
 
 # Option 2 : si le repo est déjà cloné
 cd docker-server
