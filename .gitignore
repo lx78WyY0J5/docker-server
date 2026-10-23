@@ -9,6 +9,9 @@ stacks/proxy/auth/*.htpasswd
 stacks/web/keeweb/auth/*.htpasswd
 !stacks/web/keeweb/auth/.gitkeep
 
+# Site PHP : dépôt website cloné localement (voir make php-site-src)
+stacks/web/php-site/src/
+
 # Sauvegardes
 backups/*
 !backups/.gitkeep

@@ -6,6 +6,7 @@ COMPOSE := docker compose
 MAILCOW_DIR := $(or $(shell sed -n 's/^MAILCOW_DIR=//p' .env 2>/dev/null | tail -n1),/opt/mailcow-dockerized)
 
 .PHONY: help init check-env build base php-base mariadb-base postgres-base paper-base ensure-base up down restart ps logs config backup restore \
+        php-site-src php-site-env \
         forgejo-admin mail-integrate mail-up mail-down mail-logs clean \
         stop restart-service logs-service up-service down-service \
         ps-service services
@@ -22,6 +23,12 @@ check-env: ## Vérifie que .env contient les secrets nécessaires avant make up
 
 build: base ## Construit les images de base puis celles des stacks
 	$(COMPOSE) build
+
+php-site-src: ## Clone le dépôt website dans stacks/web/php-site/src
+	./scripts/php-site-src.sh
+
+php-site-env: ## Régénère stacks/web/php-site/src/.env depuis .env
+	PHP_SITE_ENV_OVERWRITE=true ./scripts/php-site-src.sh
 
 php-base: ## Construit uniquement l'image de base PHP/Apache
 	docker build --pull --no-cache -t altherneum/php-apache:latest images/php-apache
@@ -43,7 +50,7 @@ ensure-base: ## Construit les images de base manquantes
 	@docker image inspect altherneum/postgres:18 >/dev/null 2>&1 || $(MAKE) postgres-base
 	@docker image inspect altherneum/paper:1.21.11 >/dev/null 2>&1 || $(MAKE) paper-base
 
-up: check-env ensure-base ## Démarre toute l'infrastructure
+up: check-env ensure-base php-site-src ## Démarre toute l'infrastructure
 	$(COMPOSE) up -d --remove-orphans
 
 down: ## Arrête toute l'infrastructure (les volumes sont conservés)
@@ -106,7 +113,13 @@ logs-service: ## Suit les logs d'un service (ex: make logs-service SERVICE=azuri
 up-service: ## Démarre un service (ex: make up-service SERVICE=azuriom)
 	@test -n "$(SERVICE)" || (echo "Usage: make up-service SERVICE=nom"; exit 1)
 	@case "$(SERVICE)" in \
-		azuriom|php-site) \
+		php-site) \
+			$(MAKE) php-site-src ; \
+			docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 \
+				|| $(MAKE) php-base ; \
+			docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \
+				|| $(MAKE) mariadb-base ;; \
+		azuriom) \
 			docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 \
 				|| $(MAKE) php-base ; \
 			docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \

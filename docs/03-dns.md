@@ -113,7 +113,78 @@ TRAEFIK_ACME_CA_SERVER=https://acme-staging-v02.api.letsencrypt.org/directory
 Les certificats staging sont rejetés par les navigateurs ; revenir à la
 production après validation, puis supprimer `altherneum_traefik-acme`.
 
+## Changer d'IP ou de domaine
+
+### IP du VPS et TLS
+
+Il n'y a **aucune IP de VPS dans la configuration TLS**. Traefik écoute sur
+toutes les interfaces de la machine :
+
+```yaml
+# stacks/proxy/templates/traefik.yml.template
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+```
+
+Les certificats Let's Encrypt sont délivrés pour des **noms d'hôte**, pas pour
+l'IP du serveur (HTTP-01 : Let's Encrypt appelle `http://<domaine>/.well-known/…`
+et vérifie que le DNS pointe bien vers le serveur qui répond). L'IP n'est donc
+présente que dans le DNS.
+
+Pour remplacer le VPS par un autre avec une nouvelle IP :
+
+1. créer les enregistrements `A` (IPv4) et, si utilisé, `AAAA` (IPv6) vers la
+   nouvelle IP ; conserver les `CNAME` éventuels mais vérifier leurs cibles ;
+2. ouvrir les ports nécessaires sur le nouveau VPS : `80/tcp`, `443/tcp`,
+   `25565/tcp`, `19132/tcp` et `19132-19133/udp` selon les services ;
+3. attendre la propagation DNS (`dig +short altherneum.fr`) et vérifier que
+   l'ancien serveur ne répond plus pour le domaine ;
+4. ne changer **rien** dans `.env` ni dans Traefik. Traefik redemande les
+   certificats automatiquement ; le volume `altherneum_traefik-acme` peut être
+   copié pour réutiliser les certificats existants, ou laissé vide pour une
+   nouvelle émission.
+
+Aucun redémarrage n'est nécessaire après un simple changement DNS : Traefik
+retente les défis ACME et recharge sa configuration tout seul. Si l'ancien
+serveur reste allumé et que le DNS pointe encore vers lui, c'est lui qui reçoit
+le défi HTTP-01 : arrêter son Traefik avant la bascule.
+
+### Nom de domaine
+
+Le domaine central est `DOMAIN` dans `.env`. Les routeurs Compose et les
+templates Traefik l'utilisent, mais certains noms sont écrits explicitement et
+doivent être adaptés :
+
+| Fichier / variable | À changer |
+|---|---|
+| `.env` | `DOMAIN`, `ACME_EMAIL` |
+| `.env` | `TRAEFIK_DASHBOARD_HOST` |
+| `.env` | `AZURIOM_ADMIN_EMAIL`, `AZURIOM_MAIL_HOST`, `AZURIOM_MAIL_USERNAME`, `AZURIOM_MAIL_FROM_ADDRESS` |
+| `.env` | `FORGEJO_ADMIN_EMAIL`, `FORGEJO_MAIL_HOST`, `FORGEJO_MAIL_USER`, `FORGEJO_MAIL_FROM` |
+| `.env` | `WEBSITE_DISCORD_REDIRECT_URI` (ou laisser vide pour le calcul automatique) |
+| `src/.env` du site PHP | régénérer avec `make php-site-env` |
+| mailcow | `MAILCOW_HOSTNAME`, comptes mail, puis `make mail-integrate` |
+
+Après modification :
+
+```sh
+make check-env
+make php-site-env                 # si le site PHP est utilisé
+make up                           # recrée les conteneurs avec les nouveaux labels
+```
+
+Les templates `stacks/proxy/templates/dynamic/dynamic.yml.template` et
+`stacks/mail/traefik.override.yaml.template` sont rendus au démarrage du
+conteneur avec `DOMAIN` : un `make restart-service SERVICE=traefik` suffit pour
+les routes dynamiques, mais `make up` est plus sûr pour tous les labels
+Compose. Penser aussi à mettre à jour les enregistrements MX, SPF, DKIM et
+DMARC si le domaine change ([`06-mailcow.md`](06-mailcow.md)).
+
 ## Mailcow
+
 
 mailcow a ses propres enregistrements (MX, SPF, DKIM, DMARC) : voir
 [`06-mailcow.md`](06-mailcow.md). Traefik ne gère que son interface web.

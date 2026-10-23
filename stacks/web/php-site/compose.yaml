@@ -15,8 +15,11 @@ services:
       DB_NAME: ${PHP_DB_NAME}
       DB_USER: ${PHP_DB_USER}
       DB_PASSWORD: ${PHP_DB_PASSWORD}
+      WEBSITE_AUTO_INIT: ${WEBSITE_AUTO_INIT:-true}
     volumes:
-      - ./src:/var/www/html:ro
+      # Dépôt website cloné par make php-site-src. Le montage est en écriture
+      # pour les uploads et les logs ; l'entrypoint ne chown que ces dossiers.
+      - ./src:/var/www/html
     networks:
       - proxy
       - php_internal

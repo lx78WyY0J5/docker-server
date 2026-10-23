@@ -47,6 +47,7 @@ set_env PMA_ADMIN_PASSWORD       "$(gen_hex 16)"
 
 set_env PHP_DB_ROOT_PASSWORD      "$(gen_hex 24)"
 set_env PHP_DB_PASSWORD           "$(gen_hex 24)"
+set_env WEBSITE_ADMIN_PASSWORD    "$(gen_hex 16)"
 
 set_env AZURIOM_DB_ROOT_PASSWORD  "$(gen_hex 24)"
 set_env AZURIOM_DB_PASSWORD       "$(gen_hex 24)"

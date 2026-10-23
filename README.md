@@ -48,6 +48,10 @@ make check-env
 # 4. Construit les images
 make build
 
+# 4bis. (optionnel) Clone le dépôt website du site PHP
+#       make up et make up-service SERVICE=php-site le font automatiquement.
+make php-site-src
+
 # 5. Démarre tout
 make up
 
