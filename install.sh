@@ -36,7 +36,6 @@ detect_os() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         OS_ID="$ID"
-        OS_VERSION="$VERSION_ID"
     else
         err "Impossible de détecter l'OS (/etc/os-release manquant)."
         exit 1
