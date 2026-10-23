@@ -1,0 +1,20 @@
+{
+  "settings": {
+    "theme": "te",
+    "locale": "fr-FR",
+    "webdav": true,
+    "idleMinutes": 15,
+    "lockOnOsLock": true,
+    "lockOnMinimize": true,
+    "autoSave": true,
+    "autoSaveInterval": 1,
+    "cacheConfigSettings": true
+  },
+  "files": [
+    {
+      "storage": "webdav",
+      "name": "kdbx.kdbx",
+      "path": "https://keeweb.@@DOMAIN@@/webdav/kdbx.kdbx"
+    }
+  ]
+}

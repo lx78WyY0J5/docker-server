@@ -1,0 +1,117 @@
+name: altherneum
+
+services:
+  azuriom:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        AZURIOM_VERSION: ${AZURIOM_VERSION}
+    image: altherneum/azuriom:${AZURIOM_VERSION}
+    container_name: azuriom
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      APP_URL: "https://minecraft.${DOMAIN}"
+      APP_KEY: ${AZURIOM_APP_KEY}
+      AZURIOM_GAME: ${AZURIOM_GAME:-mc-online}
+      AZURIOM_ADMIN_GAME_ID: ${AZURIOM_ADMIN_GAME_ID:-}
+      MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID:-}
+      MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET:-}
+      DB_HOST: db-azuriom
+      DB_PORT: "3306"
+      DB_DATABASE: ${AZURIOM_DB_NAME}
+      DB_USERNAME: ${AZURIOM_DB_USER}
+      DB_PASSWORD: ${AZURIOM_DB_PASSWORD}
+      AZURIOM_ADMIN_NAME: ${AZURIOM_ADMIN_NAME}
+      AZURIOM_ADMIN_EMAIL: ${AZURIOM_ADMIN_EMAIL}
+      AZURIOM_ADMIN_PASSWORD: ${AZURIOM_ADMIN_PASSWORD}
+      AZURIOM_RESOURCE_PACK_URL: ${AZURIOM_RESOURCE_PACK_URL}
+      MAIL_MAILER: ${AZURIOM_MAIL_MAILER}
+      MAIL_HOST: ${AZURIOM_MAIL_HOST}
+      MAIL_PORT: ${AZURIOM_MAIL_PORT}
+      MAIL_USERNAME: ${AZURIOM_MAIL_USERNAME}
+      MAIL_PASSWORD: ${AZURIOM_MAIL_PASSWORD}
+      MAIL_ENCRYPTION: ${AZURIOM_MAIL_ENCRYPTION}
+      MAIL_FROM_ADDRESS: ${AZURIOM_MAIL_FROM_ADDRESS}
+    volumes:
+      - altherneum_azuriom-storage:/var/www/html/storage
+      - altherneum_azuriom-plugins:/var/www/html/plugins
+      - altherneum_azuriom-themes:/var/www/html/themes
+      - altherneum_azuriom-config:/var/www/config
+    networks:
+      - proxy
+      - azuriom_internal
+      - minecraft
+    depends_on:
+      db-azuriom:
+        condition: service_healthy
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${PROXY_NETWORK}
+      traefik.http.routers.azuriom.rule: "Host(`minecraft.${DOMAIN}`)"
+      traefik.http.routers.azuriom.entrypoints: "websecure"
+      traefik.http.routers.azuriom.tls.certResolver: "letsencrypt"
+      traefik.http.routers.azuriom.middlewares: "secure-headers@file"
+      traefik.http.services.azuriom.loadbalancer.server.port: "80"
+
+  db-azuriom:
+    build:
+      context: ../../../images/mariadb
+      dockerfile: Dockerfile
+    image: altherneum/mariadb:11.8
+    container_name: db-azuriom
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      MARIADB_ROOT_PASSWORD: ${AZURIOM_DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${AZURIOM_DB_NAME}
+      MARIADB_USER: ${AZURIOM_DB_USER}
+      MARIADB_PASSWORD: ${AZURIOM_DB_PASSWORD}
+    volumes:
+      - altherneum_db-azuriom:/var/lib/mysql
+    networks:
+      - azuriom_internal
+      - db_admin
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true
+  azuriom_internal:
+    name: altherneum_azuriom_internal
+    internal: true
+  db_admin:
+    name: ${DB_ADMIN_NETWORK}
+    external: true
+  minecraft:
+    name: ${MINECRAFT_NETWORK}
+    external: true
+
+volumes:
+  altherneum_azuriom-storage:
+    name: altherneum_azuriom-storage
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_azuriom-plugins:
+    name: altherneum_azuriom-plugins
+    labels:
+      com.altherneum.backup: "false"
+  altherneum_azuriom-themes:
+    name: altherneum_azuriom-themes
+    labels:
+      com.altherneum.backup: "false"
+  altherneum_azuriom-config:
+    name: altherneum_azuriom-config
+    labels:
+      com.altherneum.backup: "false"
+  altherneum_db-azuriom:
+    name: altherneum_db-azuriom
+    labels:
+      com.altherneum.backup: "false"

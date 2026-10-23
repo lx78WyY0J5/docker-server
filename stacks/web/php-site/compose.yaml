@@ -1,0 +1,75 @@
+name: altherneum
+
+services:
+  php-site:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: altherneum/php-site:1
+    container_name: php-site
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      DB_HOST: db-php
+      DB_PORT: "3306"
+      DB_NAME: ${PHP_DB_NAME}
+      DB_USER: ${PHP_DB_USER}
+      DB_PASSWORD: ${PHP_DB_PASSWORD}
+    volumes:
+      - ./src:/var/www/html:ro
+    networks:
+      - proxy
+      - php_internal
+    depends_on:
+      db-php:
+        condition: service_healthy
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${PROXY_NETWORK}
+      traefik.http.routers.php-site.rule: "Host(`php.${DOMAIN}`) || Host(`phpdoc.${DOMAIN}`)"
+      traefik.http.routers.php-site.entrypoints: "websecure"
+      traefik.http.routers.php-site.tls.certResolver: "letsencrypt"
+      traefik.http.routers.php-site.middlewares: "secure-headers@file"
+      traefik.http.services.php-site.loadbalancer.server.port: "80"
+
+  db-php:
+    build:
+      context: ../../../images/mariadb
+      dockerfile: Dockerfile
+    image: altherneum/mariadb:11.8
+    container_name: db-php
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      MARIADB_ROOT_PASSWORD: ${PHP_DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${PHP_DB_NAME}
+      MARIADB_USER: ${PHP_DB_USER}
+      MARIADB_PASSWORD: ${PHP_DB_PASSWORD}
+    volumes:
+      - altherneum_db-php:/var/lib/mysql
+    networks:
+      - php_internal
+      - db_admin
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true
+  php_internal:
+    name: altherneum_php_internal
+    internal: true
+  db_admin:
+    name: ${DB_ADMIN_NETWORK}
+    external: true
+
+volumes:
+  altherneum_db-php:
+    name: altherneum_db-php
+    labels:
+      com.altherneum.backup: "false"

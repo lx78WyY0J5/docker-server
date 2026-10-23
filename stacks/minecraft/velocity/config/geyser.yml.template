@@ -1,0 +1,93 @@
+# =============================================================================
+# Configuration Geyser pour Velocity (Bedrock cross-play).
+# Ce fichier est copié dans /data/plugins/Geyser-Velocity/config.yml au premier
+# démarrage si absent. Adaptez les valeurs selon votre setup.
+# Docs : https://geysermc.org/wiki/geyser/velocity/
+#
+# `transport: both` accepte les anciens clients RakNet (UDP 19132) et les
+# clients récents NetherNet (WebRTC UDP 19133, signalisation TCP 19132).
+# Depuis octobre 2026, NetherNet est requis par les nouveaux clients Bedrock.
+# =============================================================================
+bedrock:
+  address: 0.0.0.0
+  port: 19132
+  webrtc-port: 19133
+  transport: both
+  clone-remote-port: false
+  signaling:
+    mode: builtin
+    # Adresse publique annoncée aux clients NetherNet. Le port WebRTC
+    # (19133/udp) est ajouté automatiquement. Nécessite que ce nom résolve.
+    advertise-addresses:
+      - "mc.__DOMAIN__"
+    stun-discovery: true
+    builtin:
+      https:
+        certificate: ''
+        private-key: ''
+        password: ''
+    nxs:
+      token: ''
+      endpoint: https://agent.warden.cloud
+java:
+  port: 0
+  auth-type: floodgate
+  forward-hostname: false
+motd:
+  primary-motd: "Bedrock.__DOMAIN__"
+  secondary-motd: "__MOTD__"
+  passthrough-motd: true
+  max-players: 100
+  passthrough-player-counts: true
+  integrated-ping-passthrough: true
+  ping-passthrough-interval: 3
+gameplay:
+  server-name: "__DOMAIN__"
+  cooldown-type: crosshair
+  command-suggestions: true
+  show-coordinates: true
+  disable-bedrock-scaffolding: false
+  nether-roof-workaround: false
+  emotes-enabled: true
+  block-legacy-codes: true
+  unusable-space-block: minecraft:barrier
+  enable-custom-content: true
+  force-resource-packs: true
+  enable-integrated-pack: true
+  forward-player-ping: false
+  xbox-achievements-enabled: false
+  max-visible-custom-skulls: 128
+  custom-skull-render-distance: 32
+default-locale: system
+log-player-ip-addresses: true
+saved-user-logins: []
+pending-authentication-timeout: 120
+notify-on-new-bedrock-update: true
+advanced:
+  cache-images: 0
+  scoreboard-packet-threshold: 20
+  add-team-suggestions: true
+  resource-pack-urls:
+    - "https://minecraft.__DOMAIN__/storage/zip/resourcePack.zip"
+  floodgate-key-file: key.pem
+  java:
+    use-haproxy-protocol: false
+    use-direct-connection: true
+    disable-compression: true
+  bedrock:
+    broadcast-port: 0
+    compression-level: 6
+    use-haproxy-protocol: false
+    haproxy-protocol-whitelisted-ips: []
+    signaling-trusted-proxies: []
+    use-waterdogpe-forwarding: false
+    mtu: 1400
+    validate-bedrock-login: true
+    nethernet-debug: false
+  nxs:
+    assisted-joins: false
+    connection-checks: true
+    location: {}
+    deregister-on-shutdown: false
+debug-mode: false
+config-version: 11

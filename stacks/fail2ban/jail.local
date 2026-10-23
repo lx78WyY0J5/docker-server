@@ -1,0 +1,21 @@
+[DEFAULT]
+# Ne jamais bannir le réseau Docker ni la boucle locale.
+ignoreip = 127.0.0.1/8 ::1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+backend = polling
+# Docker publie les ports via DNAT : le trafic vers Traefik ne passe pas par
+# INPUT mais par FORWARD/DOCKER-USER. Toutes les jails de ce dépôt visent des
+# services publiés par Docker : on bannit donc dans DOCKER-USER.
+#
+# Important : définir `chain` ici, pas dans `banaction`. L'action par défaut
+# de fail2ban passe déjà `chain="%(chain)s"` ; une valeur placée dans
+# `banaction[...]` serait écrasée par ce paramètre (et retomberait sur INPUT).
+chain = DOCKER-USER
+banaction = iptables[type=allports]
+bantime = 24h
+findtime = 24h
+maxretry = 5
+
+# Bannissements progressifs.
+bantime.increment = true
+bantime.factor = 1
+bantime.maxtime = 90d

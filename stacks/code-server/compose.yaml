@@ -1,0 +1,42 @@
+name: altherneum
+
+services:
+  code-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: altherneum/code-server:4.141.0
+    container_name: code-server
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      PASSWORD: ${CODE_SERVER_PASSWORD}
+      DEFAULT_WORKSPACE: /home/coder/workspace
+    volumes:
+      - altherneum_code-server-data:/home/coder/.local/share/code-server
+      - altherneum_code-server-workspace:/home/coder/workspace
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${PROXY_NETWORK}
+      traefik.http.routers.code-server.rule: "Host(`code.${DOMAIN}`) || Host(`vscode.${DOMAIN}`)"
+      traefik.http.routers.code-server.entrypoints: "websecure"
+      traefik.http.routers.code-server.tls.certResolver: "letsencrypt"
+      traefik.http.routers.code-server.middlewares: "secure-headers@file"
+      traefik.http.services.code-server.loadbalancer.server.port: "8080"
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true
+
+volumes:
+  altherneum_code-server-data:
+    name: altherneum_code-server-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_code-server-workspace:
+    name: altherneum_code-server-workspace
+    labels:
+      com.altherneum.backup: "true"

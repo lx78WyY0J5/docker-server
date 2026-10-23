@@ -1,0 +1,19 @@
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+
+# Auth Traefik et KeeWeb (généré par ./scripts/init.sh)
+stacks/proxy/auth/*.htpasswd
+!stacks/proxy/auth/.gitkeep
+stacks/web/keeweb/auth/*.htpasswd
+!stacks/web/keeweb/auth/.gitkeep
+
+# Sauvegardes
+backups/*
+!backups/.gitkeep
+!backups/README.md
+
+# Logs et divers
+*.log
+.DS_Store

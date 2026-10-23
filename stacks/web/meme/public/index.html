@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme redirector — Altherneum</title>
+    <meta name="description" content="Une URL de gestion des memes Altherneum.">
+    <meta property="og:title" content="meme.Altherneum.fr">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://doc.Altherneum.fr/assets/gif/small.gif">
+    <meta property="og:url" content="https://meme.Altherneum.fr/">
+    <meta property="og:locale" content="fr_FR">
+    <link rel="icon" href="https://doc.Altherneum.fr/assets/favicon/rounded-favicon.ico">
+</head>
+<body>
+    <p>Redirection en cours… <a href="https://www.youtube.com/">YouTube</a></p>
+    <script>
+        const global = [
+            "shorts/GPn7zvEiEGA",
+            "shorts/upXQQaDTuFM",
+            "watch?v=czfvEpLfCV0",
+            "shorts/kmP1QuVS7M8",
+            "watch?v=KKhnDzRgsW8"
+        ];
+
+        const arch = [
+            "watch?v=hbhoAr8GV98",
+            "shorts/dpkt1agd4x0",
+            "shorts/xTQPbhxlsio"
+        ].concat(global);
+
+        const microsoft = [
+            "watch?v=2zpCOYkdvTQ",
+            "shorts/fRTzdZcooro",
+            "shorts/OOo0IJlSUc8",
+            "shorts/WpDoFbQMseo"
+        ].concat(global);
+
+        function randomItem(items) {
+            return items[Math.floor(Math.random() * items.length)];
+        }
+
+        // Le premier label du hostname : meme, windows, arch, etc.
+        const label = location.hostname.split(".")[0].toLowerCase();
+        let pool = global;
+
+        if (label === "arch" || label === "linux") {
+            pool = arch;
+        } else if (label === "microsoft" || label === "windows") {
+            pool = microsoft;
+        } else {
+            pool = global.concat(microsoft, arch);
+        }
+
+        location.replace("https://www.youtube.com/" + randomItem(pool));
+    </script>
+</body>
+</html>

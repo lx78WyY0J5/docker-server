@@ -1,0 +1,176 @@
+# =============================================================================
+# Configuration dynamique Traefik : TLS, auth, redirections, dashboard.
+# Les placeholders @@...@@ sont remplacés par entrypoint.sh.
+# Docs : https://doc.traefik.io/traefik/reference/dynamic-configuration/file/
+# =============================================================================
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+
+http:
+  middlewares:
+    secure-headers:
+      headers:
+        contentTypeNosniff: true
+        referrerPolicy: "strict-origin-when-cross-origin"
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+
+    dashboard-auth:
+      basicAuth:
+        usersFile: "/etc/traefik/auth/dashboard.htpasswd"
+
+    phpmyadmin-auth:
+      basicAuth:
+        usersFile: "/etc/traefik/auth/phpmyadmin.htpasswd"
+
+    redirect-discord:
+      redirectRegex:
+        regex: "^https?://(www[.])?@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://discord.@@DOMAIN@@$2"
+        permanent: true
+
+    redirect-docs:
+      redirectRegex:
+        regex: "^https?://(docs|wiki|info)[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://doc.@@DOMAIN@@$2"
+        permanent: true
+
+    redirect-github:
+      redirectRegex:
+        regex: "^https?://github[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://github.com/Altherneum$1"
+        permanent: true
+
+    redirect-search:
+      redirectRegex:
+        regex: "^https?://search[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://search.brave.com$1"
+        permanent: true
+
+    redirect-ask:
+      redirectRegex:
+        regex: "^https?://(ask|ai|ia)[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://search.brave.com/ask$2"
+        permanent: true
+
+    redirect-archterneum:
+      redirectRegex:
+        regex: "^https?://(archterneum|myarch|git[.]arch)[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://raw.githubusercontent.com/Altherneum/.github/refs/heads/main/note/OS/Linux/Arch/Archterneum/arch.sh"
+        permanent: true
+
+    redirect-discord-invite:
+      redirectRegex:
+        regex: "^https?://discord[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://discord.com/invite/rF25kjuv4v"
+        permanent: true
+
+    redirect-discord-vocal:
+      redirectRegex:
+        regex: "^https?://vocal[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://discord.com/invite/yba6vQv7Q4"
+        permanent: true
+
+    redirect-lost:
+      redirectRegex:
+        regex: "^https?://lost[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://discord.@@DOMAIN@@"
+        permanent: true
+
+    redirect-azuriom:
+      redirectRegex:
+        regex: "^https?://(mc|play)[.]@@DOMAIN_REGEX@@(/.*)?$"
+        replacement: "https://minecraft.@@DOMAIN@@$2"
+        permanent: true
+
+  routers:
+    dashboard:
+      rule: "Host(`@@TRAEFIK_DASHBOARD_HOST@@`)"
+      entryPoints: [websecure]
+      service: "api@internal"
+      middlewares: [dashboard-auth, secure-headers]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-root:
+      rule: "Host(`@@DOMAIN@@`) || Host(`www.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-discord]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-docs:
+      rule: "Host(`docs.@@DOMAIN@@`) || Host(`wiki.@@DOMAIN@@`) || Host(`info.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-docs]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-github:
+      rule: "Host(`github.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-github]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-search:
+      rule: "Host(`search.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-search]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-ask:
+      rule: "Host(`ask.@@DOMAIN@@`) || Host(`ai.@@DOMAIN@@`) || Host(`ia.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-ask]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-archterneum:
+      rule: "Host(`archterneum.@@DOMAIN@@`) || Host(`myarch.@@DOMAIN@@`) || Host(`git.arch.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-archterneum]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-discord:
+      rule: "Host(`discord.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-discord-invite]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-vocal:
+      rule: "Host(`vocal.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-discord-vocal]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-lost:
+      rule: "Host(`lost.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-lost]
+      tls:
+        certResolver: letsencrypt
+
+    redirect-azuriom:
+      rule: "Host(`mc.@@DOMAIN@@`) || Host(`play.@@DOMAIN@@`)"
+      entryPoints: [websecure]
+      service: "noop@internal"
+      middlewares: [redirect-azuriom]
+      tls:
+        certResolver: letsencrypt

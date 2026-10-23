@@ -1,0 +1,36 @@
+name: altherneum
+
+services:
+  phpmyadmin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: altherneum/phpmyadmin:5.2.3
+    container_name: phpmyadmin
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      PMA_HOSTS: ${PMA_HOSTS}
+      PMA_PORT: "3306"
+      PMA_ABSOLUTE_URI: "https://phpmyadmin.${DOMAIN}/"
+      PMA_BLOWFISH_SECRET: ${PMA_BLOWFISH_SECRET}
+      UPLOAD_LIMIT: 64M
+    networks:
+      - proxy
+      - db_admin
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${PROXY_NETWORK}
+      traefik.http.routers.phpmyadmin.rule: "Host(`phpmyadmin.${DOMAIN}`)"
+      traefik.http.routers.phpmyadmin.entrypoints: "websecure"
+      traefik.http.routers.phpmyadmin.tls.certResolver: "letsencrypt"
+      traefik.http.routers.phpmyadmin.middlewares: "phpmyadmin-auth@file,secure-headers@file"
+      traefik.http.services.phpmyadmin.loadbalancer.server.port: "80"
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true
+  db_admin:
+    name: ${DB_ADMIN_NETWORK}
+    external: true

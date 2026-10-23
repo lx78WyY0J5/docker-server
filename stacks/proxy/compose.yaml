@@ -1,0 +1,42 @@
+name: altherneum
+
+services:
+  traefik:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: altherneum/traefik:3.7.16
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      TZ: ${TZ}
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+      ACME_CA_SERVER: ${TRAEFIK_ACME_CA_SERVER}
+      TRAEFIK_LOG_LEVEL: ${TRAEFIK_LOG_LEVEL}
+      TRAEFIK_DASHBOARD_HOST: ${TRAEFIK_DASHBOARD_HOST}
+      PROXY_NETWORK: ${PROXY_NETWORK}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "${MINECRAFT_PORT:-25565}:25565/tcp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./auth:/etc/traefik/auth:ro
+      - altherneum_traefik-acme:/acme
+      - altherneum_traefik-logs:/var/log/traefik
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true
+
+volumes:
+  altherneum_traefik-acme:
+    name: altherneum_traefik-acme
+  altherneum_traefik-logs:
+    name: altherneum_traefik-logs

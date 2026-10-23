@@ -1,0 +1,28 @@
+name: altherneum
+
+services:
+  fail2ban:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: altherneum/fail2ban:1
+    container_name: fail2ban
+    restart: unless-stopped
+    # Nécessaire pour modifier iptables sur l'hôte.
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - altherneum_traefik-logs:/var/log/traefik:ro
+      - altherneum_fail2ban-data:/var/lib/fail2ban
+
+volumes:
+  altherneum_traefik-logs:
+    name: altherneum_traefik-logs
+  altherneum_fail2ban-data:
+    name: altherneum_fail2ban-data
+    labels:
+      com.altherneum.backup: "false"

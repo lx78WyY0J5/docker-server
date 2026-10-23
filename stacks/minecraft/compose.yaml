@@ -1,0 +1,236 @@
+# =============================================================================
+# Stack Minecraft — Velocity + 8 serveurs Paper.
+# Docs : https://docs.papermc.io/velocity/ et https://docs.papermc.io/paper/
+# =============================================================================
+# - velocity est le seul conteneur joignable par les joueurs (TCP 25565 et
+#   ports Bedrock 19132/tcp, 19132/udp, 19133/udp) ;
+# - les serveurs Paper ne sont accessibles que sur le réseau interne ;
+# - mc-plugins télécharge les plugins officiels dans un volume partagé, puis
+#   chaque serveur les recopie dans son propre dossier plugins.
+# =============================================================================
+
+name: altherneum
+
+# -----------------------------------------------------------------------------
+# Ancre commune à tous les serveurs Paper (voir docs/services/minecraft.md).
+# -----------------------------------------------------------------------------
+x-paper: &paper
+  build:
+    context: ./paper
+    dockerfile: Dockerfile
+  image: altherneum/paper:1.21.11
+  restart: unless-stopped
+  depends_on:
+    mc-plugins:
+      condition: service_completed_successfully
+  networks:
+    - minecraft
+  environment: &paper-env
+    TZ: ${TZ}
+    DOMAIN: ${DOMAIN}
+    VELOCITY_SECRET: ${VELOCITY_SECRET}
+    VELOCITY_ONLINE_MODE: ${VELOCITY_ONLINE_MODE:-true}
+    MINECRAFT_RCON_PASSWORD: ${MINECRAFT_RCON_PASSWORD}
+    LEVEL_NAME: ${MINECRAFT_LEVEL_NAME}
+    MAX_PLAYERS: ${MINECRAFT_MAX_PLAYERS}
+
+services:
+  # ---------------------------------------------------------------------------
+  # Télécharge les plugins (Altherneum, ViaVersion, ViaBackwards, WorldEdit,
+  # Geyser, Floodgate) puis s'arrête.
+  # ---------------------------------------------------------------------------
+  mc-plugins:
+    build:
+      context: ./plugins
+      dockerfile: Dockerfile
+    image: altherneum/mc-plugins:1
+    container_name: mc-plugins
+    restart: "no"
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - altherneum_mc-plugins:/plugins
+    networks:
+      - proxy # accès Internet pour les téléchargements
+
+  # ---------------------------------------------------------------------------
+  # Proxy Velocity : point d'entrée unique des joueurs.
+  # ---------------------------------------------------------------------------
+  velocity:
+    build:
+      context: ./velocity
+      dockerfile: Dockerfile
+    image: altherneum/velocity:4.3.0
+    container_name: velocity
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      DOMAIN: ${DOMAIN}
+      VELOCITY_SECRET: ${VELOCITY_SECRET}
+      VELOCITY_MEMORY: ${VELOCITY_MEMORY}
+      VELOCITY_ONLINE_MODE: ${VELOCITY_ONLINE_MODE:-true}
+      VELOCITY_MOTD: "${VELOCITY_MOTD:-<#09add3>Altherneum.fr}"
+    volumes:
+      - altherneum_mc-velocity-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+    # Bedrock (Geyser) — RakNet UDP 19132, signalisation NetherNet TCP 19132
+    # et WebRTC NetherNet UDP 19133.
+    ports:
+      - "19132:19132/tcp"
+      - "19132:19132/udp"
+      - "19133:19133/udp"
+    networks:
+      - proxy     # Traefik + skins Mojang
+      - minecraft # serveurs Paper
+    depends_on:
+      mc-plugins:
+        condition: service_completed_successfully
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${PROXY_NETWORK}
+      # Routeur TCP : le trafic brut du port 25565 est transmis tel quel.
+      traefik.tcp.routers.velocity.rule: "HostSNI(`*`)"
+      traefik.tcp.routers.velocity.entrypoints: "minecraft"
+      traefik.tcp.routers.velocity.service: "velocity"
+      traefik.tcp.services.velocity.loadbalancer.server.port: "25565"
+
+  # ---------------------------------------------------------------------------
+  # Serveurs Paper : un conteneur par serveur, port interne 25565.
+  # ---------------------------------------------------------------------------
+  mc-hub:
+    <<: *paper
+    container_name: mc-hub
+    environment:
+      <<: *paper-env
+      SERVER_NAME: hub
+      MEMORY: ${MINECRAFT_MEMORY_HUB}
+    volumes:
+      - altherneum_mc-hub-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+
+  mc-survie:
+    <<: *paper
+    container_name: mc-survie
+    environment:
+      <<: *paper-env
+      SERVER_NAME: survie
+      MEMORY: ${MINECRAFT_MEMORY_SURVIE}
+    volumes:
+      - altherneum_mc-survie-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+
+  mc-creatif:
+    <<: *paper
+    container_name: mc-creatif
+    environment:
+      <<: *paper-env
+      SERVER_NAME: creatif
+      MEMORY: ${MINECRAFT_MEMORY_CREATIF}
+    volumes:
+      - altherneum_mc-creatif-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+
+  mc-anarchie:
+    <<: *paper
+    container_name: mc-anarchie
+    environment:
+      <<: *paper-env
+      SERVER_NAME: anarchie
+      MEMORY: ${MINECRAFT_MEMORY_ANARCHIE}
+    volumes:
+      - altherneum_mc-anarchie-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+
+  mc-rpg:
+    <<: *paper
+    container_name: mc-rpg
+    environment:
+      <<: *paper-env
+      SERVER_NAME: rpg
+      MEMORY: ${MINECRAFT_MEMORY_RPG}
+    volumes:
+      - altherneum_mc-rpg-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+
+  mc-skyblock:
+    <<: *paper
+    container_name: mc-skyblock
+    environment:
+      <<: *paper-env
+      SERVER_NAME: skyblock
+      MEMORY: ${MINECRAFT_MEMORY_SKYBLOCK}
+    volumes:
+      - altherneum_mc-skyblock-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+
+  mc-opprison:
+    <<: *paper
+    container_name: mc-opprison
+    environment:
+      <<: *paper-env
+      SERVER_NAME: opprison
+      MEMORY: ${MINECRAFT_MEMORY_OPPRISON}
+    volumes:
+      - altherneum_mc-opprison-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+
+  mc-test:
+    <<: *paper
+    container_name: mc-test
+    environment:
+      <<: *paper-env
+      SERVER_NAME: test
+      MEMORY: ${MINECRAFT_MEMORY_TEST}
+    volumes:
+      - altherneum_mc-test-data:/data
+      - altherneum_mc-plugins:/opt/plugins:ro
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true
+  minecraft:
+    name: ${MINECRAFT_NETWORK}
+    external: true
+
+volumes:
+  altherneum_mc-plugins:
+    name: altherneum_mc-plugins
+    labels:
+      com.altherneum.backup: "false"
+  altherneum_mc-velocity-data:
+    name: altherneum_mc-velocity-data
+    labels:
+      com.altherneum.backup: "false"
+  altherneum_mc-hub-data:
+    name: altherneum_mc-hub-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_mc-survie-data:
+    name: altherneum_mc-survie-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_mc-creatif-data:
+    name: altherneum_mc-creatif-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_mc-anarchie-data:
+    name: altherneum_mc-anarchie-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_mc-rpg-data:
+    name: altherneum_mc-rpg-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_mc-skyblock-data:
+    name: altherneum_mc-skyblock-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_mc-opprison-data:
+    name: altherneum_mc-opprison-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_mc-test-data:
+    name: altherneum_mc-test-data
+    labels:
+      com.altherneum.backup: "true"

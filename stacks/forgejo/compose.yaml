@@ -1,0 +1,107 @@
+name: altherneum
+
+services:
+  forgejo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        FORGEJO_VERSION: ${FORGEJO_VERSION}
+    image: altherneum/forgejo:${FORGEJO_VERSION}
+    container_name: forgejo
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      USER_UID: "1000"
+      USER_GID: "1000"
+
+      FORGEJO__server__DOMAIN: "git.${DOMAIN}"
+      FORGEJO__server__ROOT_URL: "https://git.${DOMAIN}/"
+      FORGEJO__server__HTTP_PORT: "3000"
+      FORGEJO__server__DISABLE_SSH: "true"
+      FORGEJO__server__LFS_START_SERVER: "true"
+      FORGEJO__server__LFS_JWT_SECRET: ${FORGEJO_LFS_JWT_SECRET}
+      FORGEJO__server__OFFLINE_MODE: "true"
+
+      FORGEJO__database__DB_TYPE: "postgres"
+      FORGEJO__database__HOST: "db-forgejo:5432"
+      FORGEJO__database__NAME: ${FORGEJO_DB_NAME}
+      FORGEJO__database__USER: ${FORGEJO_DB_USER}
+      FORGEJO__database__PASSWD: ${FORGEJO_DB_PASSWORD}
+      FORGEJO__database__SSL_MODE: "disable"
+
+      FORGEJO__security__SECRET_KEY: ${FORGEJO_SECRET_KEY}
+      FORGEJO__security__INTERNAL_TOKEN: ${FORGEJO_INTERNAL_TOKEN}
+      FORGEJO__oauth2__JWT_SECRET: ${FORGEJO_OAUTH2_JWT_SECRET}
+
+      FORGEJO__service__DISABLE_REGISTRATION: "true"
+      FORGEJO__service__REGISTER_EMAIL_CONFIRM: "false"
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
+      FORGEJO__service__DEFAULT_KEEP_EMAIL_PRIVATE: "true"
+      FORGEJO__service__NO_REPLY_ADDRESS: "noreply.git.${DOMAIN}"
+      FORGEJO__openid__ENABLE_OPENID_SIGNIN: "false"
+
+      FORGEJO__mailer__ENABLED: ${FORGEJO_MAIL_ENABLED}
+      FORGEJO__mailer__PROTOCOL: "smtp"
+      FORGEJO__mailer__SMTP_ADDR: ${FORGEJO_MAIL_HOST}
+      FORGEJO__mailer__SMTP_PORT: ${FORGEJO_MAIL_PORT}
+      FORGEJO__mailer__USER: ${FORGEJO_MAIL_USER}
+      FORGEJO__mailer__PASSWD: ${FORGEJO_MAIL_PASSWORD}
+      FORGEJO__mailer__FROM: ${FORGEJO_MAIL_FROM}
+    volumes:
+      - altherneum_forgejo-data:/data
+    networks:
+      - proxy
+      - forgejo_internal
+    depends_on:
+      db-forgejo:
+        condition: service_healthy
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${PROXY_NETWORK}
+      traefik.http.routers.forgejo.rule: "Host(`git.${DOMAIN}`) || Host(`repo.${DOMAIN}`) || Host(`forgejo.${DOMAIN}`)"
+      traefik.http.routers.forgejo.entrypoints: "websecure"
+      traefik.http.routers.forgejo.tls.certResolver: "letsencrypt"
+      traefik.http.routers.forgejo.middlewares: "secure-headers@file"
+      traefik.http.services.forgejo.loadbalancer.server.port: "3000"
+
+  db-forgejo:
+    build:
+      context: ../../images/postgres
+      dockerfile: Dockerfile
+    image: altherneum/postgres:18
+    container_name: db-forgejo
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      POSTGRES_DB: ${FORGEJO_DB_NAME}
+      POSTGRES_USER: ${FORGEJO_DB_USER}
+      POSTGRES_PASSWORD: ${FORGEJO_DB_PASSWORD}
+    volumes:
+      - altherneum_db-forgejo:/var/lib/postgresql
+    networks:
+      - forgejo_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${FORGEJO_DB_USER} -d ${FORGEJO_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true
+  forgejo_internal:
+    name: altherneum_forgejo_internal
+    internal: true
+
+volumes:
+  altherneum_forgejo-data:
+    name: altherneum_forgejo-data
+    labels:
+      com.altherneum.backup: "true"
+  altherneum_db-forgejo:
+    name: altherneum_db-forgejo
+    labels:
+      com.altherneum.backup: "false"
