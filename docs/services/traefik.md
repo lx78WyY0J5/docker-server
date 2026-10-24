@@ -18,7 +18,7 @@ Au démarrage, l'entrypoint copie les templates dans `/etc/traefik/` et
 `/etc/traefik/dynamic/` après substitution des variables. Toute modification
 se fait donc **dans le dépôt**, jamais dans le conteneur.
 
-Placeholders disponibles : `@@DOMAIN@@`, `@@DOMAIN_REGEX@@` (domaine avec
+Placeholders disponibles : `@${DOMAIN_NAME}.${TLD}`, `@@DOMAIN_REGEX@@` (domaine avec
 `[.]`), `@@ACME_EMAIL@@`, `@@ACME_CA_SERVER@@`, `@@TRAEFIK_LOG_LEVEL@@`,
 `@@TRAEFIK_DASHBOARD_HOST@@`, `@@PROXY_NETWORK@@`.
 
@@ -60,7 +60,7 @@ sécuriser davantage.
     labels:
       traefik.enable: "true"
       traefik.docker.network: ${PROXY_NETWORK}
-      traefik.http.routers.mon-site.rule: "Host(`mon-site.${DOMAIN}`)"
+      traefik.http.routers.mon-site.rule: "Host(`mon-site${DOMAIN_NAME}.${TLD}`)"
       traefik.http.routers.mon-site.entrypoints: "websecure"
       traefik.http.routers.mon-site.tls.certResolver: "letsencrypt"
       traefik.http.routers.mon-site.middlewares: "secure-headers@file"

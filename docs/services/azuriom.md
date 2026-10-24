@@ -80,7 +80,7 @@ Au premier clic sur « Connexion avec Microsoft », Azuriom retrouve le compte
 par UUID et ouvre la session. `AZURIOM_ADMIN_PASSWORD` ne sert alors qu'à la
 création CLI du compte, pas à la connexion web.
 
-URI de redirection : `https://minecraft.${DOMAIN}/user/login/callback`.
+URI de redirection : `https://minecraft${DOMAIN_NAME}.${TLD}/user/login/callback`.
 
 - `MICROSOFT_CLIENT_ID` et `MICROSOFT_CLIENT_SECRET` vides : Azuriom utilise
   son relais OAuth officiel (`xbox-api.azuriom.com`), aucun compte Azure à

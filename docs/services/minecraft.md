@@ -79,7 +79,7 @@ démarrage.
 Le fichier est réécrit depuis `stacks/minecraft/paper/entrypoint.sh` :
 `online-mode=false` (authentification faite par Velocity), `enforce-secure-profile=false`,
 `difficulty=easy`, `max-players`, `enable-rcon=true`, `spawn-protection=0`,
-`motd=${SERVER_NAME}.${DOMAIN}`, serveur en écoute sur `0.0.0.0`. Toute
+`motd=${SERVER_NAME}${DOMAIN_NAME}.${TLD}`, serveur en écoute sur `0.0.0.0`. Toute
 personnalisation durable doit être faite **dans l'entrypoint**.
 
 ### `config/paper-global.yml`
@@ -104,8 +104,8 @@ Généré depuis `stacks/minecraft/velocity/config/velocity.toml.template` :
 - `[servers]` : correspondance nom → `mc-<nom>:25565` ;
 - `[forced-hosts]` : `hub.altherneum.fr`, `survie.altherneum.fr`, etc. : un
   joueur qui se connecte à ces noms est envoyé directement sur le bon serveur,
-  sans passer par le Hub. Le template contient `__DOMAIN__`, remplacé au
-  démarrage par la valeur de `DOMAIN` ; changer de domaine met donc aussi à
+  sans passer par le Hub. Le template contient `\${DOMAIN_NAME}.\${TLD}`, remplacé au
+  démarrage par la valeur de `<${DOMAIN_NAME}.${TLD}>` ; changer de domaine met donc aussi à
   jour ces hôtes.
 
 Pour modifier durablement la configuration de Velocity, éditer le template
@@ -186,7 +186,7 @@ se connectent sur `mc.altherneum.fr`, port `19132` (ou
    sur `19132/udp`, les clients récents NetherNet via `19132/tcp` et
    `19133/udp`. NetherNet est requis par les nouveaux clients Bedrock depuis
    octobre 2026 ; ne pas revenir à `raknet` seul. `advertise-addresses`
-   annonce `mc.<DOMAIN>` (port `19133` ajouté automatiquement) : ce nom doit
+   annonce `mc.<<${DOMAIN_NAME}.${TLD}>>` (port `19133` ajouté automatiquement) : ce nom doit
    résoudre publiquement avant le démarrage de Velocity.
 3. **Config Floodgate** : générée dans `/data/plugins/floodgate/config.yml` à
    partir de [`floodgate.yml.template`](../../stacks/minecraft/velocity/config/floodgate.yml.template).
@@ -209,7 +209,7 @@ si l'on veut les régénérer. Les logs Geyser/Floodgate sont dans
 
 Le pack livré par Azuriom (`pack.mcmeta`) est un **pack Java**. Il est déclaré
 dans `server.properties` de chaque serveur Paper via
-`resource-pack=https://minecraft.<DOMAIN>/storage/zip/resourcePack.zip`.
+`resource-pack=https://minecraft.<<${DOMAIN_NAME}.${TLD}>>/storage/zip/resourcePack.zip`.
 Il n'est **pas** envoyé à Geyser : un pack Bedrock exige un `manifest.json`,
 pas un `pack.mcmeta`. C'est pourquoi `resource-pack-urls` est vide dans
 `geyser.yml.template`. Si un pack Bedrock est ajouté plus tard, renseigner son

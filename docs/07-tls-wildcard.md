@@ -69,16 +69,16 @@ sur un routeur existant (par exemple `redirect-root`) :
 
 ```yaml
     redirect-root:
-      rule: "Host(`@@DOMAIN@@`) || Host(`www.@@DOMAIN@@`)"
+      rule: "Host(`@${DOMAIN_NAME}.${TLD}`) || Host(`www.@${DOMAIN_NAME}.${TLD}`)"
       entryPoints: [websecure]
       service: "noop@internal"
       middlewares: [redirect-discord]
       tls:
         certResolver: letsencrypt
         domains:
-          - main: "@@DOMAIN@@"
+          - main: "@${DOMAIN_NAME}.${TLD}"
             sans:
-              - "*@@DOMAIN@@"
+              - "*@${DOMAIN_NAME}.${TLD}"
 ```
 
 Traefik obtient alors un certificat contenant `altherneum.fr` **et**
