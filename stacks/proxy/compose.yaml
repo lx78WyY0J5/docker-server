@@ -12,7 +12,7 @@ services:
       - no-new-privileges:true
     environment:
       TZ: ${TZ}
-      DOMAIN: ${DOMAIN}
+      DOMAIN_NAME: ${DOMAIN_NAME}.${TLD}
       ACME_EMAIL: ${ACME_EMAIL}
       ACME_CA_SERVER: ${TRAEFIK_ACME_CA_SERVER}
       TRAEFIK_LOG_LEVEL: ${TRAEFIK_LOG_LEVEL}

@@ -1,14 +1,9 @@
 #!/bin/sh
+# Installation et démarrage de KeeWeb.
 set -eu
 
-: "${DOMAIN:?DOMAIN manquant}"
+TLD=${TLD:-.fr}
+DOMAIN_NAME=${DOMAIN_NAME:-Altherneum}
 
-mkdir -p /var/www/webdav
-chown -R www-data:www-data /var/www/webdav
-
-sed "s|@@DOMAIN@@|${DOMAIN}|g" \
-    /opt/keeweb/config.json.template \
-    > /usr/local/apache2/htdocs/config.json
-chown www-data:www-data /usr/local/apache2/htdocs/config.json
-
-exec "$@"
+cat > "$CONFIG_DIR/.env" <<EOF
+SESSION_DOMAIN=${DOMAIN_NAME}.${TLD}

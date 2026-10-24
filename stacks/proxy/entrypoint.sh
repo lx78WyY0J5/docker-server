@@ -2,9 +2,11 @@
 # Rend les templates (placeholders @@...@@) puis lance Traefik.
 set -eu
 
-: "${DOMAIN:?DOMAIN manquant}"
-: "${ACME_EMAIL:?ACME_EMAIL manquant}"
-: "${PROXY_NETWORK:?PROXY_NETWORK manquant}"
+: "${DOMAIN_NAME:?DOMAIN_NAME manquant}"
+TLD=${TLD:-fr}
+DOMAIN="${DOMAIN_NAME}.${TLD}"
+ACME_EMAIL=${ACME_EMAIL:-admin@altherneum.fr}
+PROXY_NETWORK=${PROXY_NETWORK:-altherneum_proxy}
 
 DOMAIN_REGEX=$(printf '%s' "$DOMAIN" | sed 's/\./[.]/g')
 

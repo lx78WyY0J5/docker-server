@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
     environment:
       TZ: ${TZ}
-      DOMAIN: ${DOMAIN}
+      DOMAIN_NAME: ${DOMAIN_NAME}.${TLD}
     volumes:
       - ./auth:/usr/local/apache2/auth:ro
       - altherneum_keeweb-webdav:/var/www/webdav
@@ -21,7 +21,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.docker.network: ${PROXY_NETWORK}
-      traefik.http.routers.keeweb.rule: "Host(`keeweb.${DOMAIN}`) || Host(`keepass.${DOMAIN}`) || Host(`keys.${DOMAIN}`) || Host(`key.${DOMAIN}`)"
+      traefik.http.routers.keeweb.rule: "Host(`keeweb.${DOMAIN_NAME}.${TLD}`) || Host(`keepass.${DOMAIN_NAME}.${TLD}`) || Host(`keys.${DOMAIN_NAME}.${TLD}`) || Host(`key.${DOMAIN_NAME}.${TLD}`)"
       traefik.http.routers.keeweb.entrypoints: "websecure"
       traefik.http.routers.keeweb.tls.certResolver: "letsencrypt"
       traefik.http.routers.keeweb.middlewares: "secure-headers@file"

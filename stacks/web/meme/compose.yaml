@@ -15,7 +15,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.docker.network: ${PROXY_NETWORK}
-      traefik.http.routers.meme.rule: "Host(`meme.${DOMAIN}`) || Host(`windows.${DOMAIN}`) || Host(`microsoft.${DOMAIN}`) || Host(`arch.${DOMAIN}`) || Host(`linux.${DOMAIN}`)"
+      traefik.http.routers.meme.rule: "Host(`meme.${DOMAIN_NAME}.${TLD}`) || Host(`windows.${DOMAIN_NAME}.${TLD}`) || Host(`microsoft.${DOMAIN_NAME}.${TLD}`) || Host(`arch.${DOMAIN_NAME}.${TLD}`) || Host(`linux.${DOMAIN_NAME}.${TLD}`)"
       traefik.http.routers.meme.entrypoints: "websecure"
       traefik.http.routers.meme.tls.certResolver: "letsencrypt"
       traefik.http.routers.meme.middlewares: "secure-headers@file"

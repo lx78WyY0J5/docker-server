@@ -5,8 +5,10 @@ set -eu
 : "${VELOCITY_SECRET:?VELOCITY_SECRET manquant}"
 
 MEMORY=${VELOCITY_MEMORY:-512M}
-MOTD=${VELOCITY_MOTD:-"<#09add3>Altherneum.fr"}
-DOMAIN=${DOMAIN:-altherneum.fr}
+TLD=${TLD:-.fr}
+DOMAIN_NAME=${DOMAIN_NAME:-Altherneum}
+MOTD="${VELOCITY_MOTD:-\"<#09add3>${DOMAIN_NAME}.${TLD}\"}"
+DOMAIN="${DOMAIN_NAME}.${TLD}"
 ONLINE_MODE=${VELOCITY_ONLINE_MODE:-true}
 
 case "$ONLINE_MODE" in

@@ -15,8 +15,8 @@ services:
       USER_UID: "1000"
       USER_GID: "1000"
 
-      FORGEJO__server__DOMAIN: "git.${DOMAIN}"
-      FORGEJO__server__ROOT_URL: "https://git.${DOMAIN}/"
+      FORGEJO__server__DOMAIN: "git.${DOMAIN_NAME}.${TLD}"
+      FORGEJO__server__ROOT_URL: "https://git.${DOMAIN_NAME}.${TLD}/"
       FORGEJO__server__HTTP_PORT: "3000"
       FORGEJO__server__DISABLE_SSH: "true"
       FORGEJO__server__LFS_START_SERVER: "true"
@@ -39,7 +39,7 @@ services:
       FORGEJO__service__REGISTER_EMAIL_CONFIRM: "false"
       FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
       FORGEJO__service__DEFAULT_KEEP_EMAIL_PRIVATE: "true"
-      FORGEJO__service__NO_REPLY_ADDRESS: "noreply.git.${DOMAIN}"
+      FORGEJO__service__NO_REPLY_ADDRESS: "noreply.git.${DOMAIN_NAME}.${TLD}"
       FORGEJO__openid__ENABLE_OPENID_SIGNIN: "false"
 
       FORGEJO__mailer__ENABLED: ${FORGEJO_MAIL_ENABLED}
@@ -60,7 +60,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.docker.network: ${PROXY_NETWORK}
-      traefik.http.routers.forgejo.rule: "Host(`git.${DOMAIN}`) || Host(`repo.${DOMAIN}`) || Host(`forgejo.${DOMAIN}`)"
+      traefik.http.routers.forgejo.rule: "Host(`git.${DOMAIN_NAME}.${TLD}`) || Host(`repo.${DOMAIN_NAME}.${TLD}`) || Host(`forgejo.${DOMAIN_NAME}.${TLD}`)"
       traefik.http.routers.forgejo.entrypoints: "websecure"
       traefik.http.routers.forgejo.tls.certResolver: "letsencrypt"
       traefik.http.routers.forgejo.middlewares: "secure-headers@file"

@@ -1,8 +1,6 @@
 #!/bin/sh
-# =============================================================================
 # Clone le dépôt du site PHP dans stacks/web/php-site/src et génère son .env.
 # Idempotent : un clone existant et un .env existant sont conservés.
-# =============================================================================
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -51,8 +49,6 @@ if [ ! -f "$SRC/public/index.php" ]; then
     exit 1
 fi
 
-# Apache tourne dans le conteneur avec un autre UID que le clone : les fichiers
-# doivent rester lisibles. Les dossiers d'écriture sont ajustés à l'exécution.
 chmod -R a+rX "$SRC"
 
 # Le site charge ses variables depuis src/.env (hors racine web).
@@ -63,7 +59,10 @@ if [ -f "$SRC/.env" ] && [ "${PHP_SITE_ENV_OVERWRITE:-false}" != "true" ]; then
     exit 0
 fi
 
-DOMAIN=$(get_env DOMAIN)
+DOMAIN_NAME=$(get_env DOMAIN_NAME) || DOMAIN_NAME="localhost"
+TLD=$(get_env TLD) || TLD=""
+DOMAIN="${DOMAIN_NAME}${TLD}"
+
 PHP_DB_NAME=$(get_env PHP_DB_NAME)
 PHP_DB_USER=$(get_env PHP_DB_USER)
 PHP_DB_PASSWORD=$(get_env PHP_DB_PASSWORD)
@@ -98,15 +97,8 @@ REDIRECT_URI=${REDIRECT_URI:-https://php.${DOMAIN}/discord/callback}
     printf 'DB_PASS="%s"\n' "$PHP_DB_PASSWORD"
     printf 'DB_NAME="%s"\n' "$PHP_DB_NAME"
     printf 'ADMIN_USERNAME="%s"\n' "$WEBSITE_ADMIN_USERNAME"
-    printf 'ADMIN_PASSWORD="%s"\n' "$WEBSITE_ADMIN_PASSWORD"
-    printf 'ADMIN_DISCORD_USER_ID="%s"\n' "$(get_env WEBSITE_ADMIN_DISCORD_USER_ID)"
-    printf 'FORCE_DB_INIT="false"\n'
-    printf 'LOCAL="false"\n'
-    printf 'FIRST_RUN="false"\n'
-    printf 'DISCORD_CLIENT_ID="%s"\n' "$(get_env WEBSITE_DISCORD_CLIENT_ID)"
-    printf 'DISCORD_CLIENT_SECRET="%s"\n' "$(get_env WEBSITE_DISCORD_CLIENT_SECRET)"
-    printf 'DISCORD_REDIRECT_URI="%s"\n' "$REDIRECT_URI"
+    printf 'ADMIN_EMAIL="%s"@${DOMAIN}\n' "$WEBSITE_ADMIN_USERNAME"
+    printf 'WEB_DOMAIN="${DOMAIN}"\n'
 } > "$SRC/.env"
-chmod 0644 "$SRC/.env"
 
-echo "→ $SRC/.env généré (hors racine web, lisible par Apache)"
+echo "→ .env généré pour php-site src/$SRC"

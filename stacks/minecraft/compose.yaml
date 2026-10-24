@@ -25,7 +25,7 @@ x-paper: &paper
     - egress
   environment: &paper-env
     TZ: ${TZ}
-    DOMAIN: ${DOMAIN}
+    DOMAIN_NAME: ${DOMAIN_NAME}.${TLD}
     VELOCITY_SECRET: ${VELOCITY_SECRET}
     VELOCITY_ONLINE_MODE: ${VELOCITY_ONLINE_MODE:-true}
     MINECRAFT_RCON_PASSWORD: ${MINECRAFT_RCON_PASSWORD}
@@ -63,7 +63,7 @@ services:
     restart: unless-stopped
     environment:
       TZ: ${TZ}
-      DOMAIN: ${DOMAIN}
+      DOMAIN_NAME: ${DOMAIN_NAME}.${TLD}
       VELOCITY_SECRET: ${VELOCITY_SECRET}
       VELOCITY_MEMORY: ${VELOCITY_MEMORY}
       VELOCITY_ONLINE_MODE: ${VELOCITY_ONLINE_MODE:-true}

@@ -69,7 +69,7 @@ docker run --rm -v "$(pwd)/$DIR":/backup alpine:3.24 \
 {
     echo "date=$STAMP"
     echo "host=$(uname -n)"
-    echo "domain=$(get_env DOMAIN)"
+    echo "domain=${DOMAIN_NAME}.${TLD}"
     echo "docker=$(docker version --format '{{.Server.Version}}' 2>/dev/null || echo inconnu)"
     echo "volumes:"
     for volume in $VOLUMES; do echo "  - $volume"; done
