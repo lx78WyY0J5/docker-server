@@ -19,7 +19,7 @@ services:
     volumes:
       # Dépôt website cloné par make php-site-src. Le montage est en écriture
       # pour les uploads et les logs ; l'entrypoint ne chown que ces dossiers.
-      - ./src/:/var/www/html/
+      - ./src/public:/var/www/html/public
     networks:
       - proxy
       - php_internal
