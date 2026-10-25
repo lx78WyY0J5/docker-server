@@ -11,6 +11,10 @@ ENV_FILE=".env"
 
 get_env() { sed -n "s/^$1=//p" "$ENV_FILE" | tail -n 1; }
 
+DOMAIN_NAME=$(get_env DOMAIN_NAME)
+TLD=$(get_env TLD)
+DOMAIN="${DOMAIN_NAME}${TLD}"
+
 STAMP=$(date +%Y-%m-%d_%H%M%S)
 DIR="backups/$STAMP"
 mkdir -p "$DIR"
@@ -69,7 +73,7 @@ docker run --rm -v "$(pwd)/$DIR":/backup alpine:3.24 \
 {
     echo "date=$STAMP"
     echo "host=$(uname -n)"
-    echo "domain=$(get_env DOMAIN)"
+    echo "domain=$DOMAIN"
     echo "docker=$(docker version --format '{{.Server.Version}}' 2>/dev/null || echo inconnu)"
     echo "volumes:"
     for volume in $VOLUMES; do echo "  - $volume"; done

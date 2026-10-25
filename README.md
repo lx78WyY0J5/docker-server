@@ -5,6 +5,7 @@
 - **__help__** : Affiche cette aide
 - **__init__** : Génère .env, les mots de passe, les htpasswd et les réseaux Docker
 - **__check-env__** : Vérifie que .env contient les secrets nécessaires avant make up
+- **__ensure-networks__** : Crée les réseaux Docker externes manquants
 - **__build__** : Construit les images de base puis celles des stacks
 - **__php-site-src__** : Clone le dépôt website dans stacks/web/php-site/src
 - **__php-site-env__** : Régénère stacks/web/php-site/src/.env depuis .env

@@ -95,26 +95,7 @@ write_htpasswd stacks/web/keeweb/auth/webdav.htpasswd \
     "$(get_env KEEWEB_WEBDAV_USER)" "$(get_env KEEWEB_WEBDAV_PASSWORD)"
 
 # --- Réseaux Docker ---------------------------------------------------------
-ensure_network() {
-    name=$1
-    shift
-    if ! docker network inspect "$name" >/dev/null 2>&1; then
-        docker network create "$@" "$name" >/dev/null
-        echo "→ réseau Docker créé : $name"
-    fi
-}
-
-if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
-    ensure_network "$(get_env PROXY_NETWORK)"
-    ensure_network "$(get_env DB_ADMIN_NETWORK)" --internal
-    ensure_network "$(get_env MINECRAFT_NETWORK)" --internal
-else
-    echo "Erreur : Docker est introuvable ou inaccessible." >&2
-    echo "  - vérifier que le service Docker tourne ;" >&2
-    echo "  - vérifier que votre utilisateur est dans le groupe docker" >&2
-    echo "    (se déconnecter/reconnecter après 'usermod -aG docker \$USER')." >&2
-    exit 1
-fi
+ENV_FILE="$ENV_FILE" ./scripts/ensure-networks.sh
 
 echo
 echo "Initialisation terminée."

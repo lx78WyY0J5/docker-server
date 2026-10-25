@@ -5,7 +5,7 @@ SHELL := /bin/sh
 COMPOSE := docker compose
 MAILCOW_DIR := $(or $(shell sed -n 's/^MAILCOW_DIR=//p' .env 2>/dev/null | tail -n1),/opt/mailcow-dockerized)
 
-.PHONY: help init check-env build base php-base mariadb-base postgres-base paper-base ensure-base up down restart ps logs config backup restore \
+.PHONY: help init check-env ensure-networks build base php-base mariadb-base postgres-base paper-base ensure-base up down restart ps logs config backup restore \
         php-site-src php-site-env \
         forgejo-admin mail-integrate mail-up mail-down mail-logs clean \
         stop restart-service logs-service up-service down-service \
@@ -20,6 +20,9 @@ init: ## Génère .env, les mots de passe, les htpasswd et les réseaux Docker
 
 check-env: ## Vérifie que .env contient les secrets nécessaires avant make up
 	./scripts/check-env.sh
+
+ensure-networks: ## Crée les réseaux Docker externes manquants
+	./scripts/ensure-networks.sh
 
 build: base ## Construit les images de base puis celles des stacks
 	$(COMPOSE) build
@@ -50,7 +53,7 @@ ensure-base: ## Construit les images de base manquantes
 	@docker image inspect altherneum/postgres:18 >/dev/null 2>&1 || $(MAKE) postgres-base
 	@docker image inspect altherneum/paper:1.21.11 >/dev/null 2>&1 || $(MAKE) paper-base
 
-up: check-env ensure-base php-site-src ## Démarre toute l'infrastructure
+up: check-env ensure-networks ensure-base php-site-src ## Démarre toute l'infrastructure
 	$(COMPOSE) up -d --remove-orphans
 
 down: ## Arrête toute l'infrastructure (les volumes sont conservés)
@@ -112,6 +115,7 @@ logs-service: ## Suit les logs d'un service (ex: make logs-service SERVICE=azuri
 
 up-service: ## Démarre un service (ex: make up-service SERVICE=azuriom)
 	@test -n "$(SERVICE)" || (echo "Usage: make up-service SERVICE=nom"; exit 1)
+	@./scripts/ensure-networks.sh
 	@if [ -n "$(filter $(SERVICE),php-site)" ]; then \
 		$(MAKE) php-site-src ; \
 	fi
