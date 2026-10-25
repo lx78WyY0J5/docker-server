@@ -3,31 +3,49 @@
 
 set -eu
 
-ENV_FILE=".env"
+ENV_FILE=${ENV_FILE:-.env}
+[ -f "$ENV_FILE" ] || {
+    echo "ERROR : $ENV_FILE introuvable. Lancer make init." >&2
+    exit 1
+}
+
+get_env() {
+    sed -n "s/^$1=//p" "$ENV_FILE" | tail -n 1
+}
 
 echo "=== Verification de la configuration ==="
 
-# Check DOMAIN_NAME and TLD are set
+# DOMAIN_NAME et TLD doivent être présents.
 if ! grep -q "^DOMAIN_NAME=" "$ENV_FILE"; then
     echo "ERROR : DOMAIN_NAME missing in $ENV_FILE" >&2
     exit 1
 fi
-DOMAIN_NAME=$(get_env DOMAIN_NAME)
-
-if [ -z "$TLD" ]; then
-    # TLD can be empty for testing
-    pass=true
-else
-    if ! grep -q "^TLD=" "$ENV_FILE"; then
-        echo "ERROR : TLD missing in $ENV_FILE" >&2
-        exit 1
-    fi
+if ! grep -q "^TLD=" "$ENV_FILE"; then
+    echo "ERROR : TLD missing in $ENV_FILE" >&2
+    exit 1
 fi
 
-# Check email variables use DOMAIN properly (basic check)
+DOMAIN_NAME=$(get_env DOMAIN_NAME)
+TLD=$(get_env TLD)
+
+if [ -z "$DOMAIN_NAME" ]; then
+    echo "ERROR : DOMAIN_NAME vide dans $ENV_FILE" >&2
+    exit 1
+fi
+
+# TLD contient le point initial (.fr) ou est vide pour un domaine local.
+if [ -n "$TLD" ] && [ "$TLD" = "${TLD#.}" ]; then
+    echo "ERROR : TLD doit inclure le point initial (ex: .fr), ou être vide." >&2
+    exit 1
+fi
+
+DOMAIN="${DOMAIN_NAME}${TLD}"
+
 echo ""
 echo "=== Checking email configurations ==="
 echo "DOMAIN_NAME: $DOMAIN_NAME"
+echo "TLD: ${TLD:-<vide>}"
+echo "DOMAIN: $DOMAIN"
 
 # Verify that mail variables exist but don't need to be validated here
 if grep -q "^AZURIOM_MAIL_HOST=" "$ENV_FILE"; then

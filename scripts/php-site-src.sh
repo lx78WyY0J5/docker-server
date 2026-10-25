@@ -79,13 +79,11 @@ for pair in \
 do
     key=${pair%%=*}
     value=${pair#*=}
-    case "$value" in
-        ""|CHANGE_ME)
-            echo "Erreur : $key manquant ou encore égal à CHANGE_ME dans $ENV_FILE." >&2
-            echo "  Lancer make init pour générer les secrets." >&2
-            exit 1
-            ;;
-    esac
+    if [ -z "$value" ] || [ "$value" = "CHANGE_ME" ]; then
+        echo "Erreur : $key manquant ou encore égal à CHANGE_ME dans $ENV_FILE." >&2
+        echo "  Lancer make init pour générer les secrets." >&2
+        exit 1
+    fi
 done
 
 REDIRECT_URI=$(get_env WEBSITE_DISCORD_REDIRECT_URI)

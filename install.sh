@@ -75,12 +75,16 @@ install_debian() {
 }
 
 install_os_packages() {
-    case "$OS_ID" in
-        alpine) install_alpine ;;
-        arch) install_arch ;;
-        debian|ubuntu) install_debian ;;
-        *) err "OS non supporté : $OS_ID (Alpine, Arch, Debian, Ubuntu uniquement)." ; exit 1 ;;
-    esac
+    if [ "$OS_ID" = "alpine" ]; then
+        install_alpine
+    elif [ "$OS_ID" = "arch" ]; then
+        install_arch
+    elif [ "$OS_ID" = "debian" ] || [ "$OS_ID" = "ubuntu" ]; then
+        install_debian
+    else
+        err "OS non supporté : $OS_ID (Alpine, Arch, Debian, Ubuntu uniquement)."
+        exit 1
+    fi
 }
 
 ensure_compose_plugin() {

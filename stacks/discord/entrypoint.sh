@@ -2,12 +2,10 @@
 set -eu
 
 : "${DISCORD_BOT_TOKEN:?DISCORD_BOT_TOKEN manquant}"
-case "$DISCORD_BOT_TOKEN" in
-    ""|"CHANGE_ME")
-        echo "Erreur : renseigner DISCORD_BOT_TOKEN dans .env puis relancer." >&2
-        exit 1
-        ;;
-esac
+if [ "$DISCORD_BOT_TOKEN" = "CHANGE_ME" ]; then
+    echo "Erreur : renseigner DISCORD_BOT_TOKEN dans .env puis relancer." >&2
+    exit 1
+fi
 
 mkdir -p /DiscordBot/data /DiscordBot/Data
 

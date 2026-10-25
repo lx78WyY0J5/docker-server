@@ -112,28 +112,25 @@ logs-service: ## Suit les logs d'un service (ex: make logs-service SERVICE=azuri
 
 up-service: ## Démarre un service (ex: make up-service SERVICE=azuriom)
 	@test -n "$(SERVICE)" || (echo "Usage: make up-service SERVICE=nom"; exit 1)
-	@case "$(SERVICE)" in \
-		php-site) \
-			$(MAKE) php-site-src ; \
-			docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 \
-				|| $(MAKE) php-base ; \
-			docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \
-				|| $(MAKE) mariadb-base ;; \
-		azuriom) \
-			docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 \
-				|| $(MAKE) php-base ; \
-			docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \
-				|| $(MAKE) mariadb-base ;; \
-		db-php|db-azuriom) \
-			docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \
-				|| $(MAKE) mariadb-base ;; \
-		forgejo|db-forgejo) \
-			docker image inspect altherneum/postgres:18 >/dev/null 2>&1 \
-				|| $(MAKE) postgres-base ;; \
-		mc-hub|mc-survie|mc-creatif|mc-anarchie|mc-rpg|mc-skyblock|mc-opprison|mc-test) \
-			docker image inspect altherneum/paper:1.21.11 >/dev/null 2>&1 \
-				|| $(MAKE) paper-base ;; \
-	esac
+	@if [ -n "$(filter $(SERVICE),php-site)" ]; then \
+		$(MAKE) php-site-src ; \
+	fi
+	@if [ -n "$(filter $(SERVICE),php-site azuriom)" ]; then \
+		docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 \
+			|| $(MAKE) php-base ; \
+	fi
+	@if [ -n "$(filter $(SERVICE),php-site azuriom db-php db-azuriom)" ]; then \
+		docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \
+			|| $(MAKE) mariadb-base ; \
+	fi
+	@if [ -n "$(filter $(SERVICE),forgejo db-forgejo)" ]; then \
+		docker image inspect altherneum/postgres:18 >/dev/null 2>&1 \
+			|| $(MAKE) postgres-base ; \
+	fi
+	@if [ -n "$(filter $(SERVICE),mc-hub mc-survie mc-creatif mc-anarchie mc-rpg mc-skyblock mc-opprison mc-test)" ]; then \
+		docker image inspect altherneum/paper:1.21.11 >/dev/null 2>&1 \
+			|| $(MAKE) paper-base ; \
+	fi
 	$(COMPOSE) --env-file .env up -d --build $(SERVICE)
 
 down-service: ## Arrête et supprime un service (ex: make down-service SERVICE=azuriom)

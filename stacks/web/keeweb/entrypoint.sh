@@ -2,8 +2,7 @@
 # Installation et démarrage de KeeWeb.
 set -eu
 
-TLD=${TLD:-.fr}
-DOMAIN_NAME=${DOMAIN_NAME:-Altherneum}
+: "${DOMAIN:?DOMAIN manquant}"
 
 cat > "$CONFIG_DIR/.env" <<EOF
-SESSION_DOMAIN=${DOMAIN_NAME}.${TLD}
+SESSION_DOMAIN=${DOMAIN}

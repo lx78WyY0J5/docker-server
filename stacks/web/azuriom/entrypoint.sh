@@ -10,13 +10,10 @@ mkdir -p "$CONFIG_DIR" /var/www/html/storage/app/public/zip
 GAME_VALUE=${AZURIOM_GAME:-mc-online}
 ADMIN_GAME_ID=$(printf '%s' "${AZURIOM_ADMIN_GAME_ID:-}" | tr -d '-' | tr 'A-F' 'a-f')
 
-case "$GAME_VALUE" in
-    mc-online|mc-offline) ;;
-    *)
-        echo "Erreur : AZURIOM_GAME doit être mc-online ou mc-offline." >&2
-        exit 1
-        ;;
-esac
+if [ "$GAME_VALUE" != "mc-online" ] && [ "$GAME_VALUE" != "mc-offline" ]; then
+    echo "Erreur : AZURIOM_GAME doit être mc-online ou mc-offline." >&2
+    exit 1
+fi
 
 if [ "$GAME_VALUE" = "mc-offline" ]; then
     if [ -n "$ADMIN_GAME_ID" ]; then
@@ -26,16 +23,13 @@ if [ "$GAME_VALUE" = "mc-offline" ]; then
 fi
 
 if [ -n "$ADMIN_GAME_ID" ]; then
-    case "$ADMIN_GAME_ID" in
-        *[!0-9a-f]*)
-            echo "Erreur : AZURIOM_ADMIN_GAME_ID doit être un UUID hexadécimal." >&2
-            exit 1
-            ;;
-    esac
+    if [ -n "$(printf '%s' "$ADMIN_GAME_ID" | tr -d '0-9a-f')" ]; then
+        echo "Erreur : AZURIOM_ADMIN_GAME_ID doit être un UUID hexadécimal." >&2
+        exit 1
+    fi
     if [ "${#ADMIN_GAME_ID}" -ne 32 ]; then
         echo "Erreur : AZURIOM_ADMIN_GAME_ID doit contenir 32 caractères (UUID sans tirets)." >&2
         exit 1
-        ;;
     fi
 fi
 
@@ -90,7 +84,7 @@ SESSION_DRIVER=file
 SESSION_LIFETIME=120
 SESSION_ENCRYPT=false
 SESSION_PATH=/
-SESSION_DOMAIN=${DOMAIN_NAME}.${TLD}
+SESSION_DOMAIN=${DOMAIN}
 
 BROADCAST_CONNECTION=log
 FILESYSTEM_DISK=local

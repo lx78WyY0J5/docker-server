@@ -4,20 +4,15 @@ set -eu
 
 : "${VELOCITY_SECRET:?VELOCITY_SECRET manquant}"
 
+: "${DOMAIN:?DOMAIN manquant}"
 MEMORY=${VELOCITY_MEMORY:-512M}
-TLD=${TLD:-.fr}
-DOMAIN_NAME=${DOMAIN_NAME:-Altherneum}
-MOTD="${VELOCITY_MOTD:-\"<#09add3>${DOMAIN_NAME}.${TLD}\"}"
-DOMAIN="${DOMAIN_NAME}.${TLD}"
+MOTD="${VELOCITY_MOTD:-\"<#09add3>${DOMAIN}\"}"
 ONLINE_MODE=${VELOCITY_ONLINE_MODE:-true}
 
-case "$ONLINE_MODE" in
-    true|false) ;;
-    *)
-        echo "Erreur : VELOCITY_ONLINE_MODE doit valoir true ou false." >&2
-        exit 1
-        ;;
-esac
+if [ "$ONLINE_MODE" != "true" ] && [ "$ONLINE_MODE" != "false" ]; then
+    echo "Erreur : VELOCITY_ONLINE_MODE doit valoir true ou false." >&2
+    exit 1
+fi
 
 mkdir -p /data/plugins
 
