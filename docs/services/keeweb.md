@@ -68,18 +68,19 @@ Cela supprime le volume WebDAV et donc **tous les fichiers `.kdbx`**.
 fichiers `.kdbx`. Le mot de passe maître reste indispensable pour les ouvrir :
 conservez-le dans un endroit sûr.
 
-## Problème connu
+## Configuration
 
-Dans la version actuelle du dépôt, le script `stacks/web/keeweb/entrypoint.sh`
-utilise la variable `CONFIG_DIR` sans la définir. Le conteneur peut s'arrêter
-avec :
+Au démarrage, `stacks/web/keeweb/entrypoint.sh` génère
+`/usr/local/apache2/htdocs/config.json` à partir de
+`stacks/web/keeweb/config.json.template`, en remplaçant `@@DOMAIN@@` par la
+valeur de `DOMAIN_NAME` + `TLD`. Il crée aussi le dossier du volume WebDAV.
 
-```text
-CONFIG_DIR: parameter not set
+Après une modification du domaine dans `.env`, recréez le conteneur pour
+régénérer `config.json` :
+
+```sh
+sudo make up-service SERVICE=keeweb
 ```
-
-Vérifiez les logs et corrigez le script avant de compter sur ce service. Voir
-[Dépannage](../06-depannage.md).
 
 ## Dépannage
 
@@ -88,5 +89,7 @@ sudo make logs-service SERVICE=keeweb
 ```
 
 - **401** : mauvais identifiant ou mot de passe Basic.
-- **Le conteneur redémarre** : voir le problème connu ci-dessus.
+- **404 via Traefik** : le conteneur n'est pas démarré, donc le routeur n'est
+  pas enregistré. Vérifiez `sudo make ps-service SERVICE=keeweb`.
+- **Le conteneur redémarre** : consultez les logs, `DOMAIN` doit être défini.
 - **Fichier introuvable** : vérifiez le chemin `/webdav/kdbx.kdbx`.
