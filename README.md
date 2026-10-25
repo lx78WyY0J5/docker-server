@@ -1,5 +1,40 @@
 # Docker Server
 
+Infrastructure Docker de l'association Altherneum : proxy HTTPS, sites web,
+forge Git, éditeur de code, gestionnaire de mots de passe, serveurs Minecraft,
+bot Discord, messagerie et sauvegardes.
+
+## Documentation
+
+La documentation complète pour débutants est dans [`docs/`](docs/README.md).
+
+| Guide | Contenu |
+|---|---|
+| [Démarrage rapide](docs/README.md) | Installer, configurer et lancer |
+| [Installation](docs/01-installation.md) | Prérequis, DNS, ports |
+| [Configuration `.env`](docs/02-configuration-env.md) | Variables et mots de passe |
+| [Commandes](docs/03-commandes.md) | Démarrer, arrêter, nettoyer |
+| [Accès et URL](docs/04-acces-et-urls.md) | Toutes les adresses |
+| [Sauvegarde](docs/05-backup-restore.md) | `make backup` / `make restore` |
+| [Dépannage](docs/06-depannage.md) | Erreurs fréquentes |
+| [Fiches services](docs/services/README.md) | Une fiche par service |
+
+## Démarrage rapide
+
+```sh
+cd /opt/docker-server        # ou le dossier du dépôt
+sudo make init               # crée .env, les secrets et les réseaux
+sudo nano .env               # domaine, token Discord, UUID Azuriom…
+sudo make check-env
+sudo make up
+sudo make ps
+```
+
+Les adresses suivent le modèle `https://<service>.<DOMAIN_NAME><TLD>`.
+Exemple : avec `DOMAIN_NAME=altherneum` et `TLD=.fr`, Forgejo est sur
+`https://git.altherneum.fr`. Le domaine et l'extension peuvent être changés :
+toutes les adresses changeront en même temps.
+
 ## Commandes
 `sudo make help`
 - **__help__** : Affiche cette aide
@@ -51,21 +86,21 @@
 
 ### Services de développement
 - `code-server` : Interface web pour vs-code
-- `phpmyadmin` : Gestionnaire PHP via interface web
-- `forgejo` : Plateforme Forgejo (PHP)
+- `phpmyadmin` : Gestionnaire de bases MariaDB via interface web
+- `forgejo` : Forge Git auto-hébergée
 - `keeweb` : Gestion des mots de passe (`.kdbx` / KeePass)
 
 ### Services Web
 - `php-site` : Site web PHP
 - `meme` : Site de redirection de meme
-- `azuriom` : Site de pour serveurs Minecraft
+- `azuriom` : Site et panneau d'administration pour serveur Minecraft
 
 ### Services système
 - `traefik` : Proxy
 - `fail2ban` : Protection anti-brute force
 - `bot` : Bot Discord
 
-### Applications AAA
+### Messagerie
 - `mail-integrate` : Override Traefik dans MAILCOW_DIR
 - `mail-up` / `mail-down` : Gestion de MailCow
 - `mail-logs` : Logs de MailCow
@@ -84,7 +119,7 @@ Les services communiquent via :
   - `php_internal`
 
 ## Utilisation
-- `sudo make init` - Initialisation (création des secrets, volumes, réseaux)
+- `sudo make init` - Initialisation (création des secrets, htpasswd et réseaux)
 - `sudo make up` - Démarrage complet
 - `sudo make down` - Arrêt complet sans supprimer les conteneurs
 - `sudo make down-service SERVICE=azuriom` - Arrêt d'un service sans supprimer son conteneur

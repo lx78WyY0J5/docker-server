@@ -1,0 +1,117 @@
+# Documentation
+Cette documentation explique simplement comment installer, démarrer, arrêter et
+nettoyer les services de ce dépôt
+
+## Démarrage rapide
+
+```sh
+# 1. Se placer à la racine du dépôt
+cd /opt/docker-server        # ou le dossier où le dépôt a été cloné
+
+# 2. Créer .env, les mots de passe et les réseaux Docker
+sudo make init
+
+# 3. Modifier .env (domaine, token Discord, etc.)
+sudo nano .env
+
+# 4. Vérifier la configuration
+sudo make check-env
+
+# 5. Construire et démarrer tous les services
+sudo make up
+
+# 6. Vérifier que tout tourne
+sudo make ps
+```
+
+> Si votre utilisateur est dans le groupe `docker`, vous pouvez retirer `sudo`.
+> Les commandes se lancent **toujours depuis la racine du dépôt**.
+
+## Comprendre les adresses
+
+Les adresses sont construites à partir de deux variables de `.env` :
+
+- `DOMAIN_NAME` : le nom, sans extension. Exemple : `altherneum`
+- `TLD` : l'extension, avec le point. Exemple : `.fr` (ou vide pour `localhost`)
+
+L'adresse d'un service suit ce modèle :
+
+```text
+https://<service>.<DOMAIN_NAME><TLD>
+```
+
+Exemples :
+
+| `DOMAIN_NAME` | `TLD` | Adresse de Forgejo |
+|---|---|---|
+| `altherneum` | `.fr` | `https://git.altherneum.fr` |
+| `monprojet` | `.com` | `https://git.monprojet.com` |
+| `localhost` | *(vide)* | `https://git.localhost` |
+
+Le domaine `altherneum.fr` utilisé dans les exemples n'est **pas obligatoire** :
+remplacez-le par le vôtre. Voir [Accès et URL](04-acces-et-urls.md).
+
+## Trouver un mot de passe
+
+La plupart des mots de passe sont générés par `sudo make init` et stockés dans
+`.env`. Pour en lire un :
+
+```sh
+sudo grep '^CODE_SERVER_PASSWORD=' .env
+```
+
+Ne partagez jamais `.env` et ne le commitez jamais : il contient tous les
+secrets. Le fichier est déjà ignoré par Git.
+
+## Repères dans le dépôt
+
+| Dossier / fichier | Contenu |
+|---|---|
+| `compose.yaml` | Point d'entrée de toutes les stacks |
+| `Makefile` | Commandes `make` |
+| `.env` | Configuration et secrets (jamais commité) |
+| [`stacks/`](../stacks/README.md) | Une stack par service |
+| [`images/`](../images/README.md) | Images Docker de base |
+| [`scripts/`](../scripts/README.md) | Scripts appelés par le `Makefile` |
+| [`backups/`](../backups/README.md) | Sauvegardes locales |
+| `install.sh` | Installation automatique de l'hôte |
+
+## Guides généraux
+
+| Guide | Contenu |
+|---|---|
+| [Installation](01-installation.md) | Prérequis, DNS, premier démarrage |
+| [Configuration `.env`](02-configuration-env.md) | Variables, secrets, mots de passe |
+| [Commandes](03-commandes.md) | Démarrer, arrêter, redémarrer, nettoyer |
+| [Accès et URL](04-acces-et-urls.md) | Toutes les adresses et les ports |
+| [Sauvegarde et restauration](05-backup-restore.md) | `make backup`, `make restore` |
+| [Dépannage](06-depannage.md) | Erreurs fréquentes et solutions |
+
+## Fiches par service
+
+| Service | Fiche | Adresse par défaut (exemple) |
+|---|---|---|
+| Traefik (proxy) | [traefik.md](services/traefik.md) | `https://traefik.altherneum.fr` |
+| Site PHP | [php-site.md](services/php-site.md) | `https://php.altherneum.fr` |
+| Azuriom | [azuriom.md](services/azuriom.md) | `https://minecraft.altherneum.fr` |
+| Forgejo | [forgejo.md](services/forgejo.md) | `https://git.altherneum.fr` |
+| code-server | [code-server.md](services/code-server.md) | `https://code.altherneum.fr` |
+| KeeWeb | [keeweb.md](services/keeweb.md) | `https://keeweb.altherneum.fr` |
+| phpMyAdmin | [phpmyadmin.md](services/phpmyadmin.md) | `https://phpmyadmin.altherneum.fr` |
+| Site de memes | [meme.md](services/meme.md) | `https://meme.altherneum.fr` |
+| Minecraft | [minecraft.md](services/minecraft.md) | `mc.altherneum.fr:25565` |
+| Bot Discord | [discord-bot.md](services/discord-bot.md) | *(pas d'URL)* |
+| fail2ban | [fail2ban.md](services/fail2ban.md) | *(pas d'URL)* |
+| Mailcow | [mailcow.md](services/mailcow.md) | `https://mail.altherneum.fr` |
+| Bases de données | [databases.md](services/databases.md) | *(accès interne)* |
+| Images de base | [base-images.md](services/base-images.md) | *(pas d'URL)* |
+
+## Règles d'or
+
+1. **Sauvegardez avant de nettoyer.** `clean` et `clean-service` suppriment des
+   données.
+2. **Ne modifiez pas `.env` à la légère après le premier démarrage.** Certains
+   mots de passe sont déjà enregistrés dans les applications ou les bases.
+3. **Traefik doit tourner** pour que les sites HTTPS répondent.
+4. **Ouvrez les bons ports** sur le routeur/pare-feu : `80`, `443`, `25565`,
+   et les ports Bedrock si vous utilisez Minecraft.

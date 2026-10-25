@@ -1,0 +1,61 @@
+# Images de base
+
+**Rôle :** images Docker communes construites localement et utilisées par
+plusieurs services. Elles n'ont ni URL ni mot de passe.
+
+| Image | Dossier | Utilisée par |
+|---|---|---|
+| `altherneum/php-apache:latest` | `images/php-apache` | Site PHP, Azuriom |
+| `altherneum/mariadb:11.8` | `images/mariadb` | `db-php`, `db-azuriom` |
+| `altherneum/postgres:18` | `images/postgres` | `db-forgejo` |
+| `altherneum/paper:1.21.11` | `stacks/minecraft/paper` | Serveurs Paper |
+
+## Construire les images
+
+```sh
+sudo make base          # construit toutes les images de base
+sudo make ensure-base   # construit seulement celles qui manquent
+```
+
+Ou individuellement :
+
+```sh
+sudo make php-base
+sudo make mariadb-base
+sudo make postgres-base
+sudo make paper-base
+```
+
+## Construire aussi les services
+
+```sh
+sudo make build
+```
+
+`make build` construit d'abord les images de base, puis toutes les images des
+stacks (`php-site`, `azuriom`, `forgejo`, `code-server`, `keeweb`, `meme`,
+`phpmyadmin`, `velocity`, `bot`, `fail2ban`).
+
+## Quand reconstruire ?
+
+| Modification | Commande |
+|---|---|
+| Un `Dockerfile` de `images/` | `sudo make base` |
+| Un `Dockerfile` d'une stack | `sudo make build` |
+| `compose.yaml` seulement | `sudo make up-service SERVICE=nom` |
+
+Après une reconstruction, redémarrez les services concernés :
+
+```sh
+sudo make up
+```
+
+## Bon à savoir
+
+- Les services utilisent `ensure-base` : si une image de base manque, elle est
+  construite automatiquement au démarrage.
+- Une mise à jour de l'image de base ne met pas à jour les conteneurs déjà
+  créés : il faut reconstruire et recréer les services.
+- Les autres stacks sont construites à partir d'images officielles (Traefik,
+  Forgejo, code-server, phpMyAdmin, KeeWeb, fail2ban) téléchargées depuis leurs
+  registres respectifs.
