@@ -28,59 +28,17 @@
 - **__mail-up__** : Démarre mailcow avec l'intégration Traefik
 - **__mail-down__** : Arrête mailcow
 - **__mail-logs__** : Suit les logs de mailcow
-- **__clean__** : Supprime tous les conteneurs ET les volumes (DESTRUCTIF, `CONFIRM=yes`)
-- **__clean-service__** : Supprime un service ciblé, ses conteneurs et ses volumes exclusifs (DESTRUCTIF, `CONFIRM=yes`)
-- **__down-clean__** : Arrête puis supprime tous les conteneurs ET les volumes (DESTRUCTIF, `CONFIRM=yes`)
-- **__down-clean-service__** : Arrête puis supprime un service ciblé et ses volumes exclusifs (DESTRUCTIF, `CONFIRM=yes`)
-- **__stop__** : Arrête un service (ex: make stop SERVICE=azuriom)
-- **__restart-service__** : Redémarre un service (ex: make restart-service SERVICE=azuriom)
-- **__logs-service__** : Suit les logs d'un service (ex: make logs-service SERVICE=azuriom)
-- **__up-service__** : Démarre un service (ex: make up-service SERVICE=azuriom)
-- **__down-service__** : Arrête un service sans supprimer son conteneur (ex: make down-service SERVICE=azuriom)
-- **__ps-service__** : État d'un service (ex: make ps-service SERVICE=azuriom)
+- **__clean__** : Supprime tous les conteneurs ET les volumes (**__DESTRUCTIF__**, `CONFIRM=yes`)
+- **__clean-service__** : Supprime un service ciblé, ses conteneurs et ses volumes exclusifs (**__DESTRUCTIF__**, `CONFIRM=yes`)
+- **__down-clean__** : Arrête puis supprime tous les conteneurs ET les volumes (**__DESTRUCTIF__**, `CONFIRM=yes`)
+- **__down-clean-service__** : Arrête puis supprime un service ciblé et ses volumes exclusifs (**__DESTRUCTIF__**, `CONFIRM=yes`)
+- **__stop__** : Arrête un service (ex: make stop `SERVICE=azuriom`)
+- **__restart-service__** : Redémarre un service (ex: make restart-service `SERVICE=azuriom`)
+- **__logs-service__** : Suit les logs d'un service (ex: make logs-service `SERVICE=azuriom`)
+- **__up-service__** : Démarre un service (ex: make up-service `SERVICE=azuriom`)
+- **__down-service__** : Arrête un service sans supprimer son conteneur (ex: `make down-service SERVICE=azuriom`)
+- **__ps-service__** : État d'un service (ex: make ps-service `SERVICE=azuriom`)
 - **__services__** : Liste tous les noms de services
-
-## Mise à jour du site PHP
-
-Le code du site est monté depuis `stacks/web/php-site/src`. Une mise à jour
-modifie donc directement les fichiers lus par le conteneur, sans reconstruction :
-
-```sh
-sudo git -C stacks/web/php-site/src pull --ff-only
-```
-
-PHP relit les fichiers modifiés (opcache avec `validate_timestamps=1`), donc un
-redémarrage n'est pas nécessaire pour du PHP/CSS/JS. L'endpoint `/api/deploy`
-exécute la même commande depuis le conteneur, après avoir vérifié que le dernier
-run CI de `main` est réussi.
-
-`make up-service SERVICE=php-site` ne fait **pas** de `git pull` : il reconstruit
-l'image et redémarre le service. Il faut mettre à jour `src` séparément.
-
-Par défaut, l'entrypoint donne le dépôt à l'utilisateur `apache` pour que le
-`git pull` web puisse écrire. Mettre `WEBSITE_GIT_DEPLOY=false` dans `.env` pour
-désactiver ce comportement (les fichiers de l'hôte gardent alors leur
-propriétaire).
-
-## Arrêt et suppression
-
-| Commande | Portée | Action |
-| --- | --- | --- |
-| `make down` | Toute l'infrastructure | Arrête les conteneurs sans les supprimer |
-| `make down-service SERVICE=nom` | Un seul service | Arrête le conteneur sans le supprimer |
-| `make clean` | Toute l'infrastructure | Supprime les conteneurs et les volumes |
-| `make clean-service SERVICE=nom` | Un seul service | Supprime le conteneur et ses volumes exclusifs |
-| `make down-clean` | Toute l'infrastructure | Arrête puis supprime les conteneurs et les volumes |
-| `make down-clean-service SERVICE=nom` | Un seul service | Arrête puis supprime le conteneur et ses volumes exclusifs |
-
-Les commandes `clean`, `clean-service`, `down-clean` et `down-clean-service` sont destructives et exigent `CONFIRM=yes`.
-`clean-service` et `down-clean-service` n'acceptent qu'un seul nom de service.
-Un volume partagé avec un autre service, ou encore utilisé par un autre conteneur, est conservé.
-
-```sh
-sudo CONFIRM=yes make clean-service SERVICE=azuriom
-sudo CONFIRM=yes make down-clean-service SERVICE=azuriom
-```
 
 ## Services
 ### Bases
