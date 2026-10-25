@@ -36,8 +36,8 @@ x-paper: &paper
 
 services:
   # ---------------------------------------------------------------------------
-  # Télécharge les plugins (Altherneum, ViaVersion, ViaBackwards, WorldEdit,
-  # Geyser, Floodgate) puis s'arrête.
+  # Télécharge les plugins (Altherneum, ViaVersion, ViaBackwards, Geyser,
+  # Floodgate) ainsi que WorldEdit pour le serveur créatif, puis s'arrête.
   # ---------------------------------------------------------------------------
   mc-plugins:
     build:

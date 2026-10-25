@@ -106,16 +106,24 @@ if [ ! -f /data/server-icon.png ]; then
 fi
 
 # Plugins partagés, mis à jour par le service mc-plugins.
-# Nettoyage des anciens noms/plugins Paper (Geyser/Floodgate sont proxy-only).
+# Nettoyage des anciens noms/plugins Paper (Geyser/Floodgate sont proxy-only)
+# et de WorldEdit, qui n'est autorisé que sur le serveur créatif.
 rm -f /data/plugins/geyser*.jar \
       /data/plugins/Geyser*.jar \
       /data/plugins/floodgate*.jar \
       /data/plugins/Floodgate*.jar \
       /data/plugins/ViaVersion-*.jar \
       /data/plugins/ViaBackwards-*.jar \
-      /data/plugins/worldedit-bukkit-*.jar
+      /data/plugins/worldedit-bukkit-*.jar \
+      /data/plugins/WorldEdit.jar
+
 if [ -d /opt/plugins/paper ]; then
     find /opt/plugins/paper -maxdepth 1 -name '*.jar' -exec cp -f {} /data/plugins/ \;
+fi
+
+# WorldEdit n'est installé que sur le serveur créatif.
+if [ "$SERVER_NAME" = "creatif" ] && [ -d /opt/plugins/paper-creatif ]; then
+    find /opt/plugins/paper-creatif -maxdepth 1 -name '*.jar' -exec cp -f {} /data/plugins/ \;
 fi
 
 cat > /data/server.properties <<EOF

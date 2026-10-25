@@ -5,8 +5,10 @@
 set -eu
 
 PAPER_DIR=/plugins/paper
+# Plugins réservés au serveur créatif, copiés uniquement par ce serveur.
+PAPER_CREATIF_DIR=/plugins/paper-creatif
 VELOCITY_DIR=/plugins/velocity
-mkdir -p "$PAPER_DIR" "$VELOCITY_DIR"
+mkdir -p "$PAPER_DIR" "$PAPER_CREATIF_DIR" "$VELOCITY_DIR"
 
 # Retire les anciens JAR obsolètes d'une installation précédente.
 # Les motifs couvrent aussi les noms versionnés utilisés par d'anciennes
@@ -18,6 +20,7 @@ rm -f "$PAPER_DIR"/floodgate*.jar \
       "$PAPER_DIR"/ViaVersion-*.jar \
       "$PAPER_DIR"/ViaBackwards-*.jar \
       "$PAPER_DIR"/worldedit-bukkit-*.jar \
+      "$PAPER_DIR"/WorldEdit.jar \
       "$VELOCITY_DIR"/floodgate*.jar \
       "$VELOCITY_DIR"/Floodgate*.jar \
       "$VELOCITY_DIR"/geyser*.jar \
@@ -44,10 +47,10 @@ fetch \
     "https://github.com/ViaVersion/ViaBackwards/releases/download/5.12.1/ViaBackwards-5.12.1.jar" \
     "$PAPER_DIR/ViaBackwards.jar"
 
-# WorldEdit (Paper 1.21.11).
+# WorldEdit (Paper 1.21.11) — uniquement sur le serveur créatif.
 fetch \
     "https://cdn.modrinth.com/data/1u6JkXh5/versions/YFnqiUlL/worldedit-bukkit-7.4.6.jar" \
-    "$PAPER_DIR/WorldEdit.jar"
+    "$PAPER_CREATIF_DIR/WorldEdit.jar"
 
 # Geyser / Floodgate (Bedrock cross-play) — Velocity.
 # Floodgate n'est installé que sur le proxy : c'est le mode officiel recommandé
@@ -61,4 +64,4 @@ fetch \
     "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity" \
     "$VELOCITY_DIR/Floodgate.jar"
 
-echo "Plugins prêts dans $PAPER_DIR et $VELOCITY_DIR"
+echo "Plugins prêts dans $PAPER_DIR, $PAPER_CREATIF_DIR et $VELOCITY_DIR"

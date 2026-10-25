@@ -167,7 +167,7 @@ sudo make up-service SERVICE=mc-hub
 
 - le plugin Altherneum ;
 - ViaVersion et ViaBackwards ;
-- WorldEdit ;
+- WorldEdit (serveur créatif uniquement) ;
 - Geyser et Floodgate pour Bedrock.
 
 Les plugins sont copiés dans un volume partagé. Pour les mettre à jour,
