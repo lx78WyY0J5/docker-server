@@ -69,7 +69,7 @@ services:
       VELOCITY_SECRET: ${VELOCITY_SECRET}
       VELOCITY_MEMORY: ${VELOCITY_MEMORY}
       VELOCITY_ONLINE_MODE: ${VELOCITY_ONLINE_MODE:-true}
-      VELOCITY_MOTD: "${VELOCITY_MOTD:-<#09add3>Altherneum.fr}"
+      VELOCITY_MOTD: "${VELOCITY_MOTD:-<#09add3>MOTD}"
     volumes:
       - altherneum_mc-velocity-data:/data
       - altherneum_mc-plugins:/opt/plugins:ro

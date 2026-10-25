@@ -49,7 +49,7 @@ les joueurs.
 | `VELOCITY_MEMORY` | RAM allouée au proxy |
 | `VELOCITY_SECRET` | Secret Velocity / Paper |
 | `VELOCITY_ONLINE_MODE` | `true` premium, `false` hors-ligne |
-| `VELOCITY_MOTD` | Message affiché dans la liste des serveurs |
+| `VELOCITY_MOTD` | Message affiché dans la liste des serveurs (`\n` pour un saut de ligne) |
 | `MINECRAFT_RCON_PASSWORD` | Mot de passe RCON |
 
 Les variables `MINECRAFT_MEMORY_HUB`, `MINECRAFT_MEMORY_SURVIE`,

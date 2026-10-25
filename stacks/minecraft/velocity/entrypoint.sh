@@ -6,8 +6,27 @@ set -eu
 
 : "${DOMAIN:?DOMAIN manquant}"
 MEMORY=${VELOCITY_MEMORY:-512M}
-MOTD="${VELOCITY_MOTD:-\"<#09add3>${DOMAIN}\"}"
+MOTD=${VELOCITY_MOTD:-"<#09add3>${DOMAIN}"}
 ONLINE_MODE=${VELOCITY_ONLINE_MODE:-true}
+
+# Échappe une valeur destinée à une chaîne entre guillemets (TOML ou YAML) :
+# les backslashes et guillemets sont protégés, et un MOTD multiligne (par
+# exemple « <#09add3>domaine\ndiscord.domaine » dans .env, où Compose convertit
+# \n en vrai saut de ligne) devient la séquence \n comprise par TOML/YAML.
+escape_config() {
+    printf '%s' "$1" \
+        | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' \
+        | awk 'BEGIN { ORS="" } { if (NR > 1) printf "\\n"; print }'
+}
+
+# Échappe les caractères spéciaux d'un remplacement sed (délimiteur, & et
+# backslash) pour insérer la valeur sans que sed l'interprète.
+escape_sed() {
+    printf '%s' "$1" | sed -e 's/[\\&|]/\\&/g'
+}
+
+DOMAIN_SAFE=$(escape_sed "$(escape_config "$DOMAIN")")
+MOTD_SAFE=$(escape_sed "$(escape_config "$MOTD")")
 
 if [ "$ONLINE_MODE" != "true" ] && [ "$ONLINE_MODE" != "false" ]; then
     echo "Erreur : VELOCITY_ONLINE_MODE doit valoir true ou false." >&2
@@ -32,8 +51,8 @@ mkdir -p "$GEYSER_DIR" "$FLOODGATE_DIR"
 printf '%s' "$VELOCITY_SECRET" > /data/forwarding.secret
 chmod 600 /data/forwarding.secret
 
-sed -e "s|__DOMAIN__|${DOMAIN}|g" \
-    -e "s|__MOTD__|${MOTD}|g" \
+sed -e "s|__DOMAIN__|${DOMAIN_SAFE}|g" \
+    -e "s|__MOTD__|${MOTD_SAFE}|g" \
     -e "s|__ONLINE_MODE__|${ONLINE_MODE}|g" \
     /opt/velocity/config/velocity.toml.template > /data/velocity.toml
 
@@ -43,8 +62,8 @@ fi
 
 # Config Geyser (Bedrock) — copie si absente.
 if [ ! -f "$GEYSER_DIR/config.yml" ]; then
-    sed -e "s|__DOMAIN__|${DOMAIN}|g" \
-        -e "s|__MOTD__|${MOTD}|g" \
+    sed -e "s|__DOMAIN__|${DOMAIN_SAFE}|g" \
+        -e "s|__MOTD__|${MOTD_SAFE}|g" \
         /opt/velocity/config/geyser.yml.template > "$GEYSER_DIR/config.yml"
 fi
 
