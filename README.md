@@ -1,0 +1,85 @@
+# Docker Server
+
+## Commandes
+`sudo make help`
+- **__help__** : Affiche cette aide
+- **__init__** : Génère .env, les mots de passe, les htpasswd et les réseaux Docker
+- **__check-env__** : Vérifie que .env contient les secrets nécessaires avant make up
+- **__build__** : Construit les images de base puis celles des stacks
+- **__php-site-src__** : Clone le dépôt website dans stacks/web/php-site/src
+- **__php-site-env__** : Régénère stacks/web/php-site/src/.env depuis .env
+- **__php-base__** : Construit uniquement l'image de base PHP/Apache
+- **__mariadb-base__** : Construit uniquement l'image de base MariaDB
+- **__postgres-base__** : Construit uniquement l'image de base PostgreSQL
+- **__paper-base__** : Construit l'image commune des serveurs Paper
+- **__base__** : Construit toutes les images de base
+- **__ensure-base__** : Construit les images de base manquantes
+- **__up__** : Démarre toute l'infrastructure
+- **__down__** : Arrête toute l'infrastructure (les volumes sont conservés)
+- **__restart__** : Redémarre toute l'infrastructure
+- **__ps__** : Liste l'état des conteneurs
+- **__logs__** : Suit les logs de tous les conteneurs
+- **__config__** : Valide et affiche la configuration Compose fusionnée
+- **__backup__** : Sauvegarde les bases et les volumes applicatifs
+- **__restore__** : Restaure une sauvegarde : make restore BACKUP=backups/AAAA...
+- **__forgejo-admin__** : Crée le compte admin Forgejo depuis .env
+- **__mail-integrate__** : Installe l'override Traefik dans MAILCOW_DIR
+- **__mail-up__** : Démarre mailcow avec l'intégration Traefik
+- **__mail-down__** : Arrête mailcow
+- **__mail-logs__** : Suit les logs de mailcow
+- **__clean__** : Supprime les conteneurs ET les volumes (DESTRUCTIF)
+- **__stop__** : Arrête un service (ex: make stop SERVICE=azuriom)
+- **__restart-service__** : Redémarre un service (ex: make restart-service SERVICE=azuriom)
+- **__logs_service__** : Suit les logs d'un service (ex: make logs_service SERVICE=azuriom)
+- **__up-service__** : Démarre un service (ex: make up-service SERVICE=azuriom)
+- **__down-service__** : Arrête et supprime un service (ex: make down-service SERVICE=azuriom)
+- **__ps_service__** : État d'un service (ex: make ps_service SERVICE=azuriom)
+- **__services__** : Liste tous les noms de services
+
+## Services
+### Bases
+- `base` : Images de base PHP/Apache, MariaDB, PostgreSQL, Paper
+
+### Bases de données
+- `db-azuriom` : Base de données Azuriom
+- `db-forgejo` : Base de données Forgejo
+- `db-php` : Base de données pour le site PHP
+
+### Services de développement
+- `code-server` : Interface web pour vs-code
+- `phpmyadmin` : Gestionnaire PHP via interface web
+- `forgejo` : Plateforme Forgejo (PHP)
+- `keeweb` : Gestion des mots de passe (`.kdbx` / KeePass)
+
+### Services Web
+- `php-site` : Site web PHP
+- `meme` : Site de redirection de meme
+- `azuriom` : Site de pour serveurs Minecraft
+
+### Services système
+- `traefik` : Proxy
+- `fail2ban` : Protection anti-brute force
+- `bot` : Bot Discord
+
+### Applications AAA
+- `mail-integrate` : Override Traefik dans MAILCOW_DIR
+- `mail-up` / `mail-down` : Gestion de MailCow
+- `mail-logs` : Logs de MailCow
+
+### Applications Minecraft
+- `mc-anarchie`, `mc-creatif`, `mc-opprison`, `mc-hub`, `mc-skyblock`, `mc-survie`, `mc-rpg`, `mc-test` : Serveurs de jeu Minecraft
+- `mc-plugins` : Plugins pour les serveurs
+
+## Réseaux
+Les services communiquent via :
+- `PROXY_NETWORK`
+  - `forgejo_internal`
+  - `minecraft`
+  - `azuriom_internal`
+  - `db_admin`
+  - `php_internal`
+
+## Utilisation
+- `sudo make init` - Initialisation (création des secrets, volumes, réseaux)
+- `sudo make up` - Démarrage complet
+- `sudo make services` - Liste complète des services disponibles
