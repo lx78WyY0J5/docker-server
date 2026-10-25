@@ -16,9 +16,11 @@ services:
       DB_USER: ${PHP_DB_USER}
       DB_PASSWORD: ${PHP_DB_PASSWORD}
       WEBSITE_AUTO_INIT: ${WEBSITE_AUTO_INIT:-true}
+      # Autorise /api/deploy à faire git pull : le dépôt monté est chown apache.
+      WEBSITE_GIT_DEPLOY: ${WEBSITE_GIT_DEPLOY:-true}
     volumes:
       # Dépôt website cloné par make php-site-src. Le montage est en écriture
-      # pour les uploads et les logs ; l'entrypoint ne chown que ces dossiers.
+      # pour les uploads, les logs et le git pull de /api/deploy.
       - ./src:/var/www/html
     networks:
       - proxy

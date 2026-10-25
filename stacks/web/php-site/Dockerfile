@@ -6,6 +6,9 @@
 # =============================================================================
 FROM altherneum/php-apache:latest
 
+# git est requis par /api/deploy pour mettre à jour le dépôt monté.
+RUN apk add --no-cache git
+
 COPY apache.conf /etc/apache2/conf.d/10-php-site.conf
 COPY entrypoint.sh /usr/local/bin/php-site-entrypoint
 COPY db-ready.php /usr/local/bin/php-site-db-ready

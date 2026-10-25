@@ -40,6 +40,28 @@
 - **__ps-service__** : État d'un service (ex: make ps-service SERVICE=azuriom)
 - **__services__** : Liste tous les noms de services
 
+## Mise à jour du site PHP
+
+Le code du site est monté depuis `stacks/web/php-site/src`. Une mise à jour
+modifie donc directement les fichiers lus par le conteneur, sans reconstruction :
+
+```sh
+sudo git -C stacks/web/php-site/src pull --ff-only
+```
+
+PHP relit les fichiers modifiés (opcache avec `validate_timestamps=1`), donc un
+redémarrage n'est pas nécessaire pour du PHP/CSS/JS. L'endpoint `/api/deploy`
+exécute la même commande depuis le conteneur, après avoir vérifié que le dernier
+run CI de `main` est réussi.
+
+`make up-service SERVICE=php-site` ne fait **pas** de `git pull` : il reconstruit
+l'image et redémarre le service. Il faut mettre à jour `src` séparément.
+
+Par défaut, l'entrypoint donne le dépôt à l'utilisateur `apache` pour que le
+`git pull` web puisse écrire. Mettre `WEBSITE_GIT_DEPLOY=false` dans `.env` pour
+désactiver ce comportement (les fichiers de l'hôte gardent alors leur
+propriétaire).
+
 ## Arrêt et suppression
 
 | Commande | Portée | Action |
