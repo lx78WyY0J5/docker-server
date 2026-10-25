@@ -4,15 +4,16 @@
 SHELL := /bin/sh
 COMPOSE := docker compose
 MAILCOW_DIR := $(or $(shell sed -n 's/^MAILCOW_DIR=//p' .env 2>/dev/null | tail -n1),/opt/mailcow-dockerized)
+SERVICE ?=
 
 .PHONY: help init check-env ensure-networks build base php-base mariadb-base postgres-base paper-base ensure-base up down restart ps logs config backup restore \
         php-site-src php-site-env \
-        forgejo-admin mail-integrate mail-up mail-down mail-logs clean \
+        forgejo-admin mail-integrate mail-up mail-down mail-logs clean clean-service down-clean down-clean-service \
         stop restart-service logs-service up-service down-service \
         ps-service services
 
 help: ## Affiche cette aide
-	@awk 'BEGIN {FS = ":.*##"; printf "\nCommandes disponibles :\n\n"} /^[a-zA-Z_-]+:.*?##/ {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"; printf "\nCommandes disponibles :\n\n"} /^[a-zA-Z_-]+:.*?##/ {printf "  \033[36m%-22s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 	@printf "\n"
 
 init: ## Génère .env, les mots de passe, les htpasswd et les réseaux Docker
@@ -56,8 +57,8 @@ ensure-base: ## Construit les images de base manquantes
 up: check-env ensure-networks ensure-base php-site-src ## Démarre toute l'infrastructure
 	$(COMPOSE) up -d --remove-orphans
 
-down: ## Arrête toute l'infrastructure (les volumes sont conservés)
-	$(COMPOSE) down
+down: ## Arrête toute l'infrastructure sans supprimer les conteneurs (volumes conservés)
+	$(COMPOSE) stop
 
 restart: ## Redémarre toute l'infrastructure
 	$(COMPOSE) restart
@@ -93,14 +94,33 @@ mail-down: ## Arrête mailcow
 mail-logs: ## Suit les logs de mailcow
 	cd "$(MAILCOW_DIR)" && docker compose logs -f --tail=200
 
-clean: ## Supprime les conteneurs ET les volumes (DESTRUCTIF)
+clean: ## Supprime tous les conteneurs ET les volumes (DESTRUCTIF)
 	@printf "Cette commande supprime toutes les données Docker d'Altherneum. Confirmer avec CONFIRM=yes\n"
 	@test "$${CONFIRM:-no}" = "yes"
 	$(COMPOSE) down -v --remove-orphans
 
-# --- Opérations sur un service unique ---
-SERVICE ?=
+clean-service: ## Supprime un service, ses conteneurs et ses volumes exclusifs (DESTRUCTIF)
+	@test -n "$(SERVICE)" || (echo "Usage: make clean-service SERVICE=nom"; exit 1)
+	@test "$$(echo $(SERVICE) | wc -w)" -eq 1 || (echo "Erreur: clean-service ne cible qu'un seul service"; exit 1)
+	@printf "Cette commande supprime le service $(SERVICE) et ses volumes. Confirmer avec CONFIRM=yes\n"
+	@test "$${CONFIRM:-no}" = "yes"
+	./scripts/clean-service.sh $(SERVICE)
 
+down-clean: ## Arrête puis supprime tous les conteneurs ET volumes (DESTRUCTIF)
+	@printf "Cette commande supprime toutes les données Docker d'Altherneum. Confirmer avec CONFIRM=yes\n"
+	@test "$${CONFIRM:-no}" = "yes"
+	$(COMPOSE) stop
+	$(COMPOSE) down -v --remove-orphans
+
+down-clean-service: ## Arrête puis supprime un service et ses volumes exclusifs (DESTRUCTIF)
+	@test -n "$(SERVICE)" || (echo "Usage: make down-clean-service SERVICE=nom"; exit 1)
+	@test "$$(echo $(SERVICE) | wc -w)" -eq 1 || (echo "Erreur: down-clean-service ne cible qu'un seul service"; exit 1)
+	@printf "Cette commande supprime le service $(SERVICE) et ses volumes. Confirmer avec CONFIRM=yes\n"
+	@test "$${CONFIRM:-no}" = "yes"
+	$(COMPOSE) --env-file .env stop $(SERVICE)
+	./scripts/clean-service.sh $(SERVICE)
+
+# --- Opérations sur un service unique ---
 stop: ## Arrête un service (ex: make stop SERVICE=azuriom)
 	@test -n "$(SERVICE)" || (echo "Usage: make stop SERVICE=nom"; exit 1)
 	$(COMPOSE) --env-file .env stop $(SERVICE)
@@ -137,9 +157,9 @@ up-service: ## Démarre un service (ex: make up-service SERVICE=azuriom)
 	fi
 	$(COMPOSE) --env-file .env up -d --build $(SERVICE)
 
-down-service: ## Arrête et supprime un service (ex: make down-service SERVICE=azuriom)
+down-service: ## Arrête un service sans supprimer son conteneur (ex: make down-service SERVICE=azuriom)
 	@test -n "$(SERVICE)" || (echo "Usage: make down-service SERVICE=nom"; exit 1)
-	$(COMPOSE) --env-file .env rm -sf $(SERVICE)
+	$(COMPOSE) --env-file .env stop $(SERVICE)
 
 ps-service: ## État d'un service (ex: make ps-service SERVICE=azuriom)
 	@test -n "$(SERVICE)" || (echo "Usage: make ps-service SERVICE=nom"; exit 1)

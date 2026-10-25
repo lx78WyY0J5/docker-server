@@ -16,7 +16,7 @@
 - **__base__** : Construit toutes les images de base
 - **__ensure-base__** : Construit les images de base manquantes
 - **__up__** : Démarre toute l'infrastructure
-- **__down__** : Arrête toute l'infrastructure (les volumes sont conservés)
+- **__down__** : Arrête toute l'infrastructure sans supprimer les conteneurs (les volumes sont conservés)
 - **__restart__** : Redémarre toute l'infrastructure
 - **__ps__** : Liste l'état des conteneurs
 - **__logs__** : Suit les logs de tous les conteneurs
@@ -28,14 +28,37 @@
 - **__mail-up__** : Démarre mailcow avec l'intégration Traefik
 - **__mail-down__** : Arrête mailcow
 - **__mail-logs__** : Suit les logs de mailcow
-- **__clean__** : Supprime les conteneurs ET les volumes (DESTRUCTIF)
+- **__clean__** : Supprime tous les conteneurs ET les volumes (DESTRUCTIF, `CONFIRM=yes`)
+- **__clean-service__** : Supprime un service ciblé, ses conteneurs et ses volumes exclusifs (DESTRUCTIF, `CONFIRM=yes`)
+- **__down-clean__** : Arrête puis supprime tous les conteneurs ET les volumes (DESTRUCTIF, `CONFIRM=yes`)
+- **__down-clean-service__** : Arrête puis supprime un service ciblé et ses volumes exclusifs (DESTRUCTIF, `CONFIRM=yes`)
 - **__stop__** : Arrête un service (ex: make stop SERVICE=azuriom)
 - **__restart-service__** : Redémarre un service (ex: make restart-service SERVICE=azuriom)
-- **__logs_service__** : Suit les logs d'un service (ex: make logs_service SERVICE=azuriom)
+- **__logs-service__** : Suit les logs d'un service (ex: make logs-service SERVICE=azuriom)
 - **__up-service__** : Démarre un service (ex: make up-service SERVICE=azuriom)
-- **__down-service__** : Arrête et supprime un service (ex: make down-service SERVICE=azuriom)
-- **__ps_service__** : État d'un service (ex: make ps_service SERVICE=azuriom)
+- **__down-service__** : Arrête un service sans supprimer son conteneur (ex: make down-service SERVICE=azuriom)
+- **__ps-service__** : État d'un service (ex: make ps-service SERVICE=azuriom)
 - **__services__** : Liste tous les noms de services
+
+## Arrêt et suppression
+
+| Commande | Portée | Action |
+| --- | --- | --- |
+| `make down` | Toute l'infrastructure | Arrête les conteneurs sans les supprimer |
+| `make down-service SERVICE=nom` | Un seul service | Arrête le conteneur sans le supprimer |
+| `make clean` | Toute l'infrastructure | Supprime les conteneurs et les volumes |
+| `make clean-service SERVICE=nom` | Un seul service | Supprime le conteneur et ses volumes exclusifs |
+| `make down-clean` | Toute l'infrastructure | Arrête puis supprime les conteneurs et les volumes |
+| `make down-clean-service SERVICE=nom` | Un seul service | Arrête puis supprime le conteneur et ses volumes exclusifs |
+
+Les commandes `clean`, `clean-service`, `down-clean` et `down-clean-service` sont destructives et exigent `CONFIRM=yes`.
+`clean-service` et `down-clean-service` n'acceptent qu'un seul nom de service.
+Un volume partagé avec un autre service, ou encore utilisé par un autre conteneur, est conservé.
+
+```sh
+sudo CONFIRM=yes make clean-service SERVICE=azuriom
+sudo CONFIRM=yes make down-clean-service SERVICE=azuriom
+```
 
 ## Services
 ### Bases
@@ -83,4 +106,9 @@ Les services communiquent via :
 ## Utilisation
 - `sudo make init` - Initialisation (création des secrets, volumes, réseaux)
 - `sudo make up` - Démarrage complet
+- `sudo make down` - Arrêt complet sans supprimer les conteneurs
+- `sudo make down-service SERVICE=azuriom` - Arrêt d'un service sans supprimer son conteneur
 - `sudo make services` - Liste complète des services disponibles
+- `sudo CONFIRM=yes make clean` - Suppression complète des conteneurs et volumes
+- `sudo CONFIRM=yes make clean-service SERVICE=azuriom` - Suppression d'un service et de ses volumes
+- `sudo CONFIRM=yes make down-clean-service SERVICE=azuriom` - Arrêt puis suppression d'un service et de ses volumes
