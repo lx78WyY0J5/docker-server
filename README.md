@@ -108,6 +108,7 @@ toutes les adresses changeront en même temps.
 ### Applications Minecraft
 - `mc-anarchie`, `mc-creatif`, `mc-opprison`, `mc-hub`, `mc-skyblock`, `mc-survie`, `mc-rpg`, `mc-test` : Serveurs de jeu Minecraft
 - `mc-plugins` : Plugins pour les serveurs
+- mondes Minecraft : les cartes de départ sont incluses dans l'image Paper (`stacks/minecraft/paper/maps`)
 
 ## Réseaux
 Les services communiquent via :

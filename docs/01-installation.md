@@ -90,6 +90,7 @@ Au premier lancement :
 
 - les images de base sont construites si nécessaire ;
 - le dépôt du site PHP est cloné dans `stacks/web/php-site/src` ;
+- les mondes Minecraft sont extraits des cartes livrées avec l'image Paper ;
 - les bases de données sont initialisées ;
 - les certificats HTTPS sont demandés à Let's Encrypt lors du premier accès.
 

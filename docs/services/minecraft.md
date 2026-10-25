@@ -123,6 +123,44 @@ sudo CONFIRM=yes make clean-service SERVICE=velocity
 Les deux valeurs doivent être cohérentes. En mode premium, le joueur doit
 posséder Minecraft Java.
 
+## Mondes initiaux (maps)
+
+Les cartes de départ sont livrées avec l'image Paper, dans
+`stacks/minecraft/paper/maps/<Carte>/Spawn.zip`. Au premier démarrage d'un
+serveur, l'entrypoint extrait la carte dans son volume `/data` ; les démarrages
+suivants conservent le monde et les modifications des joueurs.
+
+| Serveur | Carte utilisée |
+|---|---|
+| `mc-hub` | `Hub` |
+| `mc-survie` | `Survie` |
+| `mc-anarchie` | `Survie` |
+| `mc-test` | `Survie` |
+| `mc-skyblock` | `SkyBlock` |
+| `mc-opprison` | `OPPrison` |
+| `mc-creatif` | génération vanilla |
+| `mc-rpg` | génération vanilla |
+
+Les cartes contiennent un monde nommé `Spawn`. `MINECRAFT_LEVEL_NAME` doit donc
+rester `Spawn` pour qu'elles soient utilisées.
+
+L'extraction n'a lieu que si le monde est absent ou si le fichier de carte a
+changé depuis la dernière installation. Après une mise à jour du dépôt qui
+modifie une carte, reconstruisez l'image et redémarrez le serveur concerné :
+
+```sh
+sudo make paper-base
+sudo make up-service SERVICE=mc-hub
+```
+
+Le monde est alors réinstallé depuis l'archive : les modifications locales de
+ce monde sont remplacées. Pour repartir d'une carte propre sans mise à jour :
+
+```sh
+sudo CONFIRM=yes make clean-service SERVICE=mc-hub
+sudo make up-service SERVICE=mc-hub
+```
+
 ## Plugins
 
 `mc-plugins` télécharge notamment :
@@ -143,16 +181,3 @@ sudo make up-service SERVICE=mc-plugins
 
 `make backup` archive les mondes des serveurs Paper. Les volumes de Velocity et
 des plugins ne sont pas sauvegardés (ils peuvent être recréés).
-
-## Problème connu
-
-Dans la version actuelle du dépôt, `stacks/minecraft/paper/entrypoint.sh`
-s'arrête après la préparation des variables : il manque la génération des
-fichiers de configuration et le lancement de Java. Les conteneurs `mc-*`
-peuvent donc s'arrêter immédiatement. Vérifiez les logs :
-
-```sh
-sudo make logs-service SERVICE=mc-hub
-```
-
-Voir [Dépannage](../06-depannage.md).

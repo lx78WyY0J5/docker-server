@@ -141,7 +141,6 @@ services concernés :
 
 | Service | Symptôme | Cause probable |
 |---|---|---|
-| Minecraft Paper | Les conteneurs `mc-*` s'arrêtent aussitôt | `stacks/minecraft/paper/entrypoint.sh` s'arrête avant de lancer Java |
 | Mailcow | `make mail-integrate` ne copie pas l'override | Le script génère un fichier local au lieu de l'installer dans `MAILCOW_DIR` |
 
 En attendant une correction, consultez les fichiers concernés et adaptez-les, ou

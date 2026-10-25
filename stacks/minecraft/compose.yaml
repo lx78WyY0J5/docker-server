@@ -6,7 +6,9 @@
 #   ports Bedrock 19132/tcp, 19132/udp, 19133/udp) ;
 # - les serveurs Paper ne sont accessibles que sur le réseau interne ;
 # - mc-plugins télécharge les plugins officiels dans un volume partagé, puis
-#   chaque serveur les recopie dans son propre dossier plugins.
+#   chaque serveur les recopie dans son propre dossier plugins ;
+# - l'image Paper embarque les cartes de départ (stacks/minecraft/paper/maps)
+#   et les extrait dans le volume du serveur au premier démarrage.
 # =============================================================================
 
 name: altherneum

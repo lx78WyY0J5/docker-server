@@ -10,6 +10,10 @@ plusieurs services. Elles n'ont ni URL ni mot de passe.
 | `altherneum/postgres:18` | `images/postgres` | `db-forgejo` |
 | `altherneum/paper:1.21.11` | `stacks/minecraft/paper` | Serveurs Paper |
 
+L'image Paper embarque aussi les cartes de départ
+(`stacks/minecraft/paper/maps`) et l'entrypoint qui les installe dans le volume
+du serveur.
+
 ## Construire les images
 
 ```sh
@@ -42,6 +46,7 @@ stacks (`php-site`, `azuriom`, `forgejo`, `code-server`, `keeweb`, `meme`,
 |---|---|
 | Un `Dockerfile` de `images/` | `sudo make base` |
 | Un `Dockerfile` d'une stack | `sudo make build` |
+| Une carte Minecraft dans `stacks/minecraft/paper/maps` | `sudo make paper-base` |
 | `compose.yaml` seulement | `sudo make up-service SERVICE=nom` |
 
 Après une reconstruction, redémarrez les services concernés :
