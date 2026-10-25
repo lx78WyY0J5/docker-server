@@ -1,4 +1,4 @@
-# Traefik — proxy et HTTPS
+# Traefik - proxy et HTTPS
 
 **Rôle :** reçoit tout le trafic web, redirige HTTP vers HTTPS, crée les
 certificats Let's Encrypt et envoie chaque adresse vers le bon service.

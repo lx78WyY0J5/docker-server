@@ -1,4 +1,4 @@
-# Meme — site de redirection
+# Meme - site de redirection
 
 **Rôle :** petite page statique qui redirige vers une vidéo YouTube choisie au
 hasard.

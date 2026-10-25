@@ -1,16 +1,3 @@
-# =============================================================================
-# Altherneum — compose racine
-# =============================================================================
-# Chaque stack est indépendante et possède son propre fichier compose.
-# `include` est supporté par Docker Compose v2.24+.
-# Documentation : https://docs.docker.com/compose/how-tos/multiple-compose-files/include/
-#
-# Les fichiers inclus répètent `name: altherneum` pour pouvoir être lancés
-# seuls (`docker compose -f stacks/.../compose.yaml up -d`) avec les mêmes
-# noms de conteneurs et de volumes. Lors d'un `include`, Compose ne fusionne
-# que les services et les ressources : le `name` des fichiers inclus est ignoré.
-# =============================================================================
-
 name: altherneum
 
 include:

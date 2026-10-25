@@ -1,4 +1,4 @@
-# Mailcow — messagerie
+# Mailcow - messagerie
 
 **Rôle :** messagerie complète (SMTP, IMAP, webmail) pour le domaine. Mailcow
 est une stack **séparée**, installée hors de ce dépôt.

@@ -1,5 +1,5 @@
 # =============================================================================
-# Azuriom — release officielle, installée dans l'image PHP/Apache.
+# Azuriom - release officielle, installée dans l'image PHP/Apache.
 # Docs : https://azuriom.com/docs/
 # Release : https://github.com/Azuriom/Azuriom/releases
 # =============================================================================

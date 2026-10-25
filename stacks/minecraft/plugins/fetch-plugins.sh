@@ -47,12 +47,12 @@ fetch \
     "https://github.com/ViaVersion/ViaBackwards/releases/download/5.12.1/ViaBackwards-5.12.1.jar" \
     "$PAPER_DIR/ViaBackwards.jar"
 
-# WorldEdit (Paper 1.21.11) — uniquement sur le serveur créatif.
+# WorldEdit (Paper 1.21.11) - uniquement sur le serveur créatif.
 fetch \
     "https://cdn.modrinth.com/data/1u6JkXh5/versions/YFnqiUlL/worldedit-bukkit-7.4.6.jar" \
     "$PAPER_CREATIF_DIR/WorldEdit.jar"
 
-# Geyser / Floodgate (Bedrock cross-play) — Velocity.
+# Geyser / Floodgate (Bedrock cross-play) - Velocity.
 # Floodgate n'est installé que sur le proxy : c'est le mode officiel recommandé
 # lorsque les serveurs Paper n'utilisent pas l'API Floodgate.
 # Nécessite : ports 19132/tcp, 19132/udp et 19133/udp publiés + config

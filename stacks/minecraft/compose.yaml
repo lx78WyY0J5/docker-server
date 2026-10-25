@@ -1,5 +1,5 @@
 # =============================================================================
-# Stack Minecraft — Velocity + 8 serveurs Paper.
+# Stack Minecraft - Velocity + 8 serveurs Paper.
 # Docs : https://docs.papermc.io/velocity/ et https://docs.papermc.io/paper/
 # =============================================================================
 # - velocity est le seul conteneur joignable par les joueurs (TCP 25565 et
@@ -73,7 +73,7 @@ services:
     volumes:
       - altherneum_mc-velocity-data:/data
       - altherneum_mc-plugins:/opt/plugins:ro
-    # Bedrock (Geyser) — RakNet UDP 19132, signalisation NetherNet TCP 19132
+    # Bedrock (Geyser) - RakNet UDP 19132, signalisation NetherNet TCP 19132
     # et WebRTC NetherNet UDP 19133.
     ports:
       - "19132:19132/tcp"

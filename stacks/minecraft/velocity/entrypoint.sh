@@ -60,14 +60,14 @@ if [ ! -f /data/server-icon.png ]; then
     cp /opt/velocity/config/server-icon.png /data/server-icon.png
 fi
 
-# Config Geyser (Bedrock) — copie si absente.
+# Config Geyser (Bedrock) - copie si absente.
 if [ ! -f "$GEYSER_DIR/config.yml" ]; then
     sed -e "s|__DOMAIN__|${DOMAIN_SAFE}|g" \
         -e "s|__MOTD__|${MOTD_SAFE}|g" \
         /opt/velocity/config/geyser.yml.template > "$GEYSER_DIR/config.yml"
 fi
 
-# Config Floodgate (Bedrock) — copie si absente.
+# Config Floodgate (Bedrock) - copie si absente.
 if [ ! -f "$FLOODGATE_DIR/config.yml" ]; then
     cp /opt/velocity/config/floodgate.yml.template "$FLOODGATE_DIR/config.yml"
 fi

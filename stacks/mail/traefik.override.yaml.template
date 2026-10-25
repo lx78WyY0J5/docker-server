@@ -1,6 +1,6 @@
 # =============================================================================
 # Override mailcow : placé dans $MAILCOW_DIR/docker-compose.override.yml
-# Généré par scripts/mail-integrate.sh — ne pas éditer sur place.
+# Généré par scripts/mail-integrate.sh - ne pas éditer sur place.
 # =============================================================================
 services:
   nginx-mailcow:

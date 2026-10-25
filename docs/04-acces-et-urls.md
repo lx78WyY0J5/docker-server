@@ -37,7 +37,7 @@ Le domaine `altherneum.fr` n'est qu'un exemple.
 | code-server | `code` ou `vscode` | Mot de passe unique | `CODE_SERVER_PASSWORD` |
 | KeeWeb | `keeweb`, `keepass`, `keys` ou `key` | HTTP Basic | `KEEWEB_UI_USER` / `KEEWEB_UI_PASSWORD` |
 | phpMyAdmin | `phpmyadmin` | HTTP Basic puis compte base | `PMA_ADMIN_USER` / `PMA_ADMIN_PASSWORD` |
-| Meme | `meme`, `windows`, `microsoft`, `arch` ou `linux` | Aucune | — |
+| Meme | `meme`, `windows`, `microsoft`, `arch` ou `linux` | Aucune | - |
 | Mailcow | `mail` | Compte mailcow | Mot de passe créé pendant l'installation de mailcow |
 | Webmail | `webmail` ou `mails` | Compte mailcow | Redirige vers `mail.<domaine>` |
 

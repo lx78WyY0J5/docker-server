@@ -1,6 +1,6 @@
 #!/bin/sh
 # =============================================================================
-# install.sh — Installation automatisée d'Altherneum docker-server
+# install.sh - Installation automatisée d'Altherneum docker-server
 # Usage : curl -fsSL <url> | sh    ou    ./install.sh
 # =============================================================================
 set -eu
@@ -208,7 +208,7 @@ show_next_steps() {
     cat <<EOF
 
 ================================================================================
-✅ Initialisation terminée — les services ne sont PAS encore démarrés
+✅ Initialisation terminée - les services ne sont PAS encore démarrés
 ================================================================================
 
 Le script a installé Docker, cloné le dépôt et généré `.env`, les secrets,

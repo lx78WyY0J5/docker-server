@@ -1,5 +1,5 @@
 # =============================================================================
-# Velocity — proxy Minecraft officiel PaperMC.
+# Velocity - proxy Minecraft officiel PaperMC.
 # Docs : https://docs.papermc.io/velocity/
 # API v3 (Fill) : https://fill.papermc.io/v3/projects/velocity
 # =============================================================================

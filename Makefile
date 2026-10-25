@@ -1,5 +1,5 @@
 # =============================================================================
-# Altherneum — raccourcis d'exploitation
+# Altherneum - raccourcis d'exploitation
 # =============================================================================
 SHELL := /bin/sh
 COMPOSE := docker compose

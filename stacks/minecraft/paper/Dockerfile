@@ -1,5 +1,5 @@
 # =============================================================================
-# Paper — serveur Minecraft officiel PaperMC.
+# Paper - serveur Minecraft officiel PaperMC.
 # Docs : https://docs.papermc.io/paper/
 # API v3 (Fill) : https://fill.papermc.io/v3/projects/paper
 # =============================================================================

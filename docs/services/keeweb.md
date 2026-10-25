@@ -1,4 +1,4 @@
-# KeeWeb — gestionnaire de mots de passe
+# KeeWeb - gestionnaire de mots de passe
 
 **Rôle :** interface web pour ouvrir et stocker des fichiers KeePass
 (`.kdbx`), avec un espace WebDAV pour les synchroniser.
