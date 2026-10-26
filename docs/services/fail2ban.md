@@ -30,7 +30,7 @@ sudo make stop SERVICE=fail2ban
 sudo CONFIRM=yes make clean-service SERVICE=fail2ban
 ```
 
-Cela supprime le volume `altherneum_fail2ban-data` (base des bannissements).
+Cela supprime le volume `fail2ban-data` (base des bannissements).
 
 ## Fonctionnement
 

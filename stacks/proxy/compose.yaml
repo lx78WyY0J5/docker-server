@@ -1,11 +1,9 @@
-name: altherneum
-
 services:
   traefik:
     build:
       context: .
       dockerfile: Dockerfile
-    image: altherneum/traefik:3.7.16
+    image: traefik:3.7.16
     container_name: traefik
     restart: unless-stopped
     security_opt:
@@ -26,8 +24,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./auth:/etc/traefik/auth:ro
-      - altherneum_traefik-acme:/acme
-      - altherneum_traefik-logs:/var/log/traefik
+      - traefik-acme:/acme
+      - traefik-logs:/var/log/traefik
     networks:
       - proxy
 
@@ -37,7 +35,9 @@ networks:
     external: true
 
 volumes:
-  altherneum_traefik-acme:
-    name: altherneum_traefik-acme
-  altherneum_traefik-logs:
-    name: altherneum_traefik-logs
+  traefik-acme:
+    name: traefik-acme
+  traefik-logs:
+    name: traefik-logs
+    labels:
+      should.backup: "true"

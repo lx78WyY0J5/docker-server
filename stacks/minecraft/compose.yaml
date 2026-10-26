@@ -11,13 +11,11 @@
 #   et les extrait dans le volume du serveur au premier démarrage.
 # =============================================================================
 
-name: altherneum
-
 # -----------------------------------------------------------------------------
 # Ancre commune à tous les serveurs Paper (voir docs/services/minecraft.md).
 # -----------------------------------------------------------------------------
 x-paper: &paper
-  image: altherneum/paper:1.21.11
+  image: paper:1.21.11
   restart: unless-stopped
   depends_on:
     mc-plugins:
@@ -36,20 +34,20 @@ x-paper: &paper
 
 services:
   # ---------------------------------------------------------------------------
-  # Télécharge les plugins (Altherneum, ViaVersion, ViaBackwards, Geyser,
+  # Télécharge les plugins (plugin, ViaVersion, ViaBackwards, Geyser,
   # Floodgate) ainsi que WorldEdit pour le serveur créatif, puis s'arrête.
   # ---------------------------------------------------------------------------
   mc-plugins:
     build:
       context: ./plugins
       dockerfile: Dockerfile
-    image: altherneum/mc-plugins:1
+    image: mc-plugins:1
     container_name: mc-plugins
     restart: "no"
     environment:
       TZ: ${TZ}
     volumes:
-      - altherneum_mc-plugins:/plugins
+      - mc-plugins:/plugins
     networks:
       - proxy # accès Internet pour les téléchargements
 
@@ -60,7 +58,7 @@ services:
     build:
       context: ./velocity
       dockerfile: Dockerfile
-    image: altherneum/velocity:4.3.0
+    image: velocity:4.3.0
     container_name: velocity
     restart: unless-stopped
     environment:
@@ -71,8 +69,8 @@ services:
       VELOCITY_ONLINE_MODE: ${VELOCITY_ONLINE_MODE:-true}
       VELOCITY_MOTD: "${VELOCITY_MOTD:-<#09add3>MOTD}"
     volumes:
-      - altherneum_mc-velocity-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-velocity-data:/data
+      - mc-plugins:/opt/plugins:ro
     # Bedrock (Geyser) - RakNet UDP 19132, signalisation NetherNet TCP 19132
     # et WebRTC NetherNet UDP 19133.
     ports:
@@ -105,8 +103,8 @@ services:
       SERVER_NAME: hub
       MEMORY: ${MINECRAFT_MEMORY_HUB}
     volumes:
-      - altherneum_mc-hub-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-hub-data:/data
+      - mc-plugins:/opt/plugins:ro
 
   mc-survie:
     <<: *paper
@@ -116,8 +114,8 @@ services:
       SERVER_NAME: survie
       MEMORY: ${MINECRAFT_MEMORY_SURVIE}
     volumes:
-      - altherneum_mc-survie-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-survie-data:/data
+      - mc-plugins:/opt/plugins:ro
 
   mc-creatif:
     <<: *paper
@@ -127,8 +125,8 @@ services:
       SERVER_NAME: creatif
       MEMORY: ${MINECRAFT_MEMORY_CREATIF}
     volumes:
-      - altherneum_mc-creatif-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-creatif-data:/data
+      - mc-plugins:/opt/plugins:ro
 
   mc-anarchie:
     <<: *paper
@@ -138,8 +136,8 @@ services:
       SERVER_NAME: anarchie
       MEMORY: ${MINECRAFT_MEMORY_ANARCHIE}
     volumes:
-      - altherneum_mc-anarchie-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-anarchie-data:/data
+      - mc-plugins:/opt/plugins:ro
 
   mc-rpg:
     <<: *paper
@@ -149,8 +147,8 @@ services:
       SERVER_NAME: rpg
       MEMORY: ${MINECRAFT_MEMORY_RPG}
     volumes:
-      - altherneum_mc-rpg-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-rpg-data:/data
+      - mc-plugins:/opt/plugins:ro
 
   mc-skyblock:
     <<: *paper
@@ -160,8 +158,8 @@ services:
       SERVER_NAME: skyblock
       MEMORY: ${MINECRAFT_MEMORY_SKYBLOCK}
     volumes:
-      - altherneum_mc-skyblock-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-skyblock-data:/data
+      - mc-plugins:/opt/plugins:ro
 
   mc-opprison:
     <<: *paper
@@ -171,8 +169,8 @@ services:
       SERVER_NAME: opprison
       MEMORY: ${MINECRAFT_MEMORY_OPPRISON}
     volumes:
-      - altherneum_mc-opprison-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-opprison-data:/data
+      - mc-plugins:/opt/plugins:ro
 
   mc-test:
     <<: *paper
@@ -182,8 +180,8 @@ services:
       SERVER_NAME: test
       MEMORY: ${MINECRAFT_MEMORY_TEST}
     volumes:
-      - altherneum_mc-test-data:/data
-      - altherneum_mc-plugins:/opt/plugins:ro
+      - mc-test-data:/data
+      - mc-plugins:/opt/plugins:ro
 
 networks:
   proxy:
@@ -192,50 +190,50 @@ networks:
   minecraft:
     name: ${MINECRAFT_NETWORK}
     external: true
-  # Sortie Internet uniquement pour les serveurs Paper : le plugin Altherneum
+  # Sortie Internet uniquement pour les serveurs Paper : le plugin
   # vérifie google.fr/discord.com et Paper récupère les clés Mojang. Aucun
   # port n'est publié sur ce réseau.
   egress:
-    name: altherneum_minecraft_egress
+    name: minecraft_egress
 
 volumes:
-  altherneum_mc-plugins:
-    name: altherneum_mc-plugins
+  mc-plugins:
+    name: mc-plugins
     labels:
-      com.altherneum.backup: "false"
-  altherneum_mc-velocity-data:
-    name: altherneum_mc-velocity-data
+      should.backup: "false"
+  mc-velocity-data:
+    name: mc-velocity-data
     labels:
-      com.altherneum.backup: "false"
-  altherneum_mc-hub-data:
-    name: altherneum_mc-hub-data
+      should.backup: "true"
+  mc-hub-data:
+    name: mc-hub-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_mc-survie-data:
-    name: altherneum_mc-survie-data
+      should.backup: "true"
+  mc-survie-data:
+    name: mc-survie-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_mc-creatif-data:
-    name: altherneum_mc-creatif-data
+      should.backup: "true"
+  mc-creatif-data:
+    name: mc-creatif-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_mc-anarchie-data:
-    name: altherneum_mc-anarchie-data
+      should.backup: "true"
+  mc-anarchie-data:
+    name: mc-anarchie-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_mc-rpg-data:
-    name: altherneum_mc-rpg-data
+      should.backup: "true"
+  mc-rpg-data:
+    name: mc-rpg-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_mc-skyblock-data:
-    name: altherneum_mc-skyblock-data
+      should.backup: "true"
+  mc-skyblock-data:
+    name: mc-skyblock-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_mc-opprison-data:
-    name: altherneum_mc-opprison-data
+      should.backup: "true"
+  mc-opprison-data:
+    name: mc-opprison-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_mc-test-data:
-    name: altherneum_mc-test-data
+      should.backup: "true"
+  mc-test-data:
+    name: mc-test-data
     labels:
-      com.altherneum.backup: "true"
+      should.backup: "true"

@@ -5,7 +5,7 @@
 **Conteneurs :** `php-site`, `db-php`  
 **Adresse :** `https://php.<DOMAIN_NAME><TLD>`  
 **Alias :** `https://phpdoc.<DOMAIN_NAME><TLD>`  
-**Exemple :** `https://php.altherneum.fr`
+**Exemple :** `https://php.supername.fr`
 
 ## Mot de passe
 

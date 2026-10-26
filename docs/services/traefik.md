@@ -5,7 +5,7 @@ certificats Let's Encrypt et envoie chaque adresse vers le bon service.
 
 **Conteneur :** `traefik`  
 **Adresse :** `https://traefik.<DOMAIN_NAME><TLD>`  
-**Exemple :** `https://traefik.altherneum.fr`
+**Exemple :** `https://traefik.supername.fr`
 
 ## Mot de passe
 
@@ -52,8 +52,8 @@ sudo make stop SERVICE=traefik
 sudo CONFIRM=yes make clean-service SERVICE=traefik
 ```
 
-Cela supprime le conteneur et le volume `altherneum_traefik-acme` (les
-certificats). Le volume `altherneum_traefik-logs` est partagé avec fail2ban : il
+Cela supprime le conteneur et le volume `traefik-acme` (les
+certificats). Le volume `traefik-logs` est partagé avec fail2ban : il
 est conservé. Les certificats seront redemandés au prochain démarrage.
 Let's Encrypt limite le nombre de demandes : évitez de nettoyer Traefik sans
 raison.

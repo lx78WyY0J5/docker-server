@@ -3,7 +3,7 @@
 # Docs : https://azuriom.com/docs/
 # Release : https://github.com/Azuriom/Azuriom/releases
 # =============================================================================
-FROM altherneum/php-apache:latest
+FROM php-apache:latest
 
 ARG AZURIOM_VERSION=1.2.13
 

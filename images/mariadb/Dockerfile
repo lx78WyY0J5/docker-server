@@ -4,4 +4,4 @@
 # =============================================================================
 FROM mariadb:11.8
 
-COPY conf.d/99-altherneum.cnf /etc/mysql/conf.d/99-altherneum.cnf
+COPY conf.d/99-mysql.cnf /etc/mysql/conf.d/99-mysql.cnf

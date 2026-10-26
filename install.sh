@@ -1,6 +1,6 @@
 #!/bin/sh
 # =============================================================================
-# install.sh - Installation automatisée d'Altherneum docker-server
+# install.sh - Installation automatisée docker
 # Usage : curl -fsSL <url> | sh    ou    ./install.sh
 # =============================================================================
 set -eu

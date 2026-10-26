@@ -18,12 +18,12 @@ serveurs Paper.
 | Bedrock | `mc.<DOMAIN_NAME><TLD>` port `19132` |
 | Accès direct à un serveur | `<serveur>.<domaine>:25565` |
 
-Exemple avec `altherneum.fr` :
+Exemple avec `supername.fr` :
 
 ```text
-mc.altherneum.fr:25565          (Java)
-mc.altherneum.fr:19132          (Bedrock)
-survie.altherneum.fr:25565      (accès direct)
+mc.supername.fr:25565          (Java)
+mc.supername.fr:19132          (Bedrock)
+survie.supername.fr:25565      (accès direct)
 ```
 
 ## Mots de passe
@@ -165,7 +165,7 @@ sudo make up-service SERVICE=mc-hub
 
 `mc-plugins` télécharge notamment :
 
-- le plugin Altherneum ;
+- le plugin ;
 - ViaVersion et ViaBackwards ;
 - WorldEdit (serveur créatif uniquement) ;
 - Geyser et Floodgate pour Bedrock.

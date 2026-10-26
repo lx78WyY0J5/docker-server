@@ -1,5 +1,3 @@
-name: altherneum
-
 services:
   azuriom:
     build:
@@ -7,7 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         AZURIOM_VERSION: ${AZURIOM_VERSION}
-    image: altherneum/azuriom:${AZURIOM_VERSION}
+    image: azuriom:${AZURIOM_VERSION}
     container_name: azuriom
     restart: unless-stopped
     environment:
@@ -36,10 +34,10 @@ services:
       MAIL_ENCRYPTION: ${AZURIOM_MAIL_ENCRYPTION}
       MAIL_FROM_ADDRESS: ${AZURIOM_MAIL_FROM_ADDRESS}
     volumes:
-      - altherneum_azuriom-storage:/var/www/html/storage
-      - altherneum_azuriom-plugins:/var/www/html/plugins
-      - altherneum_azuriom-themes:/var/www/html/themes
-      - altherneum_azuriom-config:/var/www/config
+      - azuriom-storage:/var/www/html/storage
+      - azuriom-plugins:/var/www/html/plugins
+      - azuriom-themes:/var/www/html/themes
+      - azuriom-config:/var/www/config
     networks:
       - proxy
       - azuriom_internal
@@ -57,7 +55,7 @@ services:
       traefik.http.services.azuriom.loadbalancer.server.port: "80"
 
   db-azuriom:
-    image: altherneum/mariadb:11.8
+    image: mariadb:11.8
     container_name: db-azuriom
     restart: unless-stopped
     environment:
@@ -67,7 +65,7 @@ services:
       MARIADB_USER: ${AZURIOM_DB_USER}
       MARIADB_PASSWORD: ${AZURIOM_DB_PASSWORD}
     volumes:
-      - altherneum_db-azuriom:/var/lib/mysql
+      - db-azuriom:/var/lib/mysql
     networks:
       - azuriom_internal
       - db_admin
@@ -83,7 +81,7 @@ networks:
     name: ${PROXY_NETWORK}
     external: true
   azuriom_internal:
-    name: altherneum_azuriom_internal
+    name: azuriom_internal
     internal: true
   db_admin:
     name: ${DB_ADMIN_NETWORK}
@@ -93,23 +91,23 @@ networks:
     external: true
 
 volumes:
-  altherneum_azuriom-storage:
-    name: altherneum_azuriom-storage
+  azuriom-storage:
+    name: azuriom-storage
     labels:
-      com.altherneum.backup: "true"
-  altherneum_azuriom-plugins:
-    name: altherneum_azuriom-plugins
+      should.backup: "true"
+  azuriom-plugins:
+    name: azuriom-plugins
     labels:
-      com.altherneum.backup: "true"
-  altherneum_azuriom-themes:
-    name: altherneum_azuriom-themes
+      should.backup: "true"
+  azuriom-themes:
+    name: azuriom-themes
     labels:
-      com.altherneum.backup: "true"
-  altherneum_azuriom-config:
-    name: altherneum_azuriom-config
+      should.backup: "true"
+  azuriom-config:
+    name: azuriom-config
     labels:
-      com.altherneum.backup: "true"
-  altherneum_db-azuriom:
-    name: altherneum_db-azuriom
+      should.backup: "true"
+  db-azuriom:
+    name: db-azuriom
     labels:
-      com.altherneum.backup: "false"
+      should.backup: "true"

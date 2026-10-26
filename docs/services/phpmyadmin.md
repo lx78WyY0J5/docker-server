@@ -4,7 +4,7 @@
 
 **Conteneur :** `phpmyadmin`  
 **Adresse :** `https://phpmyadmin.<DOMAIN_NAME><TLD>`  
-**Exemple :** `https://phpmyadmin.altherneum.fr`
+**Exemple :** `https://phpmyadmin.supername.fr`
 
 ## Authentification en deux étapes
 

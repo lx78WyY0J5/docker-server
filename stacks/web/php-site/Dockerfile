@@ -4,7 +4,7 @@
 # Le code du site est cloné dans ./src (voir make php-site-src) et monté
 # dans /var/www/html. La racine web est ./src/public.
 # =============================================================================
-FROM altherneum/php-apache:latest
+FROM php-apache:latest
 
 # git est requis par /api/deploy pour mettre à jour le dépôt monté.
 RUN apk add --no-cache git

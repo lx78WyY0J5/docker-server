@@ -4,7 +4,7 @@ Chaque fiche décrit un service : son rôle, son adresse, les variables `.env`
 nécessaires, les mots de passe, et les commandes pour démarrer, arrêter et
 nettoyer.
 
-Les adresses utilisent `altherneum.fr` comme exemple. Remplacez-le par
+Les adresses utilisent `supername.fr` comme exemple. Remplacez-le par
 `<DOMAIN_NAME><TLD>` de votre `.env`. Voir
 [Accès et URL](../04-acces-et-urls.md).
 

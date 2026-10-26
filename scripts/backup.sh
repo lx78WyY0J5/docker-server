@@ -54,7 +54,7 @@ else
 fi
 
 # --- Volumes applicatifs ----------------------------------------------------
-VOLUMES=$(docker volume ls -q --filter label=com.altherneum.backup=true)
+VOLUMES=$(docker volume ls -q --filter label=should.backup=true)
 for volume in $VOLUMES; do
     echo "  - volume $volume"
     docker run --rm \

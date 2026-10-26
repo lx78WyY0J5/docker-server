@@ -5,7 +5,7 @@ est une stack **séparée**, installée hors de ce dépôt.
 
 **Adresse d'administration :** `https://mail.<DOMAIN_NAME><TLD>`  
 **Webmail :** `https://webmail.<domaine>` ou `https://mails.<domaine>`  
-**Exemple :** `https://mail.altherneum.fr`
+**Exemple :** `https://mail.supername.fr`
 
 ## Où est Mailcow ?
 
@@ -67,8 +67,8 @@ sudo sed -i \
   "$MAILCOW_DIR/docker-compose.override.yml"
 ```
 
-Exemple : `@@DOMAIN@@` devient `altherneum.fr` et `@@DOMAIN_REGEX@@` devient
-`altherneum[.]fr`.
+Exemple : `@@DOMAIN@@` devient `supername.fr` et `@@DOMAIN_REGEX@@` devient
+`supername[.]fr`.
 
 > `make mail-integrate` est prévu pour automatiser cette étape, mais le script
 > actuel ne copie pas encore l'override dans `MAILCOW_DIR`. Vérifiez le fichier

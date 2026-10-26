@@ -1,11 +1,9 @@
-name: altherneum
-
 services:
   phpmyadmin:
     build:
       context: .
       dockerfile: Dockerfile
-    image: altherneum/phpmyadmin:5.2.3
+    image: phpmyadmin:5.2.3
     container_name: phpmyadmin
     restart: unless-stopped
     environment:

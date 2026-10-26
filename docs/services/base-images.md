@@ -5,10 +5,10 @@ plusieurs services. Elles n'ont ni URL ni mot de passe.
 
 | Image | Dossier | Utilisée par |
 |---|---|---|
-| `altherneum/php-apache:latest` | `images/php-apache` | Site PHP, Azuriom |
-| `altherneum/mariadb:11.8` | `images/mariadb` | `db-php`, `db-azuriom` |
-| `altherneum/postgres:18` | `images/postgres` | `db-forgejo` |
-| `altherneum/paper:1.21.11` | `stacks/minecraft/paper` | Serveurs Paper |
+| `php-apache:latest` | `images/php-apache` | Site PHP, Azuriom |
+| `mariadb:11.8` | `images/mariadb` | `db-php`, `db-azuriom` |
+| `postgres:18` | `images/postgres` | `db-forgejo` |
+| `paper:1.21.11` | `stacks/minecraft/paper` | Serveurs Paper |
 
 L'image Paper embarque aussi les cartes de départ
 (`stacks/minecraft/paper/maps`) et l'entrypoint qui les installe dans le volume

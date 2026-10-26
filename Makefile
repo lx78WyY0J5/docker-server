@@ -1,6 +1,3 @@
-# =============================================================================
-# Altherneum - raccourcis d'exploitation
-# =============================================================================
 SHELL := /bin/sh
 COMPOSE := docker compose
 MAILCOW_DIR := $(or $(shell sed -n 's/^MAILCOW_DIR=//p' .env 2>/dev/null | tail -n1),/opt/mailcow-dockerized)
@@ -35,24 +32,24 @@ php-site-env: ## Régénère stacks/web/php-site/src/.env depuis .env
 	PHP_SITE_ENV_OVERWRITE=true ./scripts/php-site-src.sh
 
 php-base: ## Construit uniquement l'image de base PHP/Apache
-	docker build --pull --no-cache -t altherneum/php-apache:latest images/php-apache
+	docker build --pull --no-cache -t php-apache:latest images/php-apache
 
 mariadb-base: ## Construit uniquement l'image de base MariaDB
-	docker build -t altherneum/mariadb:11.8 images/mariadb
+	docker build -t mariadb:11.8 images/mariadb
 
 postgres-base: ## Construit uniquement l'image de base PostgreSQL
-	docker build -t altherneum/postgres:18 images/postgres
+	docker build -t postgres:18 images/postgres
 
 paper-base: ## Construit l'image commune des serveurs Paper
-	docker build -t altherneum/paper:1.21.11 stacks/minecraft/paper
+	docker build -t paper:1.21.11 stacks/minecraft/paper
 
 base: php-base mariadb-base postgres-base paper-base ## Construit toutes les images de base
 
 ensure-base: ## Construit les images de base manquantes
-	@docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 || $(MAKE) php-base
-	@docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 || $(MAKE) mariadb-base
-	@docker image inspect altherneum/postgres:18 >/dev/null 2>&1 || $(MAKE) postgres-base
-	@docker image inspect altherneum/paper:1.21.11 >/dev/null 2>&1 || $(MAKE) paper-base
+	@docker image inspect php-apache:latest >/dev/null 2>&1 || $(MAKE) php-base
+	@docker image inspect mariadb:11.8 >/dev/null 2>&1 || $(MAKE) mariadb-base
+	@docker image inspect postgres:18 >/dev/null 2>&1 || $(MAKE) postgres-base
+	@docker image inspect paper:1.21.11 >/dev/null 2>&1 || $(MAKE) paper-base
 
 up: check-env ensure-networks ensure-base php-site-src ## Démarre toute l'infrastructure
 	$(COMPOSE) up -d --remove-orphans
@@ -95,7 +92,7 @@ mail-logs: ## Suit les logs de mailcow
 	cd "$(MAILCOW_DIR)" && docker compose logs -f --tail=200
 
 clean: ## Supprime tous les conteneurs ET les volumes (DESTRUCTIF)
-	@printf "Cette commande supprime toutes les données Docker d'Altherneum. Confirmer avec CONFIRM=yes\n"
+	@printf "Cette commande supprime toutes les données Docker. Confirmer avec CONFIRM=yes\n"
 	@test "$${CONFIRM:-no}" = "yes"
 	$(COMPOSE) down -v --remove-orphans
 
@@ -107,7 +104,7 @@ clean-service: ## Supprime un service, ses conteneurs et ses volumes exclusifs (
 	./scripts/clean-service.sh $(SERVICE)
 
 down-clean: ## Arrête puis supprime tous les conteneurs ET volumes (DESTRUCTIF)
-	@printf "Cette commande supprime toutes les données Docker d'Altherneum. Confirmer avec CONFIRM=yes\n"
+	@printf "Cette commande supprime toutes les données Docker. Confirmer avec CONFIRM=yes\n"
 	@test "$${CONFIRM:-no}" = "yes"
 	$(COMPOSE) stop
 	$(COMPOSE) down -v --remove-orphans
@@ -140,19 +137,19 @@ up-service: ## Démarre un service (ex: make up-service SERVICE=azuriom)
 		$(MAKE) php-site-src ; \
 	fi
 	@if [ -n "$(filter $(SERVICE),php-site azuriom)" ]; then \
-		docker image inspect altherneum/php-apache:latest >/dev/null 2>&1 \
+		docker image inspect php-apache:latest >/dev/null 2>&1 \
 			|| $(MAKE) php-base ; \
 	fi
 	@if [ -n "$(filter $(SERVICE),php-site azuriom db-php db-azuriom)" ]; then \
-		docker image inspect altherneum/mariadb:11.8 >/dev/null 2>&1 \
+		docker image inspect mariadb:11.8 >/dev/null 2>&1 \
 			|| $(MAKE) mariadb-base ; \
 	fi
 	@if [ -n "$(filter $(SERVICE),forgejo db-forgejo)" ]; then \
-		docker image inspect altherneum/postgres:18 >/dev/null 2>&1 \
+		docker image inspect postgres:18 >/dev/null 2>&1 \
 			|| $(MAKE) postgres-base ; \
 	fi
 	@if [ -n "$(filter $(SERVICE),mc-hub mc-survie mc-creatif mc-anarchie mc-rpg mc-skyblock mc-opprison mc-test)" ]; then \
-		docker image inspect altherneum/paper:1.21.11 >/dev/null 2>&1 \
+		docker image inspect paper:1.21.11 >/dev/null 2>&1 \
 			|| $(MAKE) paper-base ; \
 	fi
 	$(COMPOSE) --env-file .env up -d --build $(SERVICE)

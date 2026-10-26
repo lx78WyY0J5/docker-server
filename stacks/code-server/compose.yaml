@@ -1,11 +1,9 @@
-name: altherneum
-
 services:
   code-server:
     build:
       context: .
       dockerfile: Dockerfile
-    image: altherneum/code-server:4.141.0
+    image: code-server:4.141.0
     container_name: code-server
     restart: unless-stopped
     environment:
@@ -13,8 +11,8 @@ services:
       PASSWORD: ${CODE_SERVER_PASSWORD}
       DEFAULT_WORKSPACE: /home/coder/workspace
     volumes:
-      - altherneum_code-server-data:/home/coder/.local/share/code-server
-      - altherneum_code-server-workspace:/home/coder/workspace
+      - code-server-data:/home/coder/.local/share/code-server
+      - code-server-workspace:/home/coder/workspace
     networks:
       - proxy
     labels:
@@ -32,11 +30,11 @@ networks:
     external: true
 
 volumes:
-  altherneum_code-server-data:
-    name: altherneum_code-server-data
+  code-server-data:
+    name: code-server-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_code-server-workspace:
-    name: altherneum_code-server-workspace
+      should.backup: "true"
+  code-server-workspace:
+    name: code-server-workspace
     labels:
-      com.altherneum.backup: "true"
+      should.backup: "true"

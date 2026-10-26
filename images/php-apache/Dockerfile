@@ -55,12 +55,12 @@ RUN set -eu; \
     && mkdir -p /var/www/html /etc/php/conf.d \
     && chown -R apache:apache /var/www/html
 
-COPY apache/altherneum.conf /etc/apache2/conf.d/000-altherneum.conf
-COPY php/99-altherneum.ini /usr/local/share/php/99-altherneum.ini
+COPY apache/apache.conf /etc/apache2/conf.d/000-apache.conf
+COPY php/99-php.ini /usr/local/share/php/99-php.ini
 COPY entrypoint.sh /usr/local/bin/php-apache-entrypoint
 
-RUN cp /usr/local/share/php/99-altherneum.ini /etc/php/conf.d/99-altherneum.ini \
-    && chmod 0644 /etc/php/conf.d/99-altherneum.ini \
+RUN cp /usr/local/share/php/99-php.ini /etc/php/conf.d/99-php.ini \
+    && chmod 0644 /etc/php/conf.d/99-php.ini \
     && chmod +x /usr/local/bin/php-apache-entrypoint
 
 WORKDIR /var/www/html

@@ -5,7 +5,7 @@
 **Conteneurs :** `azuriom`, `db-azuriom`  
 **Adresse :** `https://minecraft.<DOMAIN_NAME><TLD>`  
 **Administration :** `https://minecraft.<DOMAIN_NAME><TLD>/admin`  
-**Exemple :** `https://minecraft.altherneum.fr`
+**Exemple :** `https://minecraft.supername.fr`
 
 ## Mot de passe
 

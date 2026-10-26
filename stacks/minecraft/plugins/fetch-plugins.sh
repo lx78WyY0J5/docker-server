@@ -34,7 +34,7 @@ fetch() {
     mv "$target.tmp" "$target"
 }
 
-# Plugin maison Altherneum (Paper).
+# Plugin maison (Paper).
 fetch \
     "https://github.com/Altherneum/plugin/releases/latest/download/plugin-1.0-fat.jar" \
     "$PAPER_DIR/altherneum-plugin.jar"

@@ -1,11 +1,9 @@
-name: altherneum
-
 services:
   meme:
     build:
       context: .
       dockerfile: Dockerfile
-    image: altherneum/meme:1
+    image: meme:1
     container_name: meme
     restart: unless-stopped
     environment:

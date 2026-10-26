@@ -1,11 +1,9 @@
-name: altherneum
-
 services:
   php-site:
     build:
       context: .
       dockerfile: Dockerfile
-    image: altherneum/php-site:1
+    image: php-site:1
     container_name: php-site
     restart: unless-stopped
     environment:
@@ -38,7 +36,7 @@ services:
       traefik.http.services.php-site.loadbalancer.server.port: "80"
 
   db-php:
-    image: altherneum/mariadb:11.8
+    image: mariadb:11.8
     container_name: db-php
     restart: unless-stopped
     environment:
@@ -48,7 +46,7 @@ services:
       MARIADB_USER: ${PHP_DB_USER}
       MARIADB_PASSWORD: ${PHP_DB_PASSWORD}
     volumes:
-      - altherneum_db-php:/var/lib/mysql
+      - db-php:/var/lib/mysql
     networks:
       - php_internal
       - db_admin
@@ -64,14 +62,14 @@ networks:
     name: ${PROXY_NETWORK}
     external: true
   php_internal:
-    name: altherneum_php_internal
+    name: php_internal
     internal: true
   db_admin:
     name: ${DB_ADMIN_NETWORK}
     external: true
 
 volumes:
-  altherneum_db-php:
-    name: altherneum_db-php
+  db-php:
+    name: db-php
     labels:
-      com.altherneum.backup: "false"
+      should.backup: "true"

@@ -5,7 +5,7 @@
 **Conteneurs :** `forgejo`, `db-forgejo`  
 **Adresse :** `https://git.<DOMAIN_NAME><TLD>`  
 **Alias :** `https://repo.<domaine>` et `https://forgejo.<domaine>`  
-**Exemple :** `https://git.altherneum.fr`
+**Exemple :** `https://git.supername.fr`
 
 ## Mot de passe
 
@@ -95,7 +95,7 @@ boîte `git@` dans mailcow avec le même mot de passe.
 `make backup` sauvegarde :
 
 - la base via un dump PostgreSQL `db-forgejo` ;
-- le volume `altherneum_forgejo-data` (dépôts, comptes, configuration).
+- le volume `forgejo-data` (dépôts, comptes, configuration).
 
 ## Dépannage
 

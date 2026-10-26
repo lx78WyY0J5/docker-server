@@ -6,7 +6,7 @@ directement sur le serveur.
 **Conteneur :** `code-server`  
 **Adresse :** `https://code.<DOMAIN_NAME><TLD>`  
 **Alias :** `https://vscode.<domaine>`  
-**Exemple :** `https://code.altherneum.fr`
+**Exemple :** `https://code.supername.fr`
 
 ## Mot de passe
 
@@ -43,8 +43,8 @@ sudo make stop SERVICE=code-server
 sudo CONFIRM=yes make clean-service SERVICE=code-server
 ```
 
-Cela supprime les volumes `altherneum_code-server-data` (réglages, extensions)
-et `altherneum_code-server-workspace` (vos projets). **Sauvegardez avant.**
+Cela supprime les volumes `code-server-data` (réglages, extensions)
+et `code-server-workspace` (vos projets). **Sauvegardez avant.**
 
 ## Utilisation
 
@@ -66,8 +66,8 @@ aux redémarrages, mais pas à `clean-service`.
 
 `make backup` archive les deux volumes :
 
-- `altherneum_code-server-data` ;
-- `altherneum_code-server-workspace`.
+- `code-server-data` ;
+- `code-server-workspace`.
 
 ## Dépannage
 

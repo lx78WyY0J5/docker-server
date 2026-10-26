@@ -1,11 +1,9 @@
-name: altherneum
-
 services:
   bot:
     build:
       context: .
       dockerfile: Dockerfile
-    image: altherneum/discord-bot:1.0
+    image: discord-bot:1.0
     container_name: discord-bot
     restart: unless-stopped
     environment:
@@ -13,16 +11,16 @@ services:
       DISCORD_BOT_NAME: ${DISCORD_BOT_NAME}
       DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
     volumes:
-      - altherneum_discord-data:/DiscordBot/Data
+      - discord-data:/DiscordBot/Data
       # L'entrypoint écrit tokens.yml dans data/ (minuscule).
-      - altherneum_discord-config:/DiscordBot/data
+      - discord-config:/DiscordBot/data
 
 volumes:
-  altherneum_discord-data:
-    name: altherneum_discord-data
+  discord-data:
+    name: discord-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_discord-config:
-    name: altherneum_discord-config
+      should.backup: "true"
+  discord-config:
+    name: discord-config
     labels:
-      com.altherneum.backup: "false"
+      should.backup: "true"

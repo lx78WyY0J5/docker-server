@@ -1,5 +1,3 @@
-name: altherneum
-
 services:
   forgejo:
     build:
@@ -7,7 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         FORGEJO_VERSION: ${FORGEJO_VERSION}
-    image: altherneum/forgejo:${FORGEJO_VERSION}
+    image: forgejo:${FORGEJO_VERSION}
     container_name: forgejo
     restart: unless-stopped
     environment:
@@ -50,7 +48,7 @@ services:
       FORGEJO__mailer__PASSWD: ${FORGEJO_MAIL_PASSWORD}
       FORGEJO__mailer__FROM: ${FORGEJO_MAIL_FROM}
     volumes:
-      - altherneum_forgejo-data:/data
+      - forgejo-data:/data
     networks:
       - proxy
       - forgejo_internal
@@ -67,7 +65,7 @@ services:
       traefik.http.services.forgejo.loadbalancer.server.port: "3000"
 
   db-forgejo:
-    image: altherneum/postgres:18
+    image: postgres:18
     container_name: db-forgejo
     restart: unless-stopped
     environment:
@@ -76,7 +74,7 @@ services:
       POSTGRES_USER: ${FORGEJO_DB_USER}
       POSTGRES_PASSWORD: ${FORGEJO_DB_PASSWORD}
     volumes:
-      - altherneum_db-forgejo:/var/lib/postgresql
+      - db-forgejo:/var/lib/postgresql
     networks:
       - forgejo_internal
     healthcheck:
@@ -91,15 +89,15 @@ networks:
     name: ${PROXY_NETWORK}
     external: true
   forgejo_internal:
-    name: altherneum_forgejo_internal
+    name: forgejo_internal
     internal: true
 
 volumes:
-  altherneum_forgejo-data:
-    name: altherneum_forgejo-data
+  forgejo-data:
+    name: forgejo-data
     labels:
-      com.altherneum.backup: "true"
-  altherneum_db-forgejo:
-    name: altherneum_db-forgejo
+      should.backup: "true"
+  db-forgejo:
+    name: db-forgejo
     labels:
-      com.altherneum.backup: "false"
+      should.backup: "true"

@@ -1,8 +1,6 @@
 # Docker Server
 
-Infrastructure Docker de l'association Altherneum : proxy HTTPS, sites web,
-forge Git, éditeur de code, gestionnaire de mots de passe, serveurs Minecraft,
-bot Discord, messagerie et sauvegardes.
+Infrastructure Docker : proxy HTTPS, sites web, forge Git, éditeur de code, gestionnaire de mots de passe, serveurs Minecraft, bot Discord, messagerie et sauvegardes.
 
 ## Documentation
 
@@ -31,8 +29,7 @@ sudo make ps
 ```
 
 Les adresses suivent le modèle `https://<service>.<DOMAIN_NAME><TLD>`.
-Exemple : avec `DOMAIN_NAME=altherneum` et `TLD=.fr`, Forgejo est sur
-`https://git.altherneum.fr`. Le domaine et l'extension peuvent être changés :
+Exemple : avec `DOMAIN_NAME=supername` et `TLD=.fr`, Forgejo est sur `https://git.supername.fr`. Le domaine et l'extension peuvent être changés :
 toutes les adresses changeront en même temps.
 
 ## Commandes

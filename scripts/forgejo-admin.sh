@@ -15,7 +15,7 @@ PASSWORD=$(get_env FORGEJO_ADMIN_PASSWORD)
 [ -n "$NAME" ] || { echo "Erreur : FORGEJO_ADMIN_NAME est vide." >&2; exit 1; }
 if [ "$NAME" = "admin" ]; then
     echo "Erreur : 'admin' est un nom réservé par Forgejo." >&2
-    echo "Définir par exemple FORGEJO_ADMIN_NAME=altherneum dans .env." >&2
+    echo "Définir par exemple FORGEJO_ADMIN_NAME=username dans .env." >&2
     exit 1
 fi
 

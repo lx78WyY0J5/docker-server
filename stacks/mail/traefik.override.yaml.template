@@ -6,7 +6,7 @@ services:
   nginx-mailcow:
     networks:
       - mailcow-network
-      - altherneum_proxy
+      - proxy
     # Traefik publie déjà 80/443 : on retire les ports de mailcow.
     ports: !reset []
     labels:
@@ -35,6 +35,6 @@ services:
       traefik.http.middlewares.mailcow-webmail.redirectRegex.permanent: "true"
 
 networks:
-  altherneum_proxy:
+  proxy:
     external: true
     name: "@@PROXY_NETWORK@@"

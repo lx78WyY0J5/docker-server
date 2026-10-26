@@ -1,6 +1,6 @@
 # Bot Discord
 
-**Rôle :** bot du serveur Discord Altherneum.
+**Rôle :** bot du serveur Discord.
 
 **Conteneur :** `discord-bot`  
 **Adresse :** aucune. Le bot se connecte à Discord ; il n'ouvre pas de site web.
@@ -32,8 +32,8 @@ sudo make stop SERVICE=bot
 sudo CONFIRM=yes make clean-service SERVICE=bot
 ```
 
-Cela supprime les volumes `altherneum_discord-data` et
-`altherneum_discord-config`. Les données du bot sont perdues.
+Cela supprime les volumes `discord-data` et
+`discord-config`. Les données du bot sont perdues.
 
 ## Inviter le bot
 
@@ -53,7 +53,7 @@ Cela supprime les volumes `altherneum_discord-data` et
 
 ## Sauvegarde
 
-`make backup` archive `altherneum_discord-data`. Le token reste dans `.env`,
+`make backup` archive `discord-data`. Le token reste dans `.env`,
 à sauvegarder séparément.
 
 ## Dépannage

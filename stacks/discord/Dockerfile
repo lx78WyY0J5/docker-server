@@ -1,6 +1,5 @@
 # =============================================================================
-# Bot Discord Altherneum.
-# Release officielle : https://github.com/Altherneum/bot/releases
+# Bot Discord.
 # =============================================================================
 FROM eclipse-temurin:21-jre-alpine
 

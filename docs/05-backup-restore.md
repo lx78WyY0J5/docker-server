@@ -11,7 +11,7 @@ La sauvegarde est créée dans `backups/AAAA-MM-JJ_HHMMSS/`. Elle contient :
 - un dump SQL de `db-php` (MariaDB) ;
 - un dump SQL de `db-azuriom` (MariaDB) ;
 - un dump SQL de `db-forgejo` (PostgreSQL) ;
-- les volumes applicatifs marqués `com.altherneum.backup=true` :
+- les volumes applicatifs marqués `should.backup=true` :
   - Azuriom : stockage, plugins, thèmes, configuration ;
   - Forgejo : dépôts, comptes, configuration ;
   - KeeWeb : fichiers WebDAV ;

@@ -7,7 +7,7 @@ set -eu
 TLD=${TLD:-}
 DOMAIN="${DOMAIN_NAME}${TLD}"
 ACME_EMAIL=${ACME_EMAIL:-admin@${DOMAIN}}
-PROXY_NETWORK=${PROXY_NETWORK:-altherneum_proxy}
+PROXY_NETWORK=${PROXY_NETWORK:-proxy}
 
 DOMAIN_REGEX=$(printf '%s' "$DOMAIN" | sed 's/\./[.]/g')
 

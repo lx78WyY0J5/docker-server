@@ -8,21 +8,21 @@ Toutes les adresses web utilisent le même modèle :
 https://<sous-domaine>.<DOMAIN_NAME><TLD>
 ```
 
-Exemple avec `DOMAIN_NAME=altherneum` et `TLD=.fr` :
+Exemple avec `DOMAIN_NAME=supername` et `TLD=.fr` :
 
 ```text
-https://git.altherneum.fr
-          ^^^   ^^^^^^^^ ^^^
-          |     nom      extension
-          sous-domaine
+https://git.supername.fr
+        ^^^  ^^^^^^^^ ^^
+sous-domaine, nom, extension
+
 ```
 
 Si vous changez `DOMAIN_NAME` ou `TLD`, **toutes les adresses changent**.
-Le domaine `altherneum.fr` n'est qu'un exemple.
+Le domaine `supername.fr` n'est qu'un exemple.
 
 | `DOMAIN_NAME` | `TLD` | Adresse Forgejo |
 |---|---|---|
-| `altherneum` | `.fr` | `https://git.altherneum.fr` |
+| `supername` | `.fr` | `https://git.supername.fr` |
 | `monprojet` | `.com` | `https://git.monprojet.com` |
 | `localhost` | *(vide)* | `https://git.localhost` |
 

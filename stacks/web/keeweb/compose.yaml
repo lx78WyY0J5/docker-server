@@ -1,5 +1,3 @@
-name: altherneum
-
 services:
   keeweb:
     build:
@@ -7,7 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         KEEWEB_VERSION: "1.18.7"
-    image: altherneum/keeweb:1.18.7
+    image: keeweb:1.18.7
     container_name: keeweb
     restart: unless-stopped
     environment:
@@ -15,7 +13,7 @@ services:
       DOMAIN: ${DOMAIN_NAME}${TLD}
     volumes:
       - ./auth:/usr/local/apache2/auth:ro
-      - altherneum_keeweb-webdav:/var/www/webdav
+      - keeweb-webdav:/var/www/webdav
     networks:
       - proxy
     labels:
@@ -33,7 +31,7 @@ networks:
     external: true
 
 volumes:
-  altherneum_keeweb-webdav:
-    name: altherneum_keeweb-webdav
+  keeweb-webdav:
+    name: keeweb-webdav
     labels:
-      com.altherneum.backup: "true"
+      should.backup: "true"

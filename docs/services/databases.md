@@ -5,9 +5,9 @@ directement sur Internet.
 
 | Conteneur | Moteur | Application | Volume | Accès phpMyAdmin |
 |---|---|---|---|---|
-| `db-php` | MariaDB 11.8 | Site PHP | `altherneum_db-php` | Oui |
-| `db-azuriom` | MariaDB 11.8 | Azuriom | `altherneum_db-azuriom` | Oui |
-| `db-forgejo` | PostgreSQL 18 | Forgejo | `altherneum_db-forgejo` | Non |
+| `db-php` | MariaDB 11.8 | Site PHP | `db-php` | Oui |
+| `db-azuriom` | MariaDB 11.8 | Azuriom | `db-azuriom` | Oui |
+| `db-forgejo` | PostgreSQL 18 | Forgejo | `db-forgejo` | Non |
 
 ## Identifiants
 

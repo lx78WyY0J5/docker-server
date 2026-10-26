@@ -6,7 +6,7 @@ hasard.
 **Conteneur :** `meme`  
 **Adresse :** `https://meme.<DOMAIN_NAME><TLD>`  
 **Alias :** `windows`, `microsoft`, `arch`, `linux`  
-**Exemple :** `https://meme.altherneum.fr`
+**Exemple :** `https://meme.supername.fr`
 
 ## Mot de passe
 

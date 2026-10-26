@@ -6,7 +6,7 @@
 **Conteneur :** `keeweb`  
 **Adresse :** `https://keeweb.<DOMAIN_NAME><TLD>`  
 **Alias :** `keepass`, `keys`, `key`  
-**Exemple :** `https://keeweb.altherneum.fr`
+**Exemple :** `https://keeweb.supername.fr`
 
 ## Mots de passe
 
@@ -33,7 +33,7 @@ https://keeweb.<DOMAIN_NAME><TLD>/webdav/
 ```
 
 Le fichier prévu par la configuration par défaut est `kdbx.kdbx`, stocké dans
-le volume `altherneum_keeweb-webdav`.
+le volume `keeweb-webdav`.
 
 ## Démarrer / arrêter
 
@@ -64,7 +64,7 @@ Cela supprime le volume WebDAV et donc **tous les fichiers `.kdbx`**.
 
 ## Sauvegarde
 
-`make backup` archive le volume `altherneum_keeweb-webdav`, qui contient les
+`make backup` archive le volume `keeweb-webdav`, qui contient les
 fichiers `.kdbx`. Le mot de passe maître reste indispensable pour les ouvrir :
 conservez-le dans un endroit sûr.
 

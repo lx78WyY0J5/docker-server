@@ -31,7 +31,7 @@ sudo make ps
 
 Les adresses sont construites à partir de deux variables de `.env` :
 
-- `DOMAIN_NAME` : le nom, sans extension. Exemple : `altherneum`
+- `DOMAIN_NAME` : le nom, sans extension. Exemple : `supername`
 - `TLD` : l'extension, avec le point. Exemple : `.fr` (ou vide pour `localhost`)
 
 L'adresse d'un service suit ce modèle :
@@ -44,11 +44,11 @@ Exemples :
 
 | `DOMAIN_NAME` | `TLD` | Adresse de Forgejo |
 |---|---|---|
-| `altherneum` | `.fr` | `https://git.altherneum.fr` |
+| `supername` | `.fr` | `https://git.supername.fr` |
 | `monprojet` | `.com` | `https://git.monprojet.com` |
 | `localhost` | *(vide)* | `https://git.localhost` |
 
-Le domaine `altherneum.fr` utilisé dans les exemples n'est **pas obligatoire** :
+Le domaine `supername.fr` utilisé dans les exemples n'est **pas obligatoire** :
 remplacez-le par le vôtre. Voir [Accès et URL](04-acces-et-urls.md).
 
 ## Trouver un mot de passe
@@ -91,18 +91,18 @@ secrets. Le fichier est déjà ignoré par Git.
 
 | Service | Fiche | Adresse par défaut (exemple) |
 |---|---|---|
-| Traefik (proxy) | [traefik.md](services/traefik.md) | `https://traefik.altherneum.fr` |
-| Site PHP | [php-site.md](services/php-site.md) | `https://php.altherneum.fr` |
-| Azuriom | [azuriom.md](services/azuriom.md) | `https://minecraft.altherneum.fr` |
-| Forgejo | [forgejo.md](services/forgejo.md) | `https://git.altherneum.fr` |
-| code-server | [code-server.md](services/code-server.md) | `https://code.altherneum.fr` |
-| KeeWeb | [keeweb.md](services/keeweb.md) | `https://keeweb.altherneum.fr` |
-| phpMyAdmin | [phpmyadmin.md](services/phpmyadmin.md) | `https://phpmyadmin.altherneum.fr` |
-| Site de memes | [meme.md](services/meme.md) | `https://meme.altherneum.fr` |
-| Minecraft | [minecraft.md](services/minecraft.md) | `mc.altherneum.fr:25565` |
+| Traefik (proxy) | [traefik.md](services/traefik.md) | `https://traefik.supername.fr` |
+| Site PHP | [php-site.md](services/php-site.md) | `https://php.supername.fr` |
+| Azuriom | [azuriom.md](services/azuriom.md) | `https://minecraft.supername.fr` |
+| Forgejo | [forgejo.md](services/forgejo.md) | `https://git.supername.fr` |
+| code-server | [code-server.md](services/code-server.md) | `https://code.supername.fr` |
+| KeeWeb | [keeweb.md](services/keeweb.md) | `https://keeweb.supername.fr` |
+| phpMyAdmin | [phpmyadmin.md](services/phpmyadmin.md) | `https://phpmyadmin.supername.fr` |
+| Site de memes | [meme.md](services/meme.md) | `https://meme.supername.fr` |
+| Minecraft | [minecraft.md](services/minecraft.md) | `mc.supername.fr:25565` |
 | Bot Discord | [discord-bot.md](services/discord-bot.md) | *(pas d'URL)* |
 | fail2ban | [fail2ban.md](services/fail2ban.md) | *(pas d'URL)* |
-| Mailcow | [mailcow.md](services/mailcow.md) | `https://mail.altherneum.fr` |
+| Mailcow | [mailcow.md](services/mailcow.md) | `https://mail.supername.fr` |
 | Bases de données | [databases.md](services/databases.md) | *(accès interne)* |
 | Images de base | [base-images.md](services/base-images.md) | *(pas d'URL)* |
 

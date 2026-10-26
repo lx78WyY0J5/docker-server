@@ -10,7 +10,7 @@ fi
 mkdir -p /DiscordBot/data /DiscordBot/Data
 
 cat > /DiscordBot/data/tokens.yml <<EOF
-BotName: ${DISCORD_BOT_NAME:-Altherneum}
+BotName: ${DISCORD_BOT_NAME:-CHANGE_ME}
 Bot: ${DISCORD_BOT_TOKEN}
 EOF
 chmod 600 /DiscordBot/data/tokens.yml

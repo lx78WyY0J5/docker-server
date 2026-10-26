@@ -5,4 +5,4 @@
 # =============================================================================
 FROM phpmyadmin:5.2.3
 
-LABEL org.opencontainers.image.title="Altherneum phpMyAdmin"
+LABEL org.opencontainers.image.title="phpMyAdmin"
