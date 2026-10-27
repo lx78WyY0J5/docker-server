@@ -20,7 +20,10 @@
 # Ancre commune à tous les serveurs Paper (voir docs/services/minecraft.md).
 # -----------------------------------------------------------------------------
 x-paper: &paper
-  image: paper:1.21.11
+  image: paper
+  build:
+    context: ./paper
+    dockerfile: Dockerfile
   restart: unless-stopped
   depends_on:
     mc-plugins:
@@ -30,6 +33,8 @@ x-paper: &paper
     - egress
   environment: &paper-env
     TZ: ${TZ}
+    PAPER_VERSION: ${PAPER_VERSION}
+    PAPER_BUILD: ${PAPER_BUILD}
     # Variables exposées telles quelles au plugin (System.getenv).
     DOMAIN_NAME: ${DOMAIN_NAME}
     TLD: ${TLD}
@@ -49,11 +54,19 @@ services:
     build:
       context: ./plugins
       dockerfile: Dockerfile
-    image: mc-plugins:1
+    image: mc-plugins
     container_name: mc-plugins
     restart: "no"
     environment:
       TZ: ${TZ}
+      PAPER_VERSION: ${PAPER_VERSION}
+      PAPER_BUILD: ${PAPER_BUILD}
+      VIAVERSION_VERSION: ${VIAVERSION_VERSION}
+      VIABACKWARDS_VERSION: ${VIABACKWARDS_VERSION}
+      WORLDEDIT_VERSION: ${WORLDEDIT_VERSION}
+      WORLDEDIT_OPAQUE: ${WORLDEDIT_OPAQUE}
+      GEYSER_VERSION: ${GEYSER_VERSION}
+      FLOODGATE_VERSION: ${FLOODGATE_VERSION}
     volumes:
       - mc-plugins:/plugins
     networks:
@@ -66,7 +79,7 @@ services:
     build:
       context: ./velocity
       dockerfile: Dockerfile
-    image: velocity:4.3.0
+    image: velocity
     container_name: velocity
     restart: unless-stopped
     environment:

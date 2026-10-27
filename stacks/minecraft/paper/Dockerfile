@@ -8,6 +8,7 @@ FROM eclipse-temurin:25-jre-alpine
 ARG PAPER_VERSION=1.21.11
 ARG PAPER_BUILD=132
 ENV PAPER_VERSION=${PAPER_VERSION}
+ENV PAPER_BUILD=${PAPER_BUILD}
 
 RUN apk add --no-cache curl jq unzip \
     && PAPER_URL=$(curl -fsSL --retry 5 --retry-delay 2 \
