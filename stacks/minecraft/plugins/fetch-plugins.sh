@@ -5,9 +5,10 @@ set -eu
 
 PAPER_DIR=/plugins/paper
 PAPER_CREATIF_DIR=/plugins/paper-creatif
+DOWNLOAD_DIR=/plugins/downloads
 VELOCITY_DIR=/plugins/velocity
 
-mkdir -p "$PAPER_DIR" "$PAPER_CREATIF_DIR" "$VELOCITY_DIR"
+mkdir -p "$PAPER_DIR" "$PAPER_CREATIF_DIR" "$VELOCITY_DIR" "$DOWNLOAD_DIR"
 
 # Retire les anciens JAR obsolètes (avec version pour éviter conflits)
 rm -f "$VELOCITY_DIR"/Floodgate*.jar \
@@ -22,23 +23,24 @@ rm -f "$VELOCITY_DIR"/Floodgate*.jar \
 fetch_if_needed() {
     local url=$1
     local target=$2
+    local filename=$(basename "$target")
 
-    echo "checking : $target"
+    echo "checking : $filename"
     
     # Check if file exists (exact match by name)
-    if [ -f "/tmp/$target.tmp" ]; then
-        echo "✓ $target (déjà téléchargé)"
+    if [ -f "$DOWNLOAD_DIR/$filename.tmp" ]; then
+        echo "✓ $target (déjà téléchargé en tmp)"
         return 0
     fi
 
-    echo "→ Téléchargement de $target"
-    curl -fsSL --retry 5 --retry-delay 2 -o "/tmp/$target.tmp" "$url"
-    cp "/tmp/$target.tmp" "$target"
+    echo "→ Téléchargement de $filename"
+    curl -fsSL --retry 5 --retry-delay 2 -o "$DOWNLOAD_DIR/$filename.tmp" "$url"
+    cp "$DOWNLOAD_DIR/$filename.tmp" "$target"
 }
 
 # Plugin maison (Paper).
 fetch_if_needed \
-    "https://github.com/Altherneum/plugin/releases/latest/download/plugin-1.0-fat.jar" \
+    "https://github.com/Altherneum/plugin/releases/download/v.${PLUGIN_VERSION}/plugin-1.0-fat.jar" \
     "$PAPER_DIR/Plugin.jar"
 
 # ViaVersion
