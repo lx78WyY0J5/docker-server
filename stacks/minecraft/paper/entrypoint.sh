@@ -25,6 +25,22 @@ esac
 
 mkdir -p /data/config /data/plugins /data/cache
 
+# --- Données partagées du plugin maison -------------------------------------
+# Le volume mc-plugin-data est monté sur /plugin/DataFolder (voir compose.yaml).
+# Le plugin calcule son dossier de données depuis /data/plugins/plugin (trois
+# parents au-dessus), soit /DataFolder. On relie ce chemin au volume partagé.
+
+# Crée le dossier cible dans le volume partagé (sécurité si le montage manque).
+mkdir -p /plugin/DataFolder
+
+# Vérifie si /DataFolder n'est pas déjà un lien symbolique.
+if [ ! -L /DataFolder ]; then
+    # Supprime un éventuel vrai dossier local : ln -s refuse de le remplacer.
+    rm -rf /DataFolder
+    # Crée le lien /DataFolder -> /plugin/DataFolder attendu par le plugin.
+    ln -s /plugin/DataFolder /DataFolder
+fi
+
 # Le build a pré-téléchargé le jar Mojang et le jar Paper patché. On les copie
 # dans le volume avant le premier démarrage ; le réseau egress ne sert qu'aux
 # vérifications de plugins et aux appels Mojang, jamais au trafic joueur.

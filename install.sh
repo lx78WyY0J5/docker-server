@@ -224,7 +224,8 @@ Prochaines étapes :
    #   newgrp docker
    \$EDITOR .env
    # Renseigner au minimum :
-   #   - DISCORD_BOT_TOKEN
+   #   - DISCORD_BOT_TOKEN (bot Discord général)
+   #   - MINECRAFT_DISCORD_TOKEN_* (un bot par serveur Minecraft)
    #   - AZURIOM_ADMIN_GAME_ID (UUID Minecraft sans tirets, mode mc-online)
    # Si mailcow est utilisé, créer les boîtes noreply@ et git@ avec les
    # mots de passe déjà générés dans .env.

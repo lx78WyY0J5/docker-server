@@ -16,7 +16,8 @@ La sauvegarde est créée dans `backups/AAAA-MM-JJ_HHMMSS/`. Elle contient :
   - Forgejo : dépôts, comptes, configuration ;
   - KeeWeb : fichiers WebDAV ;
   - code-server : réglages et espace de travail ;
-  - Minecraft : mondes des serveurs Paper ;
+  - Minecraft : mondes des serveurs Paper, données partagées du plugin
+    (`mc-plugin-data`) et configuration de Velocity ;
   - bot Discord : données.
 
 Les volumes des bases de données ne sont **pas** archivés : les dumps SQL

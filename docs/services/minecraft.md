@@ -10,6 +10,20 @@ serveurs Paper.
 - `mc-hub`, `mc-survie`, `mc-creatif`, `mc-anarchie`, `mc-rpg`, `mc-skyblock`,
   `mc-opprison`, `mc-test` : serveurs de jeu.
 
+## Stockage
+
+| Chemin | Contenu | Volume |
+|---|---|---|
+| `/data` | Monde, `server.properties`, `plugins/`, `config/`, caches et logs du serveur | `mc-<serveur>-data` (un par serveur) |
+| `/data/plugins/plugin` | Configuration propre au plugin (par serveur) | `mc-<serveur>-data` |
+| `/plugin/DataFolder` | Données partagées du plugin : `players/`, `islands/`, `structures/`, argent, grades, tags… | `mc-plugin-data` (partagé) |
+| `/opt/plugins` | JAR des plugins téléchargés (lecture seule) | `mc-plugins` (partagé) |
+| `/data` (Velocity) | Configuration et plugins de Velocity | `mc-velocity-data` |
+
+Les mondes ne sont jamais dans le volume partagé : chaque serveur garde son
+propre volume. Seules les données du plugin qui doivent être communes (argent,
+grades, tags, îles) sont dans `mc-plugin-data`.
+
 ## Adresses
 
 | Usage | Adresse |
@@ -51,6 +65,14 @@ les joueurs.
 | `VELOCITY_ONLINE_MODE` | `true` premium, `false` hors-ligne |
 | `VELOCITY_MOTD` | Message affiché dans la liste des serveurs (`\n` pour un saut de ligne) |
 | `MINECRAFT_RCON_PASSWORD` | Mot de passe RCON |
+| `MINECRAFT_DISCORD_TOKEN_*` | Jeton du bot Discord de chaque serveur (un bot par serveur) |
+
+Les variables `MINECRAFT_DISCORD_TOKEN_HUB`, `MINECRAFT_DISCORD_TOKEN_SURVIE`,
+`MINECRAFT_DISCORD_TOKEN_CREATIF`, `MINECRAFT_DISCORD_TOKEN_ANARCHIE`,
+`MINECRAFT_DISCORD_TOKEN_RPG`, `MINECRAFT_DISCORD_TOKEN_SKYBLOCK`,
+`MINECRAFT_DISCORD_TOKEN_OPPRISON` et `MINECRAFT_DISCORD_TOKEN_TEST` sont
+transmises au plugin via `DISCORD_BOT_TOKEN`. Laisser une valeur vide désactive
+le bot de ce serveur.
 
 Les variables `MINECRAFT_MEMORY_HUB`, `MINECRAFT_MEMORY_SURVIE`,
 `MINECRAFT_MEMORY_CREATIF`, `MINECRAFT_MEMORY_ANARCHIE`,
@@ -104,8 +126,8 @@ sudo CONFIRM=yes make clean-service SERVICE=mc-hub
 ```
 
 Chaque serveur a son propre volume de monde. `clean-service` supprime ce volume
-et donc le monde du serveur. Le volume `mc-plugins` est partagé : il est
-conservé.
+et donc le monde du serveur. Les volumes `mc-plugins` et `mc-plugin-data` sont
+partagés : ils sont conservés.
 
 Pour supprimer aussi Velocity :
 
@@ -177,7 +199,57 @@ relancez :
 sudo make up-service SERVICE=mc-plugins
 ```
 
+## Données partagées du plugin
+
+Les huit serveurs Paper partagent le volume `mc-plugin-data`, monté sur
+`/plugin/DataFolder`. Le plugin maison y stocke les données communes : argent,
+grades, tags, données d'îles, etc.
+
+Le plugin calcule son dossier de données depuis `/data/plugins/plugin` (trois
+niveaux au-dessus), soit `/DataFolder`. L'entrypoint crée donc le lien
+`/DataFolder` → `/plugin/DataFolder`.
+
+Chaque serveur déduit son type de la variable `SERVER_NAME` (`hub`, `survie`,
+`creatif`, etc.). Il n'y a donc plus de fichier `serverTypeFile.yml` ni de ports
+internes différents. Le fichier `serverTypeFile.yml` d'une ancienne installation
+est ignoré et peut être supprimé du volume. Le serveur `test` est traité comme
+`Survie`, l'enum du plugin n'ayant pas de type `Test`.
+
+Chaque serveur Paper reçoit aussi son propre jeton Discord via
+`DISCORD_BOT_TOKEN`, alimenté par `MINECRAFT_DISCORD_TOKEN_<SERVEUR>`. Chaque
+serveur a donc son propre bot. L'ancien fichier `tokens.yml` n'est plus utilisé.
+
+Pour repartir des données de l'ancienne installation, copier son
+`Serveurs/DataFolder` dans le volume avant le premier démarrage :
+
+```sh
+docker run --rm \
+    -v mc-plugin-data:/target \
+    -v /chemin/vers/Serveurs/DataFolder:/source:ro \
+    alpine:3.24 sh -c 'mkdir -p /target && cp -a /source/. /target/'
+```
+
+> Les anciens fichiers `serverTypeFile.yml` et `tokens.yml` peuvent être
+> supprimés du volume : ils ne sont plus lus par le plugin.
+
+Après une modification de l'entrypoint, reconstruire l'image Paper puis
+redémarrer les serveurs :
+
+```sh
+sudo make paper-base
+sudo make up
+```
+
+Après une nouvelle release du plugin, relancer le téléchargement puis redémarrer
+les serveurs :
+
+```sh
+sudo make up-service SERVICE=mc-plugins
+sudo make up
+```
+
 ## Sauvegarde
 
-`make backup` archive les mondes des serveurs Paper. Les volumes de Velocity et
-des plugins ne sont pas sauvegardés (ils peuvent être recréés).
+`make backup` archive les mondes des serveurs Paper, les données partagées du
+plugin (`mc-plugin-data`) et la configuration de Velocity. Le volume des
+plugins (`mc-plugins`) n'est pas sauvegardé : il peut être retéléchargé.

@@ -32,6 +32,7 @@ Ces valeurs ne peuvent pas être générées automatiquement :
 | Variable | Obligatoire ? | Où la trouver |
 |---|---|---|
 | `DISCORD_BOT_TOKEN` | Oui pour le bot | Portail développeur Discord |
+| `MINECRAFT_DISCORD_TOKEN_*` | Non | Portail développeur Discord (un bot par serveur Minecraft) |
 | `AZURIOM_ADMIN_GAME_ID` | Oui en mode `mc-online` | UUID Minecraft du compte admin, sans tirets |
 | `WEBSITE_DISCORD_CLIENT_ID` | Non | Application Discord OAuth |
 | `WEBSITE_DISCORD_CLIENT_SECRET` | Non | Application Discord OAuth |

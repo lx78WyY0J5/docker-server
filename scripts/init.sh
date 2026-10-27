@@ -104,7 +104,8 @@ echo "  - htpasswd dans stacks/proxy/auth et stacks/web/keeweb/auth ;"
 echo "  - réseaux Docker vérifiés."
 echo
 echo "À renseigner manuellement avant le premier démarrage :"
-echo "  - DISCORD_BOT_TOKEN (portail développeur Discord) ;"
+echo "  - DISCORD_BOT_TOKEN (bot Discord général) ;"
+echo "  - MINECRAFT_DISCORD_TOKEN_* (un bot par serveur Minecraft) ;"
 echo "  - AZURIOM_ADMIN_GAME_ID (UUID Minecraft de l'admin, mode mc-online)."
 echo
 echo "Si mailcow est utilisé, créer les boîtes noreply@ et git@ avec les"

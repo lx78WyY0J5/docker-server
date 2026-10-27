@@ -8,7 +8,12 @@
 # - mc-plugins télécharge les plugins officiels dans un volume partagé, puis
 #   chaque serveur les recopie dans son propre dossier plugins ;
 # - l'image Paper embarque les cartes de départ (stacks/minecraft/paper/maps)
-#   et les extrait dans le volume du serveur au premier démarrage.
+#   et les extrait dans le volume du serveur au premier démarrage ;
+# - le volume partagé mc-plugin-data est monté sur /plugin/DataFolder dans
+#   chaque serveur Paper : le plugin maison y stocke les données communes
+#   (argent, grades, tags, îles) ;
+# - chaque serveur Paper reçoit son propre jeton Discord via DISCORD_BOT_TOKEN
+#   et déduit son type (Hub, Survie…) de la variable SERVER_NAME.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -99,6 +104,8 @@ services:
 
   # ---------------------------------------------------------------------------
   # Serveurs Paper : un conteneur par serveur, port interne 25565.
+  # Le plugin déduit son type de SERVER_NAME ; le monde reste sur le volume
+  # dédié de chaque serveur.
   # ---------------------------------------------------------------------------
   mc-hub:
     <<: *paper
@@ -106,9 +113,11 @@ services:
     environment:
       <<: *paper-env
       SERVER_NAME: hub
+      DISCORD_BOT_TOKEN: ${MINECRAFT_DISCORD_TOKEN_HUB:-}
       MEMORY: ${MINECRAFT_MEMORY_HUB}
     volumes:
       - mc-hub-data:/data
+      - mc-plugin-data:/plugin/DataFolder
       - mc-plugins:/opt/plugins:ro
 
   mc-survie:
@@ -117,9 +126,11 @@ services:
     environment:
       <<: *paper-env
       SERVER_NAME: survie
+      DISCORD_BOT_TOKEN: ${MINECRAFT_DISCORD_TOKEN_SURVIE:-}
       MEMORY: ${MINECRAFT_MEMORY_SURVIE}
     volumes:
       - mc-survie-data:/data
+      - mc-plugin-data:/plugin/DataFolder
       - mc-plugins:/opt/plugins:ro
 
   mc-creatif:
@@ -128,9 +139,11 @@ services:
     environment:
       <<: *paper-env
       SERVER_NAME: creatif
+      DISCORD_BOT_TOKEN: ${MINECRAFT_DISCORD_TOKEN_CREATIF:-}
       MEMORY: ${MINECRAFT_MEMORY_CREATIF}
     volumes:
       - mc-creatif-data:/data
+      - mc-plugin-data:/plugin/DataFolder
       - mc-plugins:/opt/plugins:ro
 
   mc-anarchie:
@@ -139,9 +152,11 @@ services:
     environment:
       <<: *paper-env
       SERVER_NAME: anarchie
+      DISCORD_BOT_TOKEN: ${MINECRAFT_DISCORD_TOKEN_ANARCHIE:-}
       MEMORY: ${MINECRAFT_MEMORY_ANARCHIE}
     volumes:
       - mc-anarchie-data:/data
+      - mc-plugin-data:/plugin/DataFolder
       - mc-plugins:/opt/plugins:ro
 
   mc-rpg:
@@ -150,9 +165,11 @@ services:
     environment:
       <<: *paper-env
       SERVER_NAME: rpg
+      DISCORD_BOT_TOKEN: ${MINECRAFT_DISCORD_TOKEN_RPG:-}
       MEMORY: ${MINECRAFT_MEMORY_RPG}
     volumes:
       - mc-rpg-data:/data
+      - mc-plugin-data:/plugin/DataFolder
       - mc-plugins:/opt/plugins:ro
 
   mc-skyblock:
@@ -161,9 +178,11 @@ services:
     environment:
       <<: *paper-env
       SERVER_NAME: skyblock
+      DISCORD_BOT_TOKEN: ${MINECRAFT_DISCORD_TOKEN_SKYBLOCK:-}
       MEMORY: ${MINECRAFT_MEMORY_SKYBLOCK}
     volumes:
       - mc-skyblock-data:/data
+      - mc-plugin-data:/plugin/DataFolder
       - mc-plugins:/opt/plugins:ro
 
   mc-opprison:
@@ -172,9 +191,11 @@ services:
     environment:
       <<: *paper-env
       SERVER_NAME: opprison
+      DISCORD_BOT_TOKEN: ${MINECRAFT_DISCORD_TOKEN_OPPRISON:-}
       MEMORY: ${MINECRAFT_MEMORY_OPPRISON}
     volumes:
       - mc-opprison-data:/data
+      - mc-plugin-data:/plugin/DataFolder
       - mc-plugins:/opt/plugins:ro
 
   mc-test:
@@ -183,9 +204,11 @@ services:
     environment:
       <<: *paper-env
       SERVER_NAME: test
+      DISCORD_BOT_TOKEN: ${MINECRAFT_DISCORD_TOKEN_TEST:-}
       MEMORY: ${MINECRAFT_MEMORY_TEST}
     volumes:
       - mc-test-data:/data
+      - mc-plugin-data:/plugin/DataFolder
       - mc-plugins:/opt/plugins:ro
 
 networks:
@@ -206,6 +229,12 @@ volumes:
     name: mc-plugins
     labels:
       should.backup: "false"
+  # Données partagées du plugin maison (argent, grades, tags, îles).
+  # Monté sur /plugin/DataFolder dans chaque serveur Paper.
+  mc-plugin-data:
+    name: mc-plugin-data
+    labels:
+      should.backup: "true"
   mc-velocity-data:
     name: mc-velocity-data
     labels:
