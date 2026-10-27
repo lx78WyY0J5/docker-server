@@ -25,6 +25,9 @@ x-paper: &paper
     - egress
   environment: &paper-env
     TZ: ${TZ}
+    # Variables exposées telles quelles au plugin (System.getenv).
+    DOMAIN_NAME: ${DOMAIN_NAME}
+    TLD: ${TLD}
     DOMAIN: ${DOMAIN_NAME}${TLD}
     VELOCITY_SECRET: ${VELOCITY_SECRET}
     VELOCITY_ONLINE_MODE: ${VELOCITY_ONLINE_MODE:-true}
@@ -63,6 +66,8 @@ services:
     restart: unless-stopped
     environment:
       TZ: ${TZ}
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      TLD: ${TLD}
       DOMAIN: ${DOMAIN_NAME}${TLD}
       VELOCITY_SECRET: ${VELOCITY_SECRET}
       VELOCITY_MEMORY: ${VELOCITY_MEMORY}
