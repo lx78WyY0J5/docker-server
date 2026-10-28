@@ -1,0 +1,59 @@
+# Azuriom
+## Boutique cassée
+- La boutique est mal formée, les articles semble ne pas avoir de références
+  - Cliquer cause l'erreur  : `ReferenceError: $ is not defined`
+  - Tout les articles ont la même URL `https://minecraft.localhost/shop/categories/global#`
+## ::marker visible
+- Le thème a une erreur étrange
+  - `html body div#app header div.sub-navbar.text-bg-primary.py-2 div.container div.row div.col-md-6.text-center.prism-nav-right li.nav-item`
+  - Dans la page HTML, cet élément a un `::marker` qui casse le CSS (et rend le site moche)
+```
+<li class="nav-item">
+    ::marker
+    <a href="https://minecraft.localhost/profile/theme" class="nav-link  d-none " data-theme-value="light">
+        <i class="bi bi-sun" data-bs-toggle="tooltip" aria-label="Thème clair" data-bs-original-title="Thème clair"></i>
+    </a>
+    <a href="https://minecraft.localhost/profile/theme" class="nav-link " data-theme-value="dark">
+        <i class="bi bi-moon-stars" data-bs-toggle="tooltip" aria-label="Thème sombre" data-bs-original-title="Thème sombre"></i>
+    </a>
+</li>
+```
+### Présence du mot "Altherneum"
+- Le mot "Altherneum" est présent en dur dans le code et n'est pas dynamique
+  - Il doit utiliser le `${DOMAIN_NAME}` pour remplacer le mot "Altherneum",
+  - Ou ${DOMAIN} pour les URL
+- Présence par exemple dans
+  - `~/repo/docker-server/stacks/web/azuriom/seed/database/navbar_elements.sql`
+  - `~/repo/docker-server/stacks/web/azuriom/seed/database/settings.sql`
+  - `~/repo/docker-server/stacks/web/azuriom/seed/database/social_links.sql`
+
+# Autre
+## Images avec logo
+- Dans le futur, ajouter les images à la racine, et indiquer à l'utilisateur de les remplacer au besoin (car avec le logo Altherneum, et le projet doit pouvoir changer de nom/identité facilement)
+  - Images dans en dossier ".env"
+  - Les copiers de ce .env vers le bon endroit (azuriom, logo minecraft server.png, etc)
+## Liste ToTest/OK
+- Lister chaque service
+- Faire un OK / à tester / bug / polish
+  - Azuriom : polish
+  - MC : polish
+    - Vérifier si les logos dans le menu marchent toujours (car j'ai l'impression que non)
+        - Logo du shop vanilla (diamond)
+        - Alors qu'il devrait (de mémoire) être un billet doré
+  - KeePass : OK (à revérifier)
+  - Coder-server : OK (à revérifier)
+  - Traefik : 
+    - Tester sur un VPS avec CNAME si le TLS marche
+      - Pour remplacer CertBot
+    - Tester chaque URL de redirection
+      - `ask / ai / ia`.${DOMAIN} : erreur : redirige vers `/ask/` au lieu de `/ask` et brave retourne une "404"
+      - Autre URL ?
+  - Forgejo : à tester
+  - Discord-Bot : à tester
+  - ... autres services ?
+## SSH + UFW
+- Quand docker-server est installé
+- il faut ajouter les clefs SSH privés
+- Configurer UFW ?
+# JDA bot discord convert
+- Vérifier + tester si la conversion vers JDA est OK
