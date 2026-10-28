@@ -7,6 +7,11 @@ CONFIG_DIR=/var/www/config
 ENV_FILE="$CONFIG_DIR/.env"
 mkdir -p "$CONFIG_DIR" /var/www/html/storage/app/public/zip
 
+# Les images et la vue personnalisée sont dans l'image, pas dans un volume :
+# on les recopie à chaque démarrage pour survivre à la recréation du conteneur.
+/usr/local/bin/azuriom-seed --assets-only \
+    || echo "Attention : copie des fichiers de démonstration impossible." >&2
+
 GAME_VALUE=${AZURIOM_GAME:-mc-online}
 ADMIN_GAME_ID=$(printf '%s' "${AZURIOM_ADMIN_GAME_ID:-}" | tr -d '-' | tr 'A-F' 'a-f')
 
@@ -192,6 +197,10 @@ if [ ! -f "$CONFIG_DIR/.installed" ]; then
         echo "→ des comptes existent déjà, création de l'admin ignorée"
     fi
     ensure_admin_game_id
+
+    echo "→ application des données de démonstration Azuriom"
+    /usr/local/bin/azuriom-seed
+
     date -u +%Y-%m-%dT%H:%M:%SZ > "$CONFIG_DIR/.installed"
 else
     php artisan migrate --force
@@ -224,7 +233,7 @@ chown -R apache:apache \
     /var/www/html/storage \
     /var/www/html/bootstrap/cache \
     /var/www/html/plugins \
-    /var/www/html/themes \
+    /var/www/html/resources/themes \
     2>/dev/null || true
 
 exec "$@"

@@ -7,7 +7,7 @@ SERVICE ?=
         php-site-src php-site-env \
         forgejo-admin mail-integrate mail-up mail-down mail-logs clean clean-service down-clean down-clean-service \
         stop restart-service logs-service up-service down-service \
-        ps-service services
+        ps-service services azuriom-seed
 
 help: ## Affiche cette aide
 	@awk 'BEGIN {FS = ":.*##"; printf "\nCommandes disponibles :\n\n"} /^[a-zA-Z_-]+:.*?##/ {printf "  \033[36m%-22s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -78,6 +78,13 @@ restore: ## Restaure une sauvegarde : make restore BACKUP=backups/AAAA...
 
 forgejo-admin: ## Crée le compte admin Forgejo depuis .env
 	./scripts/forgejo-admin.sh
+
+azuriom-seed: ## Réapplique les données de démonstration Azuriom (paramètres, rôles, boutique)
+	@printf "Cette commande réapplique les données de démonstration Azuriom. Confirmer avec CONFIRM=yes\n"
+	@test "$${CONFIRM:-no}" = "yes"
+	@docker ps --filter name=^/azuriom$$ --format '{{.Names}}' | grep -qx azuriom \
+		|| (echo "Le conteneur azuriom n'est pas démarré."; exit 1)
+	docker exec azuriom /usr/local/bin/azuriom-seed
 
 mail-integrate: ## Installe l'override Traefik dans MAILCOW_DIR
 	./scripts/mail-integrate.sh

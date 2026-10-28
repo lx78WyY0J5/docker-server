@@ -6,6 +6,8 @@
 FROM php-apache:latest
 
 ARG AZURIOM_VERSION=1.2.13
+ARG AZURIOM_SHOP_VERSION=0.2.26
+ARG AZURIOM_PRISM_VERSION=1.1.0
 
 RUN curl -fsSL --retry 5 \
         -o /tmp/azuriom.zip \
@@ -14,10 +16,34 @@ RUN curl -fsSL --retry 5 \
     && rm -f /tmp/azuriom.zip \
     && chown -R apache:apache /var/www/html
 
+# Extensions nécessaires aux données de démonstration (thème Prism, boutique).
+# Elles sont installées dans les volumes au premier démarrage.
+# Le plugin Shop 0.2.26 utilise encore Blueprint::unsignedDecimal(), retiré de
+# Laravel 12 utilisé par Azuriom 1.2 : on adapte ses migrations au build.
+RUN set -eu; \
+    mkdir -p \
+        /opt/azuriom-seed/extensions/plugins/shop \
+        /opt/azuriom-seed/extensions/themes/prism; \
+    curl -fsSL --retry 5 \
+        -o /tmp/shop.zip \
+        "https://market.azuriom.com/api/resources/1/download/${AZURIOM_SHOP_VERSION}"; \
+    unzip -q /tmp/shop.zip -d /opt/azuriom-seed/extensions/plugins/shop; \
+    find /opt/azuriom-seed/extensions/plugins/shop/database/migrations \
+        -name '*.php' -exec sed -i -E \
+        's/\$table->unsignedDecimal\(([^)]*)\)/\$table->decimal(\1, 8, 2)->unsigned()/g' {} +; \
+    curl -fsSL --retry 5 \
+        -o /tmp/prism.zip \
+        "https://market.azuriom.com/api/resources/15/download/${AZURIOM_PRISM_VERSION}"; \
+    unzip -q /tmp/prism.zip -d /opt/azuriom-seed/extensions/themes/prism; \
+    rm -f /tmp/shop.zip /tmp/prism.zip
+
+# Données de démonstration : SQL, images, vues et script d'application.
+COPY seed /opt/azuriom-seed
 COPY apache.conf /etc/apache2/conf.d/10-azuriom.conf
 COPY entrypoint.sh /usr/local/bin/azuriom-entrypoint
 
-RUN chmod +x /usr/local/bin/azuriom-entrypoint
+RUN chmod +x /usr/local/bin/azuriom-entrypoint /opt/azuriom-seed/apply.sh \
+    && ln -s /opt/azuriom-seed/apply.sh /usr/local/bin/azuriom-seed
 
 WORKDIR /var/www/html
 

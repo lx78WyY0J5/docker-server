@@ -55,6 +55,7 @@ toutes les adresses changeront en même temps.
 - **__config__** : Valide et affiche la configuration Compose fusionnée
 - **__backup__** : Sauvegarde les bases et les volumes applicatifs
 - **__restore__** : Restaure une sauvegarde : make restore BACKUP=backups/AAAA...
+- **__azuriom-seed__** : Réapplique les données de démonstration Azuriom (paramètres, rôles, boutique)
 - **__forgejo-admin__** : Crée le compte admin Forgejo depuis .env
 - **__mail-integrate__** : Installe l'override Traefik dans MAILCOW_DIR
 - **__mail-up__** : Démarre mailcow avec l'intégration Traefik

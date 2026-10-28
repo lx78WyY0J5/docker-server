@@ -1,0 +1,191 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Importe les données de démonstration Azuriom.
+ *
+ * Les fichiers SQL proviennent de l'ancien dépôt « server » et contiennent
+ * l'ensemble des paramètres, rôles, liens, images et catégories/packages de la
+ * boutique. Ils sont prévus pour être appliqués une seule fois, après les
+ * migrations Azuriom et après l'installation du plugin Shop.
+ *
+ * Usage : php import.php [dossier_sql]
+ */
+
+declare(strict_types=1);
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+function fail(string $message): void
+{
+    fwrite(STDERR, "Erreur : {$message}\n");
+    exit(1);
+}
+
+function envValue(string $name): ?string
+{
+    $value = getenv($name);
+
+    return $value === false ? null : $value;
+}
+
+/**
+ * Ordre d'import hérité de l'ancien script setup.azuriom-db.sh.
+ * Les rôles et permissions passent en dernier : la table roles est recréée
+ * avec les identifiants 1 (Membre) et 2 (Admin), utilisés par users.role_id.
+ */
+const IMPORT_ORDER = [
+    'settings.sql',
+    'social_links.sql',
+    'navbar_elements.sql',
+    'images.sql',
+    'shop_categories.sql',
+    'shop_packages.sql',
+    'servers.sql',
+    'users.sql',
+    'roles.sql',
+    'permissions.sql',
+];
+
+$databaseDir = $argv[1] ?? __DIR__ . '/database';
+
+$host = envValue('DB_HOST') ?: 'db-azuriom';
+$port = (int) (envValue('DB_PORT') ?: 3306);
+$name = envValue('DB_DATABASE');
+$user = envValue('DB_USERNAME');
+$password = envValue('DB_PASSWORD');
+
+if ($name === null || $name === '' || $user === null) {
+    fail('DB_DATABASE et DB_USERNAME doivent être définis.');
+}
+
+try {
+    $db = new mysqli($host, $user, $password ?? '', $name, $port);
+    $db->set_charset('utf8mb4');
+} catch (mysqli_sql_exception $e) {
+    fail('connexion à la base impossible : ' . $e->getMessage());
+}
+
+function tableExists(mysqli $db, string $table): bool
+{
+    $stmt = $db->prepare(
+        'SELECT 1 FROM information_schema.tables
+         WHERE table_schema = DATABASE() AND table_name = ?'
+    );
+    $stmt->bind_param('s', $table);
+    $stmt->execute();
+    $stmt->store_result();
+    $exists = $stmt->num_rows > 0;
+    $stmt->close();
+
+    return $exists;
+}
+
+function settingValue(mysqli $db, string $name): ?string
+{
+    $stmt = $db->prepare('SELECT value FROM settings WHERE name = ? LIMIT 1');
+    $stmt->bind_param('s', $name);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+
+    return $row === null ? null : (string) $row['value'];
+}
+
+function upsertSetting(mysqli $db, string $name, string $value): void
+{
+    $stmt = $db->prepare(
+        'INSERT INTO settings (name, value) VALUES (?, ?)
+         ON DUPLICATE KEY UPDATE value = ?'
+    );
+    $stmt->bind_param('sss', $name, $value, $value);
+    $stmt->execute();
+    $stmt->close();
+}
+
+$shopInstalled = tableExists($db, 'shop_categories')
+    && tableExists($db, 'shop_packages');
+
+$files = [];
+
+foreach (IMPORT_ORDER as $file) {
+    $path = $databaseDir . '/' . $file;
+
+    if (! is_file($path)) {
+        fail("fichier SQL introuvable : {$path}");
+    }
+
+    if (! $shopInstalled && str_starts_with($file, 'shop_')) {
+        fwrite(STDERR, "→ {$file} ignoré (plugin Shop non installé)\n");
+        continue;
+    }
+
+    $files[] = $path;
+}
+
+foreach ($files as $path) {
+    $file = basename($path);
+    $sql = file_get_contents($path);
+
+    if ($sql === false) {
+        fail("lecture impossible : {$path}");
+    }
+
+    try {
+        $db->multi_query($sql);
+
+        do {
+            if ($result = $db->store_result()) {
+                $result->free();
+            }
+        } while ($db->more_results() && $db->next_result());
+    } catch (mysqli_sql_exception $e) {
+        fail("{$file} : " . $e->getMessage());
+    }
+
+    echo "  ✓ {$file}\n";
+}
+
+/*
+ * Les valeurs de l'ancien site (URL, serveur mail) sont remplacées par celles
+ * du fichier .env Docker : sans cela, Azuriom utiliserait « play.Altherneum »
+ * et un serveur mail local qui n'existent pas dans le conteneur.
+ */
+$overrides = [
+    'url' => envValue('APP_URL'),
+    'mail.from.address' => envValue('MAIL_FROM_ADDRESS'),
+    'mail.mailer' => envValue('MAIL_MAILER'),
+    'mail.smtp.host' => envValue('MAIL_HOST'),
+    'mail.smtp.port' => envValue('MAIL_PORT'),
+    'mail.smtp.username' => envValue('MAIL_USERNAME'),
+    'mail.smtp.password' => envValue('MAIL_PASSWORD'),
+];
+
+$encryption = strtolower(envValue('MAIL_ENCRYPTION') ?? '');
+if ($encryption === 'ssl') {
+    $overrides['mail.smtp.scheme'] = 'smtps';
+} elseif ($encryption !== '') {
+    $overrides['mail.smtp.scheme'] = 'smtp';
+}
+
+foreach ($overrides as $key => $value) {
+    if ($value !== null && $value !== '') {
+        upsertSetting($db, $key, $value);
+    }
+}
+
+/*
+ * Si le thème Prism n'a pas pu être copié, on retire le réglage pour éviter
+ * qu'Azuriom cherche des vues et des assets inexistants.
+ */
+$theme = settingValue($db, 'theme');
+$webroot = envValue('AZURIOM_WEBROOT') ?: '/var/www/html';
+
+if ($theme !== null && $theme !== '' && ! is_dir($webroot . '/resources/themes/' . $theme)) {
+    fwrite(STDERR, "Attention : thème « {$theme} » absent, réglage theme retiré.\n");
+    $stmt = $db->prepare("DELETE FROM settings WHERE name = 'theme'");
+    $stmt->execute();
+    $stmt->close();
+}
+
+$db->close();
