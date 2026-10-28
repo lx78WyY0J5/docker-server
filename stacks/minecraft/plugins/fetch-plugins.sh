@@ -30,6 +30,7 @@ fetch_if_needed() {
     # Check if file exists (exact match by name)
     if [ -f "$DOWNLOAD_DIR/$filename.tmp" ]; then
         echo "✓ $target (déjà téléchargé en tmp)"
+        cp "$DOWNLOAD_DIR/$filename.tmp" "$target"
         return 0
     fi
 
