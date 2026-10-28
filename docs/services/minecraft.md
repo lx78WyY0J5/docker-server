@@ -183,6 +183,30 @@ sudo CONFIRM=yes make clean-service SERVICE=mc-hub
 sudo make up-service SERVICE=mc-hub
 ```
 
+## Resource pack
+
+Le pack est envoyé aux joueurs Java par chaque serveur Paper. L'URL vient de
+`AZURIOM_RESOURCE_PACK_URL` (dans `.env`) et doit pointer directement vers un
+`resourcePack.zip` :
+
+```dotenv
+AZURIOM_RESOURCE_PACK_URL=https://github.com/Altherneum/resourcePack/releases/latest/download/resourcePack.zip
+```
+
+Au démarrage, Paper télécharge le pack dans son cache (`/data/cache`) pour
+calculer son SHA-1 et l'inscrit dans `server.properties` avec l'URL. Le hash
+permet aux clients de vérifier le fichier ; il n'est pas fourni par GitHub.
+
+Le pack n'a pas besoin d'Azuriom pour fonctionner : l'URL GitHub est publique.
+Si vous préférez servir le pack depuis Azuriom, pointez l'URL vers
+`https://minecraft.<DOMAIN_NAME><TLD>/storage/zip/resourcePack.zip` ; Azuriom le
+télécharge alors dans son volume et l'expose via `/storage`. Dans ce cas,
+démarrez Azuriom avant les serveurs Paper pour que le hash puisse être calculé
+au premier démarrage.
+
+Pour appliquer une nouvelle version du pack, redémarrez les serveurs Paper :
+ils retéléchargent le fichier et mettent à jour le SHA-1.
+
 ## Plugins
 
 `mc-plugins` télécharge notamment :

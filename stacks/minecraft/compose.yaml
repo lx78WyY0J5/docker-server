@@ -44,6 +44,8 @@ x-paper: &paper
     MINECRAFT_RCON_PASSWORD: ${MINECRAFT_RCON_PASSWORD}
     LEVEL_NAME: ${MINECRAFT_LEVEL_NAME}
     MAX_PLAYERS: ${MINECRAFT_MAX_PLAYERS}
+    # URL du pack envoyée aux clients et utilisée pour calculer son SHA-1.
+    AZURIOM_RESOURCE_PACK_URL: ${AZURIOM_RESOURCE_PACK_URL}
 
 services:
   # ---------------------------------------------------------------------------

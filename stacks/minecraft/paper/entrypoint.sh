@@ -142,6 +142,24 @@ if [ "$SERVER_NAME" = "creatif" ] && [ -d /opt/plugins/paper-creatif ]; then
     find /opt/plugins/paper-creatif -maxdepth 1 -name '*.jar' -exec cp -f {} /data/plugins/ \;
 fi
 
+# --- Resource pack -----------------------------------------------------------
+# Calculer le hash du ressource pack
+RESOURCE_PACK_URL=${AZURIOM_RESOURCE_PACK_URL:-}
+RESOURCE_PACK_SHA1=""
+if [ -n "$RESOURCE_PACK_URL" ]; then
+    RESOURCE_PACK_CACHE=/data/cache/resourcePack.zip
+    if curl -fsSL --retry 3 --retry-delay 2 \
+        -o "${RESOURCE_PACK_CACHE}.tmp" "$RESOURCE_PACK_URL"; then
+        mv "${RESOURCE_PACK_CACHE}.tmp" "$RESOURCE_PACK_CACHE"
+    else
+        rm -f "${RESOURCE_PACK_CACHE}.tmp"
+        echo "Attention : resource pack non téléchargé, hash SHA-1 indisponible." >&2
+    fi
+    if [ -s "$RESOURCE_PACK_CACHE" ]; then
+        RESOURCE_PACK_SHA1=$(sha1sum "$RESOURCE_PACK_CACHE" | awk '{print $1}')
+    fi
+fi
+
 cat > /data/server.properties <<EOF
 enable-jmx-monitoring=false
 rcon.port=${RCON_PORT}
@@ -174,7 +192,7 @@ sync-chunk-writes=false
 op-permission-level=4
 prevent-proxy-connections=false
 hide-online-players=false
-resource-pack=https://minecraft.${DOMAIN}/storage/zip/resourcePack.zip
+resource-pack=${RESOURCE_PACK_URL}
 entity-broadcast-range-percentage=100
 simulation-distance=6
 rcon.password=${MINECRAFT_RCON_PASSWORD}
@@ -194,7 +212,7 @@ text-filtering-config=
 spawn-monsters=true
 enforce-whitelist=false
 spawn-protection=0
-resource-pack-sha1=
+resource-pack-sha1=${RESOURCE_PACK_SHA1}
 max-world-size=29999984
 EOF
 

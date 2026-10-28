@@ -35,7 +35,7 @@ utilisez l'interface d'administration.
 | `AZURIOM_ADMIN_NAME` | Identifiant admin |
 | `AZURIOM_ADMIN_EMAIL` | E-mail admin |
 | `AZURIOM_ADMIN_PASSWORD` | Mot de passe admin |
-| `AZURIOM_RESOURCE_PACK_URL` | URL du resource pack |
+| `AZURIOM_RESOURCE_PACK_URL` | URL source du resource pack, téléchargé dans le volume puis servi sous `/storage/zip/resourcePack.zip` |
 | `AZURIOM_MAIL_*` | Configuration e-mail |
 | `MICROSOFT_CLIENT_ID` / `MICROSOFT_CLIENT_SECRET` | OAuth Microsoft (optionnel) |
 
