@@ -16,10 +16,6 @@ RUN curl -fsSL --retry 5 \
     && rm -f /tmp/azuriom.zip \
     && chown -R apache:apache /var/www/html
 
-# Remplacer les variables env par leurs valeurs réelles avant copie
-# Inclut settings.sql, social_links.sql et import.php
-RUN sed -i 's/\${DOMAIN_NAME}/${DOMAIN_NAME}/g; s/\${TLD}/${TLD}/g' seed/database/*.sql
-
 # Extensions nécessaires aux données de démonstration (thème Prism, boutique).
 # Elles sont installées dans les volumes au premier démarrage.
 # Le plugin Shop doit suivre la branche 1.2.x d'Azuriom : la 0.2.x utilise

@@ -224,7 +224,7 @@ foreach ($files as $path) {
 
 /*
  * Les valeurs de l'ancien site (URL, serveur mail) sont remplacées par celles
- * du fichier .env Docker : sans cela, Azuriom utiliserait « play.${DOMAIN_NAME}${TLD} »
+ * du fichier .env Docker : sans cela, Azuriom utiliserait « play.Altherneum »
  * et un serveur mail local qui n'existent pas dans le conteneur.
  */
 $overrides = [

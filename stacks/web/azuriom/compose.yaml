@@ -14,6 +14,8 @@ services:
       TZ: ${TZ}
       APP_URL: "https://minecraft.${DOMAIN_NAME}${TLD}"
       DOMAIN: ${DOMAIN_NAME}${TLD}
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      TLD: ${TLD}
       APP_KEY: ${AZURIOM_APP_KEY}
       AZURIOM_GAME: ${AZURIOM_GAME:-mc-online}
       AZURIOM_ADMIN_GAME_ID: ${AZURIOM_ADMIN_GAME_ID:-}

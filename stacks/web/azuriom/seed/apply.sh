@@ -11,6 +11,8 @@
 set -eu
 
 WEBROOT=${AZURIOM_WEBROOT:-/var/www/html}
+DOMAIN_NAME=${DOMAIN_NAME:-localhost}
+TLD=${TLD:-}
 SEED_DIR=${AZURIOM_SEED_DIR:-/opt/azuriom-seed}
 MODE=${1:-}
 
@@ -138,6 +140,12 @@ copy_assets
 copy_extensions
 ensure_asset_links
 enable_shop
+
+echo "→ sed du DNS et TLD des données Azuriom"
+# Remplacer les variables env par leurs valeurs réelles avant copie
+# Inclut settings.sql, social_links.sql et import.php
+sed -i 's/\${DOMAIN_NAME}/$DOMAIN_NAME/g; s/\${TLD}/$TLD/g' $SEED_DIR/database/*.sql
+
 
 echo "→ import des données Azuriom"
 php "$SEED_DIR/import.php" "$SEED_DIR/database"
