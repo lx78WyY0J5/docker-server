@@ -36,44 +36,61 @@ copy_assets() {
     cp -a "$SEED_DIR/views/custom/." "$WEBROOT/resources/views/custom/"
 }
 
-extension_version() {
-    [ -f "$1/theme.json" ] || return 0
+manifest_version() {
+    [ -f "$1" ] || return 0
 
     php -r '
         $data = json_decode(file_get_contents($argv[1]), true);
         echo is_array($data) ? ($data["version"] ?? "") : "";
-    ' "$1/theme.json" 2>/dev/null || true
+    ' "$1" 2>/dev/null || true
+}
+
+# Installe ou met à jour une extension du volume à partir de l'image.
+# Les extensions ne sont plus suivies par l'image une fois copiées : sans
+# cette synchronisation, une ancienne version resterait indéfiniment dans le
+# volume après une mise à jour du Dockerfile.
+sync_extension() {
+    source_dir=$1
+    destination_dir=$2
+    manifest=$3
+    label=$4
+
+    source_version=$(manifest_version "$source_dir/$manifest")
+
+    if [ ! -d "$destination_dir" ]; then
+        echo "→ installation de ${label} ${source_version}"
+        cp -a "$source_dir" "$destination_dir"
+        return 0
+    fi
+
+    installed_version=$(manifest_version "$destination_dir/$manifest")
+
+    if [ -n "$source_version" ] && [ "$installed_version" != "$source_version" ]; then
+        echo "→ mise à jour de ${label} ${installed_version:-inconnue} → ${source_version}"
+        rm -rf "$destination_dir"
+        cp -a "$source_dir" "$destination_dir"
+    fi
 }
 
 copy_extensions() {
     mkdir -p "$WEBROOT/plugins" "$WEBROOT/resources/themes"
 
-    if [ -d "$SEED_DIR/extensions/plugins/shop" ] \
-        && [ ! -d "$WEBROOT/plugins/shop" ]; then
-        echo "→ installation du plugin Shop"
-        cp -a "$SEED_DIR/extensions/plugins/shop" "$WEBROOT/plugins/shop"
+    if [ -d "$SEED_DIR/extensions/plugins/shop" ]; then
+        sync_extension \
+            "$SEED_DIR/extensions/plugins/shop" \
+            "$WEBROOT/plugins/shop" \
+            plugin.json \
+            "du plugin Shop"
     fi
 
+    # Les anciennes versions de Prism ne sont pas compatibles avec
+    # Bootstrap 5/Azuriom 1.2 (icônes, couleurs et pied de page).
     if [ -d "$SEED_DIR/extensions/themes/prism" ]; then
-        theme_source="$SEED_DIR/extensions/themes/prism"
-        theme_destination="$WEBROOT/resources/themes/prism"
-        theme_version=$(extension_version "$theme_source")
-
-        if [ ! -d "$theme_destination" ]; then
-            echo "→ installation du thème Prism ${theme_version}"
-            cp -a "$theme_source" "$theme_destination"
-        else
-            installed_version=$(extension_version "$theme_destination")
-
-            # Les anciennes versions de Prism ne sont pas compatibles avec
-            # Bootstrap 5/Azuriom 1.2 (icônes, couleurs et pied de page).
-            if [ -n "$theme_version" ] \
-                && [ "$installed_version" != "$theme_version" ]; then
-                echo "→ mise à jour du thème Prism ${installed_version:-inconnue} → ${theme_version}"
-                rm -rf "$theme_destination"
-                cp -a "$theme_source" "$theme_destination"
-            fi
-        fi
+        sync_extension \
+            "$SEED_DIR/extensions/themes/prism" \
+            "$WEBROOT/resources/themes/prism" \
+            theme.json \
+            "du thème Prism"
     fi
 
     chown -R apache:apache \

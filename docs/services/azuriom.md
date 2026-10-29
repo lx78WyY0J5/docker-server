@@ -87,23 +87,33 @@ Le thème **Prism** et le plugin **Shop** nécessaires à ces données sont
 installés automatiquement depuis le market Azuriom. Les versions sont
 configurables avec `AZURIOM_PRISM_VERSION` et `AZURIOM_SHOP_VERSION`.
 
-Le thème doit être en version **1.1.0** ou plus récente : les versions 0.1.x
-utilisent Bootstrap 4/Font Awesome et n'affichent ni les icônes Bootstrap ni la
-couleur rouge configurée dans les données d'origine. Au démarrage, le thème
-est mis à jour automatiquement si sa version diffère de celle embarquée dans
-l'image.
+Le thème **Prism** doit être en version **1.1.0** ou plus récente : les
+versions 0.1.x utilisent Bootstrap 4/Font Awesome et n'affichent ni les icônes
+Bootstrap ni la couleur rouge configurée dans les données d'origine. Le plugin
+**Shop** doit être en version **1.2.x** : les versions 0.2.x utilisent
+Bootstrap 4/jQuery et ne fonctionnent pas avec Azuriom 1.2. Au démarrage, une
+extension est mise à jour automatiquement si sa version diffère de celle
+embarquée dans l'image.
 
-Les fichiers sources sont dans `stacks/web/azuriom/seed/`. L'import SQL n'a
-lieu qu'une seule fois : le marqueur `/var/www/config/.installed` indique que
-l'installation est terminée. Les images et la vue personnalisée sont recopiées
-à chaque démarrage, et le thème est resynchronisé lorsque sa version change,
-car ils ne sont pas tous dans un volume persistant.
+Les fichiers sources sont dans `stacks/web/azuriom/seed/`. L'import SQL
+automatique n'a lieu qu'une seule fois : le marqueur
+`/var/www/config/.installed` indique que l'installation est terminée. Les images et la vue personnalisée sont recopiées
+à chaque démarrage, et les extensions sont resynchronisées lorsque leur
+version change dans l'image.
 
-Pour réappliquer les données sur une installation existante, reconstruisez
-d'abord l'image puis lancez le script :
+Pour appliquer une modification de l'image (versions des extensions, seed SQL)
+sur une installation existante, reconstruisez l'image puis recréez le
+conteneur :
 
 ```sh
-sudo make up-service SERVICE=azuriom
+cd ~/repo/docker-server
+docker compose build azuriom
+docker compose up -d --force-recreate azuriom
+```
+
+Pour réappliquer ensuite les données de démonstration à la demande :
+
+```sh
 sudo CONFIRM=yes make azuriom-seed
 ```
 
@@ -114,9 +124,11 @@ L'URL du site et la configuration mail sont remplacées par les valeurs du
 `.env` (`APP_URL`, `AZURIOM_MAIL_*`) après l'import : les anciennes valeurs
 `play.Altherneum` et `mailhog` de l'ancien serveur ne sont donc pas utilisées.
 
-> Le plugin Shop 0.2.26 utilise encore `Blueprint::unsignedDecimal()`, retiré de
-> Laravel 12. Ses migrations sont adaptées automatiquement pendant la
-> construction de l'image Azuriom.
+> Les fichiers SQL de `seed/database/*.sql` ne recréent, ne suppriment et
+> n'altèrent aucune table : le schéma appartient aux migrations d'Azuriom et du
+> plugin Shop. Ils ne contiennent que les données de démonstration, insérées
+> avec `ON DUPLICATE KEY UPDATE` (ou ajoutées seulement si elles manquent) pour
+> rester rejouables sans casser les clés étrangères.
 
 ## Nettoyer
 
@@ -161,3 +173,8 @@ Le mot de passe de la boîte `noreply@` est `AZURIOM_MAIL_PASSWORD`, généré p
 - **Pas d'e-mail** : gardez `AZURIOM_MAIL_MAILER=log` tant que mailcow n'est
   pas prêt.
 - **Accès admin** : `/admin` sur le domaine Azuriom.
+- **Cookies refusés / impossible de se connecter** : le cookie de session est
+  volontairement limité à l'hôte (`minecraft.<domaine>`, sans `SESSION_DOMAIN`).
+  Un `SESSION_DOMAIN` égal au domaine parent (`localhost`, `exemple.fr`) est
+  rejeté par les navigateurs pour `minecraft.localhost` et casse la session,
+  le CSRF et donc la connexion.

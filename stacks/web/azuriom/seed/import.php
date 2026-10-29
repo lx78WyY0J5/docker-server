@@ -5,8 +5,9 @@
  *
  * Les fichiers SQL proviennent de l'ancien dépôt « server » et contiennent
  * l'ensemble des paramètres, rôles, liens, images et catégories/packages de la
- * boutique. Ils sont prévus pour être appliqués une seule fois, après les
- * migrations Azuriom et après l'installation du plugin Shop.
+ * boutique. Ils ne contiennent que des données : le schéma appartient aux
+ * migrations Azuriom et du plugin Shop. Ils sont rejouables sans perte de
+ * données grâce aux upserts.
  *
  * Usage : php import.php [dossier_sql]
  */
@@ -29,21 +30,20 @@ function envValue(string $name): ?string
 }
 
 /**
- * Ordre d'import hérité de l'ancien script setup.azuriom-db.sh.
- * Les rôles et permissions passent en dernier : la table roles est recréée
- * avec les identifiants 1 (Membre) et 2 (Admin), utilisés par users.role_id.
+ * Ordre d'import : les dépendances passent avant les tables qui les utilisent
+ * (rôles avant permissions et utilisateurs, catégories avant packages).
  */
 const IMPORT_ORDER = [
     'settings.sql',
+    'roles.sql',
+    'permissions.sql',
     'social_links.sql',
     'navbar_elements.sql',
     'images.sql',
+    'servers.sql',
     'shop_categories.sql',
     'shop_packages.sql',
-    'servers.sql',
     'users.sql',
-    'roles.sql',
-    'permissions.sql',
 ];
 
 $databaseDir = $argv[1] ?? __DIR__ . '/database';

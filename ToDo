@@ -1,9 +1,18 @@
 # Azuriom
-## Boutique cassée
+## Boutique cassée (Corrigé)
 - La boutique est mal formée, les articles semble ne pas avoir de références
   - Cliquer cause l'erreur  : `ReferenceError: $ is not defined`
   - Tout les articles ont la même URL `https://minecraft.localhost/shop/categories/global#`
-## ::marker visible
+- Causes :
+  - Le plugin Shop 0.2.26 (Bootstrap 4/jQuery) était installé sur Azuriom 1.2
+    (Bootstrap 5, sans jQuery) : la modale plantait sur `$`. Passage à 1.2.26.
+  - Les SQL de seed recréaient les tables avec l'ancien schéma : ils ne
+    contiennent plus que les données (upsert), les migrations gèrent le schéma.
+  - `SESSION_DOMAIN=localhost` était rejeté pour `minecraft.localhost`, ce qui
+    cassait session/CSRF/login. Le cookie est maintenant limité à l'hôte.
+  - Les `href="#"` sont normaux : l'URL de chaque article est dans
+    `data-package-url` et ouvre la modale.
+## ::marker visible (Corrigé)
 - Le thème a une erreur étrange
   - `html body div#app header div.sub-navbar.text-bg-primary.py-2 div.container div.row div.col-md-6.text-center.prism-nav-right li.nav-item`
   - Dans la page HTML, cet élément a un `::marker` qui casse le CSS (et rend le site moche)
@@ -18,6 +27,14 @@
     </a>
 </li>
 ```
+- Update : Resolved, this was due to cache (I guess cache control) as i might have loaded the site before new theme applyed
+  - CTRL + F5 solved the issue removing any cache that where left
+  - Seem to work for now
+    - Delete the issue when confirmed
+## Version du site et theme hard coded
+- Dans `/home/admin/repo/docker-server/stacks/web/azuriom/Dockerfile` le numéro de version est codé en dur
+  - Il devrait provenir du `.env` comme le reste des valeurs
+  - Ajouter les clefs dans `.env` mais aussi `.env.exemple`
 ### Présence du mot "Altherneum"
 - Le mot "Altherneum" est présent en dur dans le code et n'est pas dynamique
   - Il doit utiliser le `${DOMAIN_NAME}` pour remplacer le mot "Altherneum",

@@ -6,7 +6,7 @@
 FROM php-apache:latest
 
 ARG AZURIOM_VERSION=1.2.13
-ARG AZURIOM_SHOP_VERSION=0.2.26
+ARG AZURIOM_SHOP_VERSION=1.2.26
 ARG AZURIOM_PRISM_VERSION=1.1.0
 
 RUN curl -fsSL --retry 5 \
@@ -18,8 +18,8 @@ RUN curl -fsSL --retry 5 \
 
 # Extensions nécessaires aux données de démonstration (thème Prism, boutique).
 # Elles sont installées dans les volumes au premier démarrage.
-# Le plugin Shop 0.2.26 utilise encore Blueprint::unsignedDecimal(), retiré de
-# Laravel 12 utilisé par Azuriom 1.2 : on adapte ses migrations au build.
+# Le plugin Shop doit suivre la branche 1.2.x d'Azuriom : la 0.2.x utilise
+# Bootstrap 4/jQuery et n'est plus compatible avec Azuriom 1.2 (Bootstrap 5).
 RUN set -eu; \
     mkdir -p \
         /opt/azuriom-seed/extensions/plugins/shop \
@@ -28,9 +28,6 @@ RUN set -eu; \
         -o /tmp/shop.zip \
         "https://market.azuriom.com/api/resources/1/download/${AZURIOM_SHOP_VERSION}"; \
     unzip -q /tmp/shop.zip -d /opt/azuriom-seed/extensions/plugins/shop; \
-    find /opt/azuriom-seed/extensions/plugins/shop/database/migrations \
-        -name '*.php' -exec sed -i -E \
-        's/\$table->unsignedDecimal\(([^)]*)\)/\$table->decimal(\1, 8, 2)->unsigned()/g' {} +; \
     curl -fsSL --retry 5 \
         -o /tmp/prism.zip \
         "https://market.azuriom.com/api/resources/15/download/${AZURIOM_PRISM_VERSION}"; \

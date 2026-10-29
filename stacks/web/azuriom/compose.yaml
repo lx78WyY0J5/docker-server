@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         AZURIOM_VERSION: ${AZURIOM_VERSION}
-        AZURIOM_SHOP_VERSION: ${AZURIOM_SHOP_VERSION:-0.2.26}
+        AZURIOM_SHOP_VERSION: ${AZURIOM_SHOP_VERSION:-1.2.26}
         AZURIOM_PRISM_VERSION: ${AZURIOM_PRISM_VERSION:-1.1.0}
     image: azuriom:${AZURIOM_VERSION}
     container_name: azuriom
