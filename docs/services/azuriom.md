@@ -130,6 +130,42 @@ L'URL du site et la configuration mail sont remplacées par les valeurs du
 > avec `ON DUPLICATE KEY UPDATE` (ou ajoutées seulement si elles manquent) pour
 > rester rejouables sans casser les clés étrangères.
 
+## Serveurs et RCON
+
+`seed/database/servers.sql` crée les huit serveurs Paper avec les IDs `1` à
+`8` :
+
+| ID | Nom | Adresse Docker |
+|---|---|---|
+| 1 | Hub | `mc-hub` |
+| 2 | Survie | `mc-survie` |
+| 3 | Créatif | `mc-creatif` |
+| 4 | Anarchie | `mc-anarchie` |
+| 5 | RPG | `mc-rpg` |
+| 6 | SkyBlock | `mc-skyblock` |
+| 7 | OP-Prison | `mc-opprison` |
+| 8 | Test | `mc-test` |
+
+Ils utilisent le type `mc-rcon`, le port Minecraft `25565` pour le ping et le
+port RCON interne `25575`. L'adresse est le nom du conteneur, résolu par Docker
+sur le réseau `minecraft` : le conteneur `azuriom` doit rester attaché à ce
+réseau.
+
+Le mot de passe RCON n'est pas stocké en clair dans le SQL. `import.php`
+remplace le marqueur `{{rcon-password}}` par `MINECRAFT_RCON_PASSWORD` chiffré
+avec l'`APP_KEY` de l'instance. La variable est transmise au conteneur
+`azuriom` par `compose.yaml` ; elle doit être identique à celle utilisée par les
+serveurs Paper.
+
+Le serveur `1` (Hub) est la cible des commandes de la boutique configurées avec
+`"server":"1"`. Les commandes sont envoyées par RCON ; le plugin maison partage
+ses données entre les serveurs via le volume `mc-plugin-data`.
+
+Par défaut, `home_display` vaut `0` et `servers.default` vaut `0` : les serveurs
+sont listés dans `/admin/servers` sans exposer les noms de conteneurs sur la
+page d'accueil. Pour les afficher publiquement, activez « Afficher sur la page
+d'accueil » et renseignez une URL de connexion publique dans l'administration.
+
 ## Nettoyer
 
 ```sh

@@ -1,9 +1,6 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
--- La table `social_links` appartient aux migrations Azuriom. Ce fichier ne
--- contient que les données de démonstration, mises à jour en place pour ne pas
--- supprimer les liens personnalisés ajoutés depuis l'administration.
 INSERT INTO `social_links` (`id`, `type`, `value`, `position`, `properties`, `created_at`, `updated_at`) VALUES
 (1, 'twitter', 'https://twitter.com/Altherneum', 1, NULL, '2024-04-27 14:58:41', '2024-04-27 16:09:50'),
 (2, 'youtube', 'https://Youtube.com/@Altherneum', 2, NULL, '2024-04-27 14:58:41', '2024-04-27 16:09:50'),

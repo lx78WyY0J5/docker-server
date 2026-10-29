@@ -1,9 +1,6 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
--- La table `settings` appartient aux migrations Azuriom. Ce fichier ne contient
--- que les valeurs de démonstration. L'upsert sur `name` (clé unique) préserve
--- les réglages absents du seed et ne dépend pas des identifiants auto-incrémentés.
 INSERT INTO `settings` (`name`, `value`) VALUES
 ('copyright', 'Copyright © 2026 Altherneum - Tous droits réservés.'),
 ('money', 'points'),

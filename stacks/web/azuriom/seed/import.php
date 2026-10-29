@@ -29,6 +29,80 @@ function envValue(string $name): ?string
     return $value === false ? null : $value;
 }
 
+function appKey(): string
+{
+    $appKey = null;
+    $configFile = (envValue('AZURIOM_CONFIG_DIR') ?: '/var/www/config').'/.env';
+
+    if (is_file($configFile)) {
+        foreach (file($configFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
+            if (str_starts_with($line, 'APP_KEY=')) {
+                $appKey = trim(substr($line, 8), " \t\n\r\0\x0B\"'");
+                break;
+            }
+        }
+    }
+
+    $appKey ??= trim(envValue('APP_KEY') ?? '', " \t\n\r\0\x0B\"'");
+
+    if ($appKey === '') {
+        fail('APP_KEY introuvable pour chiffrer le mot de passe RCON.');
+    }
+
+    return $appKey;
+}
+
+function encryptedRconPassword(): string
+{
+    static $encrypted = null;
+
+    if ($encrypted !== null) {
+        return $encrypted;
+    }
+
+    $password = envValue('MINECRAFT_RCON_PASSWORD');
+
+    if ($password === null || $password === '') {
+        fail('MINECRAFT_RCON_PASSWORD est requis pour configurer les serveurs RCON.');
+    }
+
+    $webroot = envValue('AZURIOM_WEBROOT') ?: '/var/www/html';
+    $autoload = $webroot.'/vendor/autoload.php';
+
+    if (! is_file($autoload)) {
+        fail("autoload introuvable : {$autoload}");
+    }
+
+    require_once $autoload;
+
+    $key = appKey();
+    $key = str_starts_with($key, 'base64:')
+        ? base64_decode(substr($key, 7), true)
+        : $key;
+
+    if ($key === false || strlen($key) !== 32) {
+        fail('APP_KEY invalide : une clé de 32 octets est requise.');
+    }
+
+    $encrypter = new Illuminate\Encryption\Encrypter($key, 'AES-256-CBC');
+    $encrypted = $encrypter->encrypt($password, false);
+
+    return $encrypted;
+}
+
+function replaceSeedPlaceholders(string $sql, mysqli $db): string
+{
+    if (! str_contains($sql, '{{rcon-password}}')) {
+        return $sql;
+    }
+
+    return str_replace(
+        '{{rcon-password}}',
+        $db->real_escape_string(encryptedRconPassword()),
+        $sql
+    );
+}
+
 /**
  * Ordre d'import : les dépendances passent avant les tables qui les utilisent
  * (rôles avant permissions et utilisateurs, catégories avant packages).
@@ -130,6 +204,8 @@ foreach ($files as $path) {
     if ($sql === false) {
         fail("lecture impossible : {$path}");
     }
+
+    $sql = replaceSeedPlaceholders($sql, $db);
 
     try {
         $db->multi_query($sql);

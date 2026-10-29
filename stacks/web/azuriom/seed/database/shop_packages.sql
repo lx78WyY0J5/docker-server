@@ -1,11 +1,6 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
--- La table `shop_packages` est créée et mise à jour par les migrations du
--- plugin Shop. Ce fichier ne contient que les données de démonstration.
--- L'ancienne version recréait la table avec le schéma du plugin 0.2.x : le
--- plugin 1.2.x ne trouvait alors plus ses colonnes (`billing_type`, `files`,
--- `expired_role_id`, etc.). On utilise donc un upsert sur la table existante.
 INSERT INTO `shop_packages` (`id`, `category_id`, `name`, `short_description`, `description`, `position`, `image`, `price`, `commands`, `role_id`, `money`, `giftcard_balance`, `custom_price`, `required_roles`, `user_limit`, `user_limit_period`, `global_limit`, `global_limit_period`, `required_packages`, `has_quantity`, `is_enabled`, `created_at`, `updated_at`) VALUES
 (1, 6, 'Message de connexion / déconnexion', 'Affiche un message lorsque vous êtes connecté ou déconnecté du serveur', '<p>1 Jours par point</p>', 0, 'KGiFBysVRTCCHpywcDlYacOC658Ct3aSjANumpfY.webp', 1.00, '[{\"trigger\":\"purchase\",\"require_online\":\"0\",\"commands\":[\"bonus {player} add JoinQuitMessage {quantity}\"],\"server\":\"1\"}]', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '[]', 1, 1, '2024-05-01 19:37:09', '2024-05-01 19:55:22'),
 (2, 6, 'Aura de téléportation', 'Affiche une aura lorsque vous êtes téléporté', '<p>1 Jours par point</p>', 0, '3YYoySEyHRE96Go88s2EOZQKWEtTGuPSUqFGEme3.webp', 1.00, '[{\"trigger\":\"purchase\",\"require_online\":\"0\",\"commands\":[\"bonus {player} add AuraTP {quantity}\"],\"server\":\"1\"}]', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '[]', 1, 1, '2024-05-01 20:18:00', '2024-05-01 20:19:38'),

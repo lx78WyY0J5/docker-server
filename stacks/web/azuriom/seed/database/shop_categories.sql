@@ -1,12 +1,6 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
--- La table `shop_categories` est créée et mise à jour par les migrations du
--- plugin Shop. Ce fichier ne doit contenir que les données de démonstration :
--- recréer la table avec un ancien schéma casse le plugin (colonnes manquantes
--- comme `icon`, `single_purchase` ou `cumulate_strict`).
--- `INSERT ... ON DUPLICATE KEY UPDATE` rend l'import rejouable sans supprimer
--- les catégories existantes ni casser les clés étrangères des packages.
 INSERT INTO `shop_categories` (`id`, `name`, `slug`, `description`, `position`, `parent_id`, `cumulate_purchases`, `is_enabled`, `created_at`, `updated_at`) VALUES
 (1, 'SkyBlock', 'skyblock', NULL, 0, NULL, 1, 1, '2024-04-28 13:44:40', '2024-04-28 13:44:40'),
 (2, 'Survie', 'survie', NULL, 0, NULL, 1, 1, '2024-04-28 13:44:52', '2024-04-28 13:44:52'),

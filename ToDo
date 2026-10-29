@@ -12,6 +12,16 @@
     cassait session/CSRF/login. Le cookie est maintenant limité à l'hôte.
   - Les `href="#"` sont normaux : l'URL de chaque article est dans
     `data-package-url` et ouvre la modale.
+## Serveurs et RCON (Corrigé)
+- La table `servers` était vide, donc la boutique ne pouvait envoyer aucune
+  commande.
+- Les huit serveurs Paper sont maintenant créés par
+  `seed/database/servers.sql` (type `mc-rcon`, port RCON interne `25575`).
+- Le mot de passe RCON est chiffré à l'import avec l'`APP_KEY` de l'instance ;
+  il n'est pas stocké en clair dans le SQL.
+- Le serveur `1` (Hub) est la cible des commandes de la boutique.
+- Vérifié : `verifyLink()` et `list` via RCON répondent correctement.
+
 ## ::marker visible (Corrigé)
 - Le thème a une erreur étrange
   - `html body div#app header div.sub-navbar.text-bg-primary.py-2 div.container div.row div.col-md-6.text-center.prism-nav-right li.nav-item`
