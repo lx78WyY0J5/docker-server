@@ -53,7 +53,7 @@ http:
     redirect-ask:
       redirectRegex:
         regex: "^https?://(ask|ai|ia)[.]@@DOMAIN_REGEX@@(/.*)?$"
-        replacement: "https://search.brave.com/ask$2"
+        replacement: "https://search.brave.com/ask"
         permanent: true
 
     redirect-archterneum:
