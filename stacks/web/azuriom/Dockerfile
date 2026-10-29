@@ -6,8 +6,8 @@
 FROM php-apache:latest
 
 ARG AZURIOM_VERSION=1.2.13
-ARG AZURIOM_SHOP_VERSION=1.2.26
-ARG AZURIOM_PRISM_VERSION=1.1.0
+ARG AZURIOM_SHOP_VERSION=${AZURIOM_SHOP_VERSION:-1.2.26}
+ARG AZURIOM_PRISM_VERSION=${AZURIOM_PRISM_VERSION:-1.1.0}
 
 RUN curl -fsSL --retry 5 \
         -o /tmp/azuriom.zip \
@@ -15,6 +15,10 @@ RUN curl -fsSL --retry 5 \
     && unzip -q /tmp/azuriom.zip -d /var/www/html \
     && rm -f /tmp/azuriom.zip \
     && chown -R apache:apache /var/www/html
+
+# Remplacer les variables env par leurs valeurs réelles avant copie
+# Inclut settings.sql, social_links.sql et import.php
+RUN sed -i 's/\${DOMAIN_NAME}/${DOMAIN_NAME}/g; s/\${TLD}/${TLD}/g' seed/database/*.sql
 
 # Extensions nécessaires aux données de démonstration (thème Prism, boutique).
 # Elles sont installées dans les volumes au premier démarrage.

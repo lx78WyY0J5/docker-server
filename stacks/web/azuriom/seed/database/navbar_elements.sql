@@ -6,7 +6,7 @@ SET time_zone = "+00:00";
 INSERT INTO `navbar_elements` (`id`, `name`, `icon`, `value`, `position`, `type`, `parent_id`, `new_tab`) VALUES
 (1, 'Accueil', 'bi bi-house', '#', 1, 'home', NULL, 0),
 (2, 'Boutique', 'bi bi-shop', 'shop.home', 2, 'plugin', NULL, 0),
-(3, 'Discord', 'bi bi-discord', 'https://discord.altherneum.fr', 3, 'link', NULL, 1)
+(3, 'Discord', 'bi bi-discord', "https://discord.${DOMAIN_NAME}${TLD}", 3, 'link', NULL, 1)
 ON DUPLICATE KEY UPDATE
     `name` = VALUES(`name`),
     `icon` = VALUES(`icon`),
