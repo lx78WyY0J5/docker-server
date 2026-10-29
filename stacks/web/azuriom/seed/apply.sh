@@ -144,8 +144,7 @@ enable_shop
 echo "→ sed du DNS et TLD des données Azuriom"
 # Remplacer les variables env par leurs valeurs réelles avant copie
 # Inclut settings.sql, social_links.sql et import.php
-sed -i 's/\${DOMAIN_NAME}/$DOMAIN_NAME/g; s/\${TLD}/$TLD/g' $SEED_DIR/database/*.sql
-
+sed -i "s/\${DOMAIN_NAME}/$DOMAIN_NAME/g; s/\${TLD}/$TLD/g" "$SEED_DIR"/database/*.sql
 
 echo "→ import des données Azuriom"
 php "$SEED_DIR/import.php" "$SEED_DIR/database"
