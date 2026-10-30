@@ -101,7 +101,8 @@ sudo make ps
 sudo make logs
 ```
 
-Pour créer le compte administrateur Forgejo après le démarrage :
+Le compte administrateur Forgejo est créé automatiquement par `make up`. Pour
+le créer manuellement (ou après suppression des volumes) :
 
 ```sh
 sudo make forgejo-admin

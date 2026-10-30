@@ -53,6 +53,7 @@ ensure-base: ## Construit les images de base manquantes
 
 up: check-env ensure-networks ensure-base php-site-src ## Démarre toute l'infrastructure
 	$(COMPOSE) up -d --remove-orphans
+	@./scripts/forgejo-admin.sh
 
 down: ## Arrête toute l'infrastructure sans supprimer les conteneurs (volumes conservés)
 	$(COMPOSE) stop
@@ -76,7 +77,7 @@ restore: ## Restaure une sauvegarde : make restore BACKUP=backups/AAAA...
 	@test -n "$(BACKUP)" || (echo "Usage : make restore BACKUP=backups/AAAA-MM-JJ_HHMMSS"; exit 1)
 	CONFIRM=yes ./scripts/restore.sh "$(BACKUP)"
 
-forgejo-admin: ## Crée le compte admin Forgejo depuis .env
+forgejo-admin: ## Crée le compte admin Forgejo depuis .env (idempotent)
 	./scripts/forgejo-admin.sh
 
 azuriom-seed: ## Réapplique les données de démonstration Azuriom (paramètres, rôles, boutique)
@@ -160,6 +161,9 @@ up-service: ## Démarre un service (ex: make up-service SERVICE=azuriom)
 			|| $(MAKE) paper-base ; \
 	fi
 	$(COMPOSE) --env-file .env up -d --build $(SERVICE)
+	@if [ "$(SERVICE)" = "forgejo" ]; then \
+		./scripts/forgejo-admin.sh ; \
+	fi
 
 down-service: ## Arrête un service sans supprimer son conteneur (ex: make down-service SERVICE=azuriom)
 	@test -n "$(SERVICE)" || (echo "Usage: make down-service SERVICE=nom"; exit 1)

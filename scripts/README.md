@@ -10,7 +10,7 @@ lancer directement : utilisez les commandes `make` documentées dans
 | `check-env.sh` | `make check-env` | Vérifie que `.env` contient les variables de base |
 | `ensure-networks.sh` | `make ensure-networks` | Crée les réseaux Docker externes manquants |
 | `php-site-src.sh` | `make php-site-src` / `php-site-env` | Clone le site PHP et génère son `.env` |
-| `forgejo-admin.sh` | `make forgejo-admin` | Crée le compte admin Forgejo |
+| `forgejo-admin.sh` | `make forgejo-admin` | Crée le compte admin Forgejo (appelé automatiquement par `up` / `up-service`) |
 | `mail-integrate.sh` | `make mail-integrate` | Prépare l'intégration Mailcow (voir la fiche Mailcow) |
 | `backup.sh` | `make backup` | Sauvegarde les bases et les volumes |
 | `restore.sh` | `make restore` | Restaure une sauvegarde |

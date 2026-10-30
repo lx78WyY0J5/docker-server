@@ -19,15 +19,19 @@
 > `FORGEJO_DB_ROOT_PASSWORD` existe dans `.env.example` mais n'est pas utilisé
 > par la configuration actuelle de `db-forgejo`. Vous pouvez l'ignorer.
 
-Le compte admin n'est **pas** créé automatiquement par le conteneur. Après le
-premier démarrage, lancez une seule fois :
+Le compte admin est créé **automatiquement** par `make up` et par
+`make up-service SERVICE=forgejo`, à partir des variables `FORGEJO_ADMIN_*`
+de `.env`. La commande reste disponible manuellement, par exemple après une
+suppression des volumes :
 
 ```sh
 sudo make forgejo-admin
 ```
 
-Cette commande lit `FORGEJO_ADMIN_*` dans `.env`. Le nom `admin` est réservé par
-Forgejo : utilisez un autre nom, par exemple `monprojet`.
+Elle lit `FORGEJO_ADMIN_*` dans `.env` (les valeurs comme `${DOMAIN_NAME}`
+sont résolues par Docker Compose), attend que Forgejo soit prêt, et ne recrée
+pas le compte s'il existe déjà. Le nom `admin` est réservé par Forgejo :
+utilisez un autre nom, par exemple `monprojet`.
 
 ## Variables `.env` utiles
 
@@ -45,6 +49,16 @@ Forgejo : utilisez un autre nom, par exemple `monprojet`.
 | `FORGEJO_ADMIN_EMAIL` | E-mail admin |
 | `FORGEJO_ADMIN_PASSWORD` | Mot de passe admin |
 | `FORGEJO_MAIL_*` | Configuration e-mail (optionnelle) |
+
+`FORGEJO_VERSION` définie dans `.env` est la seule source de vérité : elle est
+transmise au build (`ARG` du `Dockerfile`, sans valeur par défaut) et sert aussi
+de tag à l'image. Si la variable manque, Docker Compose refuse de démarrer avec
+une erreur explicite. Après un changement de version, reconstruisez et
+redémarrez :
+
+```sh
+sudo make up-service SERVICE=forgejo
+```
 
 ## Démarrer / arrêter
 
@@ -72,7 +86,8 @@ Cela supprime les dépôts, les comptes et la base. **Sauvegardez avant.**
 - Les inscriptions publiques sont désactivées : l'admin crée les comptes.
 - SSH est désactivé : utilisez HTTPS pour cloner et pousser.
 - LFS est activé.
-- Le compte admin doit être créé avec `make forgejo-admin`.
+- Le compte admin est créé automatiquement par `make up` /
+  `make up-service SERVICE=forgejo` ; `make forgejo-admin` reste disponible.
 
 ## E-mail
 
