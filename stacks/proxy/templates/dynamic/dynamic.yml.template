@@ -26,6 +26,10 @@ http:
       basicAuth:
         usersFile: "/etc/traefik/auth/phpmyadmin.htpasswd"
 
+    code-server-auth:
+      basicAuth:
+        usersFile: "/etc/traefik/auth/code-server.htpasswd"
+
     redirect-discord:
       redirectRegex:
         regex: "^https?://(www[.])?@@DOMAIN_REGEX@@(/.*)?$"

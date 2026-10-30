@@ -66,6 +66,7 @@ set_env FORGEJO_MAIL_PASSWORD     "$(gen_hex 24)"
 
 set_env CODE_SERVER_PASSWORD      "$(gen_hex 16)"
 set_env KEEWEB_UI_PASSWORD        "$(gen_hex 16)"
+set_env CODE_SERVER_HTTP_PASSWORD "$(gen_hex 32)"
 set_env KEEWEB_WEBDAV_PASSWORD    "$(gen_hex 16)"
 set_env PMA_BLOWFISH_SECRET       "$(gen_hex 16)"
 
@@ -89,6 +90,8 @@ write_htpasswd stacks/proxy/auth/dashboard.htpasswd \
     "$(get_env TRAEFIK_DASHBOARD_USER)" "$(get_env TRAEFIK_DASHBOARD_PASSWORD)"
 write_htpasswd stacks/proxy/auth/phpmyadmin.htpasswd \
     "$(get_env PMA_ADMIN_USER)" "$(get_env PMA_ADMIN_PASSWORD)"
+write_htpasswd stacks/proxy/auth/code-server.htpasswd \
+    "$(get_env CODE_SERVER_HTTP_USER)" "$(get_env CODE_SERVER_HTTP_PASSWORD)"
 write_htpasswd stacks/web/keeweb/auth/keeweb.htpasswd \
     "$(get_env KEEWEB_UI_USER)" "$(get_env KEEWEB_UI_PASSWORD)"
 write_htpasswd stacks/web/keeweb/auth/webdav.htpasswd \
