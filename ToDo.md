@@ -18,9 +18,6 @@
 | `keeweb` | ------------ | ------------ | OK |
 | `keeweb` | Test WebDav | Le WebDav est censé être vide, et n'a jamais été testé, ajouetr une clé et tester | à faire |
 | `phpmyadmin` | ------------ | ------------ | OK |
-| `phpmyadmin` #1 | .env à corriger | Les variables PMA sont séparés dans le .env, il faut les rassembler pour que ce soit plus lisible | à faire |
-| `phpmyadmin` #2 | Double login | Le password HTMl a été validé, mais j'ai jamais testé de me login sur PhpMyAdmin (la seconde page de login, celle de PMA "réelle") | OK |
-| `phpmyadmin` #3 | Double login | Le password HTMl a été validé, et le double login (il faut utiliser le user name et password de la base de donnée ciblé), ajouter cela à la doc pour s'en rappeler (que c'est le mot de passe PhpMyAdm, puis la BDD ciblé) | à faire |
 | `meme` | ------------ | ------------ | à faire |
 | `meme` | Dynamic variable .env | Cacher les termes "Altherneum" dans le code source, utiliser une variable, et l'ajouter au .env, puis faire un script qui remplace la variable lors de l'installation de ce site | à faire |
 | `forgejo`, `db-forgejo` | ------------ | ------------ | OK |
