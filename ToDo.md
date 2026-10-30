@@ -28,7 +28,6 @@
 | `forgejo` #2 | Message d'erreur | Vérifier si le message `Cette instance Forgejo est configuré pour être servi sur "https://git.localhost/". Vous êtes actuellement en train de regarder Forgejo avec une URL différente, ce qui pourrait casser certaines parties de cette application. L'URL canonique est controllée par les administrateurs Forgejo grâce au paramètre ROOT_URL dans le app.ini.` est important et casse quelque chose ? message visible sur : [forgejo.localhost/user/login](https://forgejo.localhost/user/login) | à faire |
 | `code-server` | ------------ | ------------ | OK |
 | `code-server` #1 | Plugins | Ajouter les plugins (Java, live preiew, thème sombre, etc) | à faire |
-| `code-server` #2 | Versions depuis le .env | Code-Server est installé via une valeurs codé en dur (le numéro de version) `image: code-server:4.141.0` dans `stacks/code-server/compose.yaml`, il devrait être récupéré depuis le.env pour faciliter les mises à jours et changement de n° de version, en même temps le placer sur `4.144.0` | à faire |
 | `code-server` #3 | Mot de passe HTTP | Ajouter un mot de passe traefik en plus pour protéger la page | à faire |
 | `velocity`, `mc-*` | ------------ | ------------ | OK |
 | `Plugin` | ------------ | ------------ | OK |

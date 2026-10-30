@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: code-server:4.141.0
+    image: code-server:${CODE_SERVER_VERSION}
     container_name: code-server
     restart: unless-stopped
     environment:
