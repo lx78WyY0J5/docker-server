@@ -8,21 +8,32 @@
 
 ## Authentification en deux étapes
 
-1. **Protection HTTP Basic** par Traefik :
+phpMyAdmin demande **deux mots de passe différents**, dans cet ordre :
+
+1. **Protection HTTP Basic par Traefik** : elle s'affiche avant même que la
+   page phpMyAdmin ne se charge.
 
 | Variable `.env` | Utilisation |
 |---|---|
 | `PMA_ADMIN_USER` | Identifiant Basic (par défaut `admin`) |
 | `PMA_ADMIN_PASSWORD` | Mot de passe Basic, généré par `make init` |
 
-2. **Connexion à la base** dans phpMyAdmin : utilisez un compte MariaDB.
+2. **Connexion MariaDB** : une fois sur la vraie page de connexion phpMyAdmin,
+   saisissez l'identifiant et le mot de passe du **compte de la base ciblée**
+   (et non ceux de la protection HTTP).
 
-| Base | Compte | Variables `.env` |
-|---|---|---|
-| Site PHP | root | `PHP_DB_ROOT_PASSWORD` |
-| Site PHP | utilisateur | `PHP_DB_USER` / `PHP_DB_PASSWORD` |
-| Azuriom | root | `AZURIOM_DB_ROOT_PASSWORD` |
-| Azuriom | utilisateur | `AZURIOM_DB_USER` / `AZURIOM_DB_PASSWORD` |
+| Base ciblée | Hôte | Compte | Variables `.env` |
+|---|---|---|---|
+| Site PHP | `db-php` | root | `PHP_DB_ROOT_PASSWORD` |
+| Site PHP | `db-php` | utilisateur applicatif | `PHP_DB_USER` / `PHP_DB_PASSWORD` |
+| Azuriom | `db-azuriom` | root | `AZURIOM_DB_ROOT_PASSWORD` |
+| Azuriom | `db-azuriom` | utilisateur applicatif | `AZURIOM_DB_USER` / `AZURIOM_DB_PASSWORD` |
+
+Si phpMyAdmin propose plusieurs serveurs, choisissez l'hôte correspondant à la
+base ciblée (`db-php` ou `db-azuriom`, selon `PMA_HOSTS`).
+
+Les deux protections sont indépendantes : modifier `PMA_ADMIN_PASSWORD` ne
+change pas les mots de passe MariaDB, et inversement.
 
 `db-forgejo` est une base PostgreSQL : elle n'est pas accessible via
 phpMyAdmin.

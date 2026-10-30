@@ -16,9 +16,9 @@ Les adresses utilisent `supername.fr` comme exemple. Remplacez-le par
 | [Site PHP](php-site.md) | `php-site`, `db-php` | `https://php.<domaine>` | `WEBSITE_ADMIN_PASSWORD` |
 | [Azuriom](azuriom.md) | `azuriom`, `db-azuriom` | `https://minecraft.<domaine>` | `AZURIOM_ADMIN_PASSWORD` |
 | [Forgejo](forgejo.md) | `forgejo`, `db-forgejo` | `https://git.<domaine>` | `FORGEJO_ADMIN_PASSWORD` |
-| [code-server](code-server.md) | `code-server` | `https://code.<domaine>` | `CODE_SERVER_PASSWORD` |
+| [code-server](code-server.md) | `code-server` | `https://code.<domaine>` | `CODE_SERVER_HTTP_PASSWORD` puis `CODE_SERVER_PASSWORD` |
 | [KeeWeb](keeweb.md) | `keeweb` | `https://keeweb.<domaine>` | `KEEWEB_UI_PASSWORD` |
-| [phpMyAdmin](phpmyadmin.md) | `phpmyadmin` | `https://phpmyadmin.<domaine>` | `PMA_ADMIN_PASSWORD` |
+| [phpMyAdmin](phpmyadmin.md) | `phpmyadmin` | `https://phpmyadmin.<domaine>` | `PMA_ADMIN_PASSWORD` puis compte MariaDB |
 | [Meme](meme.md) | `meme` | `https://meme.<domaine>` | *(aucun)* |
 | [Minecraft](minecraft.md) | `velocity`, `mc-*` | `mc.<domaine>:25565` | *(aucun pour jouer)* |
 | [Bot Discord](discord-bot.md) | `discord-bot` | *(pas d'URL)* | `DISCORD_BOT_TOKEN` |

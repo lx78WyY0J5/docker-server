@@ -34,9 +34,9 @@ Le domaine `supername.fr` n'est qu'un exemple.
 | Site PHP | `php` ou `phpdoc` | Compte du site | `WEBSITE_ADMIN_USERNAME` / `WEBSITE_ADMIN_PASSWORD` |
 | Azuriom | `minecraft` | Compte Azuriom | `AZURIOM_ADMIN_NAME` / `AZURIOM_ADMIN_PASSWORD` |
 | Forgejo | `git`, `repo` ou `forgejo` | Compte Forgejo | `FORGEJO_ADMIN_NAME` / `FORGEJO_ADMIN_PASSWORD` |
-| code-server | `code` ou `vscode` | Mot de passe unique | `CODE_SERVER_PASSWORD` |
+| code-server | `code` ou `vscode` | HTTP Basic puis mot de passe éditeur | `CODE_SERVER_HTTP_USER` / `CODE_SERVER_HTTP_PASSWORD` puis `CODE_SERVER_PASSWORD` |
 | KeeWeb | `keeweb`, `keepass`, `keys` ou `key` | HTTP Basic | `KEEWEB_UI_USER` / `KEEWEB_UI_PASSWORD` |
-| phpMyAdmin | `phpmyadmin` | HTTP Basic puis compte base | `PMA_ADMIN_USER` / `PMA_ADMIN_PASSWORD` |
+| phpMyAdmin | `phpmyadmin` | HTTP Basic puis compte MariaDB | `PMA_ADMIN_USER` / `PMA_ADMIN_PASSWORD`, puis `PHP_DB_*` ou `AZURIOM_DB_*` |
 | Meme | `meme`, `windows`, `microsoft`, `arch` ou `linux` | Aucune | - |
 | Mailcow | `mail` | Compte mailcow | Mot de passe créé pendant l'installation de mailcow |
 | Webmail | `webmail` ou `mails` | Compte mailcow | Redirige vers `mail.<domaine>` |

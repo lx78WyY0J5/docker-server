@@ -52,7 +52,7 @@ Gardez les 32 caractères hexadécimaux, sans tirets.
 | Service | Variables | Utilisation |
 |---|---|---|
 | Traefik | `TRAEFIK_DASHBOARD_USER`, `TRAEFIK_DASHBOARD_PASSWORD` | Connexion au tableau de bord |
-| phpMyAdmin | `PMA_ADMIN_USER`, `PMA_ADMIN_PASSWORD` | Première protection HTTP |
+| phpMyAdmin | `PMA_ADMIN_USER`, `PMA_ADMIN_PASSWORD` | Protection HTTP Basic, puis compte MariaDB sur la page de connexion |
 | Site PHP | `WEBSITE_ADMIN_USERNAME`, `WEBSITE_ADMIN_PASSWORD` | Compte admin du site |
 | Site PHP / base | `PHP_DB_ROOT_PASSWORD`, `PHP_DB_USER`, `PHP_DB_PASSWORD` | Base MariaDB |
 | Azuriom | `AZURIOM_ADMIN_NAME`, `AZURIOM_ADMIN_PASSWORD` | Compte admin Azuriom |
@@ -63,6 +63,7 @@ Gardez les 32 caractères hexadécimaux, sans tirets.
 | Forgejo / base | `FORGEJO_DB_ROOT_PASSWORD` | Généré mais non utilisé par la stack actuelle |
 | Forgejo / mail | `FORGEJO_MAIL_PASSWORD` | Boîte `git@` |
 | code-server | `CODE_SERVER_PASSWORD` | Mot de passe de l'éditeur web |
+| code-server | `CODE_SERVER_HTTP_USER`, `CODE_SERVER_HTTP_PASSWORD` | Première protection HTTP Basic par Traefik |
 | KeeWeb | `KEEWEB_UI_USER`, `KEEWEB_UI_PASSWORD` | Accès à l'interface KeeWeb |
 | KeeWeb | `KEEWEB_WEBDAV_USER`, `KEEWEB_WEBDAV_PASSWORD` | Accès WebDAV |
 | Minecraft | `MINECRAFT_RCON_PASSWORD` | Administration RCON interne |
@@ -70,7 +71,7 @@ Gardez les 32 caractères hexadécimaux, sans tirets.
 
 ## Modifier un mot de passe
 
-### Tableau de bord Traefik, phpMyAdmin, KeeWeb
+### Tableau de bord Traefik, phpMyAdmin, KeeWeb, code-server (HTTP Basic)
 
 1. Modifier la valeur dans `.env`.
 2. Lancer `sudo make init` pour régénérer les fichiers `.htpasswd`.
@@ -82,8 +83,15 @@ sudo make restart-service SERVICE=traefik
 
 ### code-server
 
-1. Modifier `CODE_SERVER_PASSWORD` dans `.env`.
-2. Redémarrer :
+code-server a deux mots de passe :
+
+- `CODE_SERVER_HTTP_USER` / `CODE_SERVER_HTTP_PASSWORD` : protection HTTP Basic
+  par Traefik, générée dans `stacks/proxy/auth/code-server.htpasswd` ;
+- `CODE_SERVER_PASSWORD` : mot de passe de l'éditeur web.
+
+Pour changer la protection HTTP : modifier `.env`, lancer `sudo make init`,
+puis redémarrer code-server. Pour changer le mot de passe de l'éditeur :
+modifier `CODE_SERVER_PASSWORD` dans `.env`, puis redémarrer :
 
 ```sh
 sudo make restart-service SERVICE=code-server
@@ -121,6 +129,7 @@ dans `.env`.
 | `.env` | Configuration et secrets |
 | `stacks/proxy/auth/dashboard.htpasswd` | Accès au dashboard Traefik |
 | `stacks/proxy/auth/phpmyadmin.htpasswd` | Accès HTTP à phpMyAdmin |
+| `stacks/proxy/auth/code-server.htpasswd` | Accès HTTP à code-server |
 | `stacks/web/keeweb/auth/*.htpasswd` | Accès KeeWeb et WebDAV |
 | `stacks/web/php-site/src/.env` | Configuration du site PHP cloné |
 

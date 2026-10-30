@@ -59,7 +59,10 @@ Utilisez phpMyAdmin :
 https://phpmyadmin.<DOMAIN_NAME><TLD>
 ```
 
-Connectez-vous avec le compte root ou l'utilisateur de l'application.
+phpMyAdmin demande deux mots de passe : d'abord la protection HTTP Basic
+(`PMA_ADMIN_USER` / `PMA_ADMIN_PASSWORD`), puis, sur la page de connexion
+phpMyAdmin, le compte MariaDB de la base ciblée (root ou utilisateur
+applicatif). Voir [phpmyadmin.md](phpmyadmin.md#authentification-en-deux-étapes).
 
 ### PostgreSQL
 

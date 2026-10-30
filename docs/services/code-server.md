@@ -8,25 +8,39 @@ directement sur le serveur.
 **Alias :** `https://vscode.<domaine>`  
 **Exemple :** `https://code.supername.fr`
 
-## Mot de passe
+## Authentification en deux étapes
+
+1. **Protection HTTP Basic par Traefik** :
+
+| Variable `.env` | Utilisation |
+|---|---|
+| `CODE_SERVER_HTTP_USER` | Identifiant Basic (par défaut `code-server`) |
+| `CODE_SERVER_HTTP_PASSWORD` | Mot de passe Basic, généré par `make init` |
+
+2. **Mot de passe de l'éditeur code-server** :
 
 | Variable `.env` | Utilisation |
 |---|---|
 | `CODE_SERVER_PASSWORD` | Mot de passe demandé à l'ouverture de code-server |
 
-Le mot de passe est généré par `make init`. Contrairement aux comptes admin
-Azuriom/Forgejo, il est relu à chaque démarrage : modifiez `.env` puis
-redémarrez le service pour le changer.
+Les deux mots de passe sont générés par `make init`. La protection HTTP utilise
+`stacks/proxy/auth/code-server.htpasswd`, régénéré à partir de `.env` par
+`make init`. Contrairement aux comptes admin Azuriom/Forgejo, le mot de passe
+de l'éditeur est relu à chaque démarrage : modifiez `.env` puis redémarrez le
+service pour le changer.
 
 ## Variables `.env` utiles
 
 | Variable | Rôle |
 |---|---|
+| `CODE_SERVER_HTTP_USER` | Identifiant de la protection HTTP Basic |
+| `CODE_SERVER_HTTP_PASSWORD` | Mot de passe de la protection HTTP Basic |
 | `CODE_SERVER_PASSWORD` | Mot de passe de l'éditeur |
 | `TZ` | Fuseau horaire |
 
-Il n'y a pas d'utilisateur séparé : toute personne qui connaît le mot de passe
-peut éditer le workspace et exécuter des commandes dans le conteneur.
+Il n'y a pas d'utilisateur séparé dans l'éditeur : toute personne qui connaît
+les deux mots de passe peut éditer le workspace et exécuter des commandes dans
+le conteneur.
 
 ## Démarrer / arrêter
 
@@ -49,8 +63,9 @@ et `code-server-workspace` (vos projets). **Sauvegardez avant.**
 ## Utilisation
 
 1. Ouvrez `https://code.<domaine>`.
-2. Saisissez `CODE_SERVER_PASSWORD`.
-3. Travaillez dans `/home/coder/workspace`.
+2. Saisissez `CODE_SERVER_HTTP_USER` / `CODE_SERVER_HTTP_PASSWORD` (Traefik).
+3. Saisissez `CODE_SERVER_PASSWORD` (éditeur).
+4. Travaillez dans `/home/coder/workspace`.
 
 Les fichiers du workspace sont conservés dans un volume Docker. Ils survivent
 aux redémarrages, mais pas à `clean-service`.

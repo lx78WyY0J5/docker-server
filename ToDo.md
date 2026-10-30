@@ -28,7 +28,6 @@
 | `forgejo` #2 | Message d'erreur | Vérifier si le message `Cette instance Forgejo est configuré pour être servi sur "https://git.localhost/". Vous êtes actuellement en train de regarder Forgejo avec une URL différente, ce qui pourrait casser certaines parties de cette application. L'URL canonique est controllée par les administrateurs Forgejo grâce au paramètre ROOT_URL dans le app.ini.` est important et casse quelque chose ? message visible sur : [forgejo.localhost/user/login](https://forgejo.localhost/user/login) | à faire |
 | `code-server` | ------------ | ------------ | OK |
 | `code-server` #1 | Plugins | Ajouter les plugins (Java, live preiew, thème sombre, etc) | à faire |
-| `code-server` #3 | Mot de passe HTTP | Ajouter un mot de passe traefik en plus pour protéger la page | à faire |
 | `velocity`, `mc-*` | ------------ | ------------ | OK |
 | `Plugin` | ------------ | ------------ | OK |
 | `Plugin` #1 | Logo resource pack | Je crois qu'un logo manque / est cassé : Logo du shop vanilla (diamond), alors qu'il devrait (de mémoire) être un billet doré | à faire |
