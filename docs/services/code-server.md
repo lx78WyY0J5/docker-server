@@ -36,11 +36,59 @@ service pour le changer.
 | `CODE_SERVER_HTTP_USER` | Identifiant de la protection HTTP Basic |
 | `CODE_SERVER_HTTP_PASSWORD` | Mot de passe de la protection HTTP Basic |
 | `CODE_SERVER_PASSWORD` | Mot de passe de l'éditeur |
+| `CODE_SERVER_THEME` | Thème appliqué par défaut (défaut : `Default High Contrast`) |
+| `GIT_USER_NAME` | Nom du profil Git global (commits) |
+| `GIT_USER_EMAIL` | Adresse e-mail du profil Git global |
 | `TZ` | Fuseau horaire |
 
 Il n'y a pas d'utilisateur séparé dans l'éditeur : toute personne qui connaît
 les deux mots de passe peut éditer le workspace et exécuter des commandes dans
 le conteneur.
+
+## Extensions installées par défaut
+
+Le `Dockerfile` préinstalle les extensions listées dans
+`stacks/code-server/extensions.txt` :
+
+- `GitHub.vscode-pull-request-GitHub` ;
+- `PKief.material-icon-theme` ;
+- `ms-vscode.live-server` ;
+- `vscjava.vscode-java-pack` ;
+- `redhat.vscode-yaml`.
+
+Un volume `code-server-data` neuf reçoit ces extensions à sa création. Si le
+volume existe déjà, `entrypoint.sh` installe au démarrage celles qui manquent.
+Pour en ajouter une, complétez `extensions.txt`, reconstruisez l'image puis
+redémarrez le service :
+
+```sh
+sudo docker compose build code-server
+sudo make up-service SERVICE=code-server
+```
+
+## Thème par défaut
+
+Au démarrage, `entrypoint.sh` applique le thème défini par
+`CODE_SERVER_THEME` (par défaut `Default High Contrast`, de l'extension
+intégrée `vscode.theme-defaults`) dans `User/settings.json` du volume
+`code-server-data`. Le réglage n'est écrit que s'il n'existe pas déjà : un
+thème choisi dans l'interface est conservé.
+
+Pour changer le thème par défaut d'un volume neuf, modifiez
+`CODE_SERVER_THEME` dans `.env` puis redémarrez. Sur un volume existant,
+utilisez le sélecteur de code-server (`Ctrl+K Ctrl+T`) ou modifiez
+`workbench.colorTheme` dans les réglages.
+
+## Profil Git
+
+`entrypoint.sh` configure le profil Git global du conteneur à partir de
+`GIT_USER_NAME` et `GIT_USER_EMAIL` (voir `.env`). Les deux variables doivent
+être renseignées ensemble ; sinon code-server affiche un rappel au démarrage.
+Modifiez `.env` puis redémarrez le service :
+
+```sh
+sudo make restart-service SERVICE=code-server
+```
 
 ## Démarrer / arrêter
 
@@ -90,5 +138,7 @@ aux redémarrages, mais pas à `clean-service`.
   cookies. Traefik doit rester le seul reverse proxy.
 - **Terminal figé** : les WebSockets sont bloqués par un pare-feu ou un proxy.
 - **Extensions disparues** : vérifiez que le volume `code-server-data` est bien
-  monté.
+  monté. Les extensions de `stacks/code-server/extensions.txt` sont réinstallées
+  au démarrage si elles manquent ; vérifiez les logs et l'accès réseau du
+  conteneur si l'installation échoue.
 - **Erreur 502** : vérifiez les logs et que le conteneur écoute sur `8080`.

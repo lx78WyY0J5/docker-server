@@ -64,6 +64,7 @@ Gardez les 32 caractères hexadécimaux, sans tirets.
 | Forgejo / mail | `FORGEJO_MAIL_PASSWORD` | Boîte `git@` |
 | code-server | `CODE_SERVER_PASSWORD` | Mot de passe de l'éditeur web |
 | code-server | `CODE_SERVER_HTTP_USER`, `CODE_SERVER_HTTP_PASSWORD` | Première protection HTTP Basic par Traefik |
+| code-server | `GIT_USER_NAME`, `GIT_USER_EMAIL` | Profil Git global du conteneur (commits) |
 | KeeWeb | `KEEWEB_UI_USER`, `KEEWEB_UI_PASSWORD` | Accès à l'interface KeeWeb |
 | KeeWeb | `KEEWEB_WEBDAV_USER`, `KEEWEB_WEBDAV_PASSWORD` | Accès WebDAV |
 | Minecraft | `MINECRAFT_RCON_PASSWORD` | Administration RCON interne |

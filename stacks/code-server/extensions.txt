@@ -1,0 +1,9 @@
+# Extensions code-server installées par défaut.
+# Une extension par ligne, au format <éditeur>.<nom>.
+# Le Dockerfile les préinstalle dans l'image ; entrypoint.sh installe
+# celles qui manquent lorsqu'un volume code-server-data existe déjà.
+GitHub.vscode-pull-request-GitHub
+PKief.material-icon-theme
+ms-vscode.live-server
+vscjava.vscode-java-pack
+redhat.vscode-yaml

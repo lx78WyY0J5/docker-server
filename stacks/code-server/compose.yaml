@@ -10,6 +10,9 @@ services:
       TZ: ${TZ}
       PASSWORD: ${CODE_SERVER_PASSWORD}
       DEFAULT_WORKSPACE: /home/coder/workspace
+      CODE_SERVER_THEME: ${CODE_SERVER_THEME:-Default High Contrast}
+      GIT_USER_NAME: ${GIT_USER_NAME:-}
+      GIT_USER_EMAIL: ${GIT_USER_EMAIL:-}
     volumes:
       - code-server-data:/home/coder/.local/share/code-server
       - code-server-workspace:/home/coder/workspace
